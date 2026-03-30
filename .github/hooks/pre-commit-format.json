@@ -1,0 +1,12 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "command": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".tool_input.command // empty\"); if [ -z \"$CMD\" ]; then exit 0; fi; if echo \"$CMD\" | grep -qE \"git\\s+(add|commit)\"; then if [ -f \"pyproject.toml\" ] || [ -f \"setup.py\" ] || [ -f \"setup.cfg\" ]; then ruff format . 2>/dev/null; ruff check --fix . 2>/dev/null; elif [ -f \"package.json\" ]; then npx prettier --write . 2>/dev/null; fi; fi; exit 0'",
+        "windows": "bash -c 'INPUT=$(cat); CMD=$(echo \"$INPUT\" | jq -r \".tool_input.command // empty\"); if [ -z \"$CMD\" ]; then exit 0; fi; if echo \"$CMD\" | grep -qE \"git\\s+(add|commit)\"; then if [ -f \"pyproject.toml\" ] || [ -f \"setup.py\" ] || [ -f \"setup.cfg\" ]; then ruff format . 2>/dev/null; ruff check --fix . 2>/dev/null; elif [ -f \"package.json\" ]; then npx prettier --write . 2>/dev/null; fi; fi; exit 0'",
+        "timeout": 30
+      }
+    ]
+  }
+}
