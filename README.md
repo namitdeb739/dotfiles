@@ -14,18 +14,19 @@ Personal development environment configuration.
 
 ## Setup on a new machine
 
+Clone anywhere you like, then symlink into your home directory:
+
 ```bash
-git clone git@github.com:namitdeb739/dotfiles.git ~/dotfiles
+# Clone to your preferred location
+git clone git@github.com:namitdeb739/dotfiles.git ~/Developer/dotfiles
 
-# Symlink .github into home directory
-ln -sf ~/dotfiles/.github ~/.github
-
-# Symlink .gitconfig
-ln -sf ~/dotfiles/.gitconfig ~/.gitconfig
+# Symlink into home directory (VS Code reads from ~/.github/)
+ln -sf ~/Developer/dotfiles/.github ~/.github
+ln -sf ~/Developer/dotfiles/.gitconfig ~/.gitconfig
 ```
 
 ## Syncing changes
 
 ```bash
-cd ~/dotfiles && git pull
+cd ~/Developer/dotfiles && git pull
 ```
