@@ -1,8 +1,8 @@
 ---
 name: Security Auditor
 description: Scans code for vulnerabilities — OWASP top 10, secrets, dependency risks
-tools: ['search/codebase', 'search/usages']
-model: ['Claude Opus 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'web', 'execute/runInTerminal']
+model: ['Claude Opus 4.6', 'GPT-5.2']
 ---
 
 # Security Auditor

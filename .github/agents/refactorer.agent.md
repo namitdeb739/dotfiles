@@ -1,8 +1,8 @@
 ---
 name: Refactorer
 description: Restructures code — extract methods, rename, simplify, reduce duplication
-tools: ['search/codebase', 'search/usages', 'editFiles']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'edit', 'execute']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # Refactorer

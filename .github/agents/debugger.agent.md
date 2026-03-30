@@ -1,8 +1,8 @@
 ---
 name: Debugger
 description: Traces bugs through code, follows data flow, reports root cause with file:line references
-tools: ['search/codebase', 'search/usages']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'execute/runInTerminal', 'execute/getTerminalOutput', 'execute/testFailure']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # Debugger

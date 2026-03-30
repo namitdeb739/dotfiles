@@ -1,8 +1,8 @@
 ---
 name: Testing Expert
 description: Finds coverage gaps, writes comprehensive tests following project conventions
-tools: ['search/codebase', 'search/usages', 'editFiles', 'runInTerminal']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'edit', 'execute']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # Testing Expert

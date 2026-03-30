@@ -1,8 +1,8 @@
 ---
 name: DevOps
 description: CI/CD pipelines, Docker, GitHub Actions, deployment configurations
-tools: ['search/codebase', 'search/usages', 'editFiles', 'runInTerminal']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'edit', 'execute', 'web']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # DevOps

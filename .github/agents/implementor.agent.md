@@ -2,7 +2,7 @@
 name: Implementor
 description: Full autonomy task execution — explore, plan, implement, test, summarize
 tools: ['*']
-model: ['Claude Opus 4.5', 'GPT-5.2']
+model: ['Claude Opus 4.6', 'GPT-5.2']
 ---
 
 # Implementor

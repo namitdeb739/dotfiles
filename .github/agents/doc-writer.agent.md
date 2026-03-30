@@ -1,8 +1,8 @@
 ---
 name: Doc Writer
 description: Explores code and generates well-organized technical documentation
-tools: ['search/codebase', 'search/usages', 'editFiles']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'edit', 'web']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # Doc Writer

@@ -1,8 +1,8 @@
 ---
 name: PR Writer
 description: Analyzes git changes and creates structured pull requests
-tools: ['io.github.github/github-mcp-server/*', 'runInTerminal']
-model: ['Claude Sonnet 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'execute/runInTerminal', 'io.github.github/github-mcp-server/*']
+model: ['Claude Sonnet 4.6', 'GPT-5.2']
 ---
 
 # PR Writer

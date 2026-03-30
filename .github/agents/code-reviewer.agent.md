@@ -1,8 +1,8 @@
 ---
 name: Code Reviewer
 description: Reviews code changes for SOLID violations, security issues, and clean code principles
-tools: ['search/codebase', 'search/usages']
-model: ['Claude Opus 4.5', 'GPT-5.2']
+tools: ['read', 'search', 'execute/runInTerminal']
+model: ['Claude Opus 4.6', 'GPT-5.2']
 ---
 
 # Code Reviewer
