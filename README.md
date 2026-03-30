@@ -18,7 +18,7 @@ Clone anywhere you like, then symlink into your home directory:
 
 ```bash
 # Clone to your preferred location
-git clone git@github.com:namitdeb739/dotfiles.git ~/Developer/dotfiles
+git clone https://github.com/namitdeb739/dotfiles.git ~/Developer/dotfiles
 
 # Symlink into home directory (VS Code reads from ~/.github/)
 ln -sf ~/Developer/dotfiles/.github ~/.github
