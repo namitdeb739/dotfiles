@@ -14,19 +14,31 @@ Personal development environment configuration.
 
 ## Setup on a new machine
 
-Clone anywhere you like, then symlink into your home directory:
+Clone anywhere you like, then run the bootstrap script:
 
 ```bash
 # Clone to your preferred location
 git clone https://github.com/namitdeb739/dotfiles.git ~/Developer/dotfiles
 
-# Symlink into home directory (VS Code reads from ~/.github/)
-ln -sf ~/Developer/dotfiles/.github ~/.github
-ln -sf ~/Developer/dotfiles/.gitconfig ~/.gitconfig
+# Bootstrap links with safe backup behavior
+~/Developer/dotfiles/bootstrap.sh
 ```
+
+The script safely backs up existing `~/.github` and `~/.gitconfig` before creating symlinks.
 
 ## Syncing changes
 
 ```bash
 cd ~/Developer/dotfiles && git pull
 ```
+
+## Verify `~/.github` is dotfiles-managed
+
+```bash
+cd ~/Developer/dotfiles
+chmod +x check-github-managed.sh
+./check-github-managed.sh
+```
+
+The command exits with non-zero status if any file under `~/.github`
+is not tracked by this repository.
