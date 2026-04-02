@@ -1,7 +1,7 @@
 ---
 name: Security Auditor
 description: Scans code for vulnerabilities — OWASP top 10, secrets, dependency risks
-tools: ['read', 'search', 'search/changes', 'read/problems', 'web', 'execute', 'io.github.github/github-mcp-server/*']
+tools: ['read', 'search', 'web', 'execute', 'io.github.github/github-mcp-server/*']
 model: ['Claude Opus 4.6', 'GPT-5.2']
 ---
 

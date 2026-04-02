@@ -1,7 +1,7 @@
 ---
 description: Edit dotfiles — agents, prompts, hooks, instructions, and global Copilot config
 agent: Dotfiles Editor
-tools: ['read', 'search', 'edit', 'execute', 'web']
+tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.github/github-mcp-server/*']
 ---
 
 Edit the dotfiles repository that manages global VS Code Copilot configuration.

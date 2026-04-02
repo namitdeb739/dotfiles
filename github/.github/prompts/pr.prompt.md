@@ -1,7 +1,7 @@
 ---
 description: Analyze git changes and create a structured pull request using GitKraken CLI or gh
 agent: PR Writer
-tools: ['runInTerminal', 'getTerminalOutput', 'read', 'search/changes', 'io.github.github/github-mcp-server/*']
+tools: ['execute', 'read', 'search', 'io.github.github/github-mcp-server/*']
 ---
 
 Create a pull request for the current branch.

@@ -1,6 +1,6 @@
 ---
 description: Stage, commit, and optionally push using GitKraken CLI for AI messages and issue linking
-tools: ['runInTerminal', 'getTerminalOutput', 'read', 'read/problems', 'search/changes']
+tools: ['execute', 'read', 'search']
 ---
 
 Create a commit for the current changes using GitKraken CLI (`gk`) when available, with fallback to plain git.
