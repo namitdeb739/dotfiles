@@ -2,6 +2,8 @@
 
 Personal development environment configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
+<!-- cspell:words Fira atuin direnv glog Refactorer docstrings pytest ipynb mkcd ghclone killport -->
+
 One command sets up a new machine: shell, git, editor, AI tooling, CLI tools, and prompt theme.
 
 ## Prerequisites
@@ -57,7 +59,7 @@ git reset --hard origin/main
 Each directory is an independent stow package that mirrors `~/` structure:
 
 | Package | Contents | Target |
-|---------|----------|--------|
+| --------- | ---------- | -------- |
 | `git/` | `.gitconfig`, `.gitignore_global` | `~/` |
 | `github/` | `.github/` — Copilot agents, hooks, instructions, prompts | `~/.github/` |
 | `zsh/` | `.zshrc`, Starship config, aliases, functions, PATH | `~/` |
@@ -92,7 +94,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 11 specialized agents with role-based tool grants, MCP server access, and workflow handoffs:
 
 | Agent | Model Tier | Purpose | MCP Servers |
-|-------|-----------|---------|-------------|
+| ------- | ----------- | --------- | ------------- |
 | Code Reviewer | Opus | SOLID/security review, severity reporting | GitHub, Context7 |
 | Debugger | Sonnet | Read-only root cause investigation | GitHub, Context7 |
 | DevOps | Sonnet | CI/CD, Docker, GitHub Actions | GitHub, Context7, Playwright |
@@ -112,7 +114,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 7 safety and quality hooks:
 
 | Hook | Event | Behavior |
-|------|-------|----------|
+| ------ | ------- | ---------- |
 | Secrets Guard | PreToolUse | Blocks commits containing `.env`, `.pem`, `.key`, credentials |
 | Dangerous Git Guard | PreToolUse | Blocks `push --force`, `reset --hard`, `clean -f`, `branch -D` |
 | Commit Message Standards | PreToolUse | Blocks non-Conventional-Commits messages |
@@ -124,7 +126,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 ### Copilot Prompts (Slash Commands)
 
 | Command | Routes to | Purpose |
-|---------|-----------|---------|
+| --------- | ----------- | --------- |
 | `/check` | (inline) | Run tests, diagnostics, report project health |
 | `/commit` | (inline) | Smart commit with GitKraken AI or plain git |
 | `/do` | Implementor | Full-autonomy task execution |
@@ -138,7 +140,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 Context-aware instruction files auto-applied by file pattern:
 
 | File | Applies to | Content |
-|------|-----------|---------|
+| ------ | ----------- | --------- |
 | `copilot-instructions.md` | Always | Global coding standards, SOLID, security, git conventions |
 | `python.instructions.md` | `**/*.py` | Type hints, Google docstrings, pytest, Ruff style |
 | `ml.instructions.md` | `**/*.ipynb`, `**/ml/**` | Reproducibility, data splitting, experiment tracking |
@@ -150,7 +152,7 @@ Context-aware instruction files auto-applied by file pattern:
 Installed via `brew bundle` during bootstrap:
 
 | Category | Tools |
-|----------|-------|
+| ---------- | ------- |
 | Shell | stow, starship, antidote, zoxide, atuin |
 | Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv |
 | Python | uv, ruff |
@@ -162,6 +164,7 @@ Installed via `brew bundle` during bootstrap:
 ### CI
 
 GitHub Actions workflow (`.github/workflows/ci.yml`):
+
 - **ShellCheck** — lints `bootstrap.sh` and `check-github-managed.sh`
 - **JSON validation** — validates all hook configs and MCP config
 - **Bootstrap smoke test** — runs full bootstrap on macOS runner, verifies symlinks
@@ -207,7 +210,7 @@ Exits non-zero if any file under `~/.github/` is not tracked by this repo.
 
 ## File Structure
 
-```
+```text
 dotfiles/
 ├── .github/workflows/ci.yml        # CI: ShellCheck, JSON validation, smoke test
 ├── bootstrap.sh                     # One-command setup script
