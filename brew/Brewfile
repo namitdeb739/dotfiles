@@ -29,16 +29,13 @@ brew "ruff"              # Python linter/formatter
 # --- Node ---
 brew "fnm"               # Fast Node Manager (replaces nvm)
 
-# --- Containers ---
-brew "docker-compose"    # Docker Compose CLI
-
 # --- Build ---
 brew "just"              # Command runner (better make)
 brew "pre-commit"        # Git hooks framework
 
 # --- Casks ---
 cask "visual-studio-code"
-cask "docker"            # Docker Desktop
+# cask "docker"          # Install manually — requires GUI permissions
 cask "iterm2"            # Terminal alternative
 cask "raycast"           # Spotlight replacement
 
