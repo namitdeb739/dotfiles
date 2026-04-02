@@ -91,49 +91,138 @@ link_vscode() {
   done
 }
 
-# --- Prerequisites ---
+install_vscode_extensions() {
+  local extensions_file="$REPO_DIR/vscode/extensions.json"
+  [[ ! -f "$extensions_file" ]] && return
 
-if ! command_exists stow; then
-  echo "GNU Stow is not installed."
-  if command_exists brew; then
-    echo "Installing via Homebrew..."
-    brew install stow
-  elif command_exists apt-get; then
-    echo "Installing via apt..."
-    sudo apt-get install -y stow
+  if ! command_exists code; then
+    echo "VS Code CLI not found — skipping extension install"
+    return
+  fi
+
+  echo ""
+  echo "--- VS Code Extensions ---"
+
+  # Get currently installed extensions
+  local installed
+  installed="$(code --list-extensions 2>/dev/null)"
+
+  # Parse recommendations and install missing ones
+  local count=0
+  while IFS= read -r ext; do
+    if ! echo "$installed" | grep -qi "^${ext}$"; then
+      echo "Installing: $ext"
+      code --install-extension "$ext" --force 2>/dev/null || echo "  Failed: $ext"
+      count=$((count + 1))
+    fi
+  done < <(python3 -c "import json,sys; [print(e) for e in json.load(open('$extensions_file'))['recommendations']]" 2>/dev/null)
+
+  if [[ $count -eq 0 ]]; then
+    echo "All extensions already installed."
   else
-    echo "Please install GNU Stow manually: https://www.gnu.org/software/stow/"
+    echo "Installed $count new extension(s)."
+  fi
+}
+
+install_brew_packages() {
+  local brewfile="$REPO_DIR/brew/Brewfile"
+  [[ ! -f "$brewfile" ]] && return
+
+  if ! command_exists brew; then
+    echo ""
+    echo "Homebrew not found. Install it first:"
+    echo '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo "Then re-run this script."
+    return
+  fi
+
+  echo ""
+  echo "--- Homebrew Packages ---"
+  brew bundle --file="$brewfile" --no-lock
+  echo "Brewfile installed."
+}
+
+init_zsh_plugins() {
+  # Source antidote once to generate the static plugin file
+  local antidote_path
+  antidote_path="$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh" || true
+
+  if [[ -f "$antidote_path" ]] && [[ -f "$HOME/.zsh_plugins.txt" ]]; then
+    echo ""
+    echo "--- Zsh Plugins ---"
+    # Generate the static load file so the first shell launch is fast
+    zsh -c "source '$antidote_path' && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh" 2>/dev/null \
+      && echo "Antidote plugins pre-compiled." \
+      || echo "Antidote plugin pre-compile skipped (will compile on first shell launch)."
+  fi
+}
+
+# ===========================================================
+# Main
+# ===========================================================
+
+echo "=== Dotfiles Bootstrap ==="
+echo ""
+
+# --- 1. Prerequisites ---
+
+echo "--- Prerequisites ---"
+
+# Ensure Homebrew is available (needed for stow and everything else)
+if ! command_exists brew; then
+  if [[ -f /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  else
+    echo "Homebrew not found. Install it first:"
+    echo '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo "Then re-run this script."
     exit 1
   fi
 fi
 
-# --- Stow packages ---
-# Each subdirectory mirrors ~ structure and is independently installable
+if ! command_exists stow; then
+  echo "Installing GNU Stow..."
+  brew install stow
+fi
 
-echo "=== Dotfiles Bootstrap ==="
+echo "Prerequisites OK."
+
+# --- 2. Brew packages (install tools before stowing, so stow/starship/etc. are available) ---
+
+install_brew_packages
+
+# --- 3. Stow packages ---
+
+echo ""
+echo "--- Stow Packages ---"
 
 stow_package "git"
 stow_package "github"
 stow_package "zsh"
-stow_package "mcp"
 
 # VSCode needs special handling (platform-specific paths with spaces)
 link_vscode
 
-# Brewfile isn't stowed — it stays in the repo, run `brew bundle` manually
-if [[ -f "$REPO_DIR/brew/Brewfile" ]]; then
-  echo ""
-  echo "Brewfile available at: $REPO_DIR/brew/Brewfile"
-  echo "Run 'brew bundle --file=$REPO_DIR/brew/Brewfile' to install tools."
-fi
+# --- 4. VS Code extensions ---
 
-# --- Verification ---
+install_vscode_extensions
+
+# --- 5. Zsh plugin pre-compile ---
+
+init_zsh_plugins
+
+# --- 6. Verification ---
 
 if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
   echo ""
-  echo "Running ~/.github management verification..."
+  echo "--- Verification ---"
   bash "$REPO_DIR/check-github-managed.sh"
 fi
 
+# --- Done ---
+
 echo ""
-echo "Dotfiles bootstrap complete."
+echo "=== Bootstrap Complete ==="
+echo ""
+echo "Open a new terminal to activate your new shell config."
+echo "If Starship prompt doesn't appear, run: exec zsh"
