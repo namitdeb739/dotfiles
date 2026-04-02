@@ -138,7 +138,7 @@ install_brew_packages() {
 
   echo ""
   echo "--- Homebrew Packages ---"
-  brew bundle --file="$brewfile" --no-lock
+  brew bundle --file="$brewfile"
   echo "Brewfile installed."
 }
 
