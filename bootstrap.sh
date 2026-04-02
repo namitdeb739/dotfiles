@@ -152,17 +152,32 @@ configure_starship() {
   local config_file="$config_dir/starship.toml"
   mkdir -p "$config_dir"
 
-  # If a config already exists (from stow or previous run), ask whether to reconfigure
+  local dotfiles_config="$REPO_DIR/zsh/.config/starship.toml"
+
+  # If config already exists and is NOT our stow symlink, ask whether to reconfigure
   if [[ -f "$config_file" || -L "$config_file" ]]; then
-    echo ""
-    echo "Starship config already exists at $config_file"
-    read -rp "Reconfigure prompt style? [y/N] " reconfigure
+    local current_target=""
+    [[ -L "$config_file" ]] && current_target="$(readlink "$config_file")"
+    # If it's our stow symlink, it's the dotfiles default — still offer preset choice
+    if [[ "$current_target" == *"$REPO_DIR"* ]]; then
+      echo ""
+      echo "Starship config is using dotfiles default (Tokyo Night)."
+      read -rp "Switch to a different preset? [y/N] " reconfigure
+    else
+      echo ""
+      echo "Starship config already exists at $config_file"
+      read -rp "Reconfigure prompt style? [y/N] " reconfigure
+    fi
     if [[ ! "$reconfigure" =~ ^[Yy]$ ]]; then
       echo "Keeping existing Starship config."
       return
     fi
-    # Remove stow-managed symlink if present so we can write a real file
-    [[ -L "$config_file" ]] && rm "$config_file"
+    # Remove symlink or back up real file
+    if [[ -L "$config_file" ]]; then
+      rm "$config_file"
+    else
+      mv "$config_file" "${config_file}.backup-${TIMESTAMP}"
+    fi
   fi
 
   echo ""
@@ -202,7 +217,16 @@ configure_starship() {
     7) preset="jetpack" ;;
     8) preset="pure-preset" ;;
     9) preset="plain-text" ;;
-    0|"") echo "Skipping Starship configuration."; return ;;
+    0|"")
+      # Use dotfiles default (Tokyo Night customized)
+      if [[ -f "$dotfiles_config" ]]; then
+        ln -sf "$dotfiles_config" "$config_file"
+        echo "Using dotfiles default config (Tokyo Night + Python/Git/Docker)."
+      else
+        echo "Skipping Starship configuration."
+      fi
+      return
+      ;;
     *) echo "Invalid choice — skipping."; return ;;
   esac
 
