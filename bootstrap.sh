@@ -285,11 +285,38 @@ fi
 
 echo "Prerequisites OK."
 
-# --- 2. Brew packages (install tools before stowing, so stow/starship/etc. are available) ---
+# --- 2. Clean up stale backups from previous runs ---
+
+cleanup_backups() {
+  local count=0
+  while IFS= read -r -d '' f; do
+    rm "$f"
+    count=$((count + 1))
+  done < <(find "$HOME" -maxdepth 1 -name "*.backup-*" -print0 2>/dev/null)
+  # Also clean inside ~/.github/
+  while IFS= read -r -d '' f; do
+    rm "$f"
+    count=$((count + 1))
+  done < <(find "$HOME/.github" -name "*.backup-*" -print0 2>/dev/null)
+  # And ~/.config/
+  while IFS= read -r -d '' f; do
+    rm "$f"
+    count=$((count + 1))
+  done < <(find "$HOME/.config" -name "*.backup-*" -print0 2>/dev/null)
+  if [[ $count -gt 0 ]]; then
+    echo "Cleaned up $count stale backup file(s)."
+  fi
+}
+
+echo ""
+echo "--- Cleanup ---"
+cleanup_backups
+
+# --- 3. Brew packages (install tools before stowing, so stow/starship/etc. are available) ---
 
 install_brew_packages
 
-# --- 3. Stow packages ---
+# --- 4. Stow packages ---
 
 echo ""
 echo "--- Stow Packages ---"
@@ -301,19 +328,19 @@ stow_package "zsh"
 # VSCode needs special handling (platform-specific paths with spaces)
 link_vscode
 
-# --- 4. Starship prompt style ---
+# --- 5. Starship prompt style ---
 
 configure_starship
 
-# --- 5. VS Code extensions ---
+# --- 6. VS Code extensions ---
 
 install_vscode_extensions
 
-# --- 6. Zsh plugin pre-compile ---
+# --- 7. Zsh plugin pre-compile ---
 
 init_zsh_plugins
 
-# --- 7. Verification ---
+# --- 8. Verification ---
 
 if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
   echo ""
