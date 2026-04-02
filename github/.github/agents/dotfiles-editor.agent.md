@@ -1,7 +1,7 @@
 ---
 name: Dotfiles Editor
 description: Maintains the dotfiles repo — agents, prompts, hooks, instructions, and global config
-tools: ['read', 'search', 'edit', 'execute/runInTerminal', 'web']
+tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.github/github-mcp-server/*']
 model: ['Claude Opus 4.6', 'GPT-5.2']
 ---
 
@@ -31,7 +31,7 @@ dotfiles/
 ---
 name: Agent Name
 description: One-line description of what this agent does
-tools: ['read', 'search', 'edit', 'execute/runInTerminal']
+tools: ['read', 'search', 'edit', 'execute']
 model: ['Claude Opus 4.6', 'GPT-5.2']
 handoffs:                    # Optional — delegate to another agent
   - label: Button Label
@@ -105,10 +105,23 @@ Wildcard: `*` (all tools), `<mcp-server>/*` (all tools from an MCP server)
 
 Using a group name (e.g., `read`) grants all tools in that group.
 
+## Available MCP Servers
+
+These MCP servers are installed and can be added to agent `tools:` arrays:
+
+| Server | Tool pattern | Use for |
+|---|---|---|
+| `io.github.github/github-mcp-server` | `io.github.github/github-mcp-server/*` | PR/issue/repo/CI operations |
+| `microsoft/playwright-mcp` | `microsoft/playwright-mcp/*` | Browser automation |
+| `io.github.upstash/context7` | `io.github.upstash/context7/*` | Up-to-date library docs lookup |
+| `microsoft/markitdown` | `microsoft/markitdown/*` | File-to-markdown (PDF, DOCX, etc.) |
+| `makenotion/notion-mcp-server` | `makenotion/notion-mcp-server/*` | Notion pages read/write |
+
 ## Principles
 
-- **Least privilege**: give agents only the tools they need. Read-only agents (reviewer, debugger, auditor) should NOT get `edit` or `execute`.
+- **Least privilege**: give agents only the tools they need. Read-only agents (reviewer, debugger, auditor) should NOT get `edit`.
 - **Group shorthands over individual tools**: use `read` instead of listing `read/readFile`, `read/problems` separately — cleaner and future-proof.
+- **Never use prefix notation**: `execute/runInTerminal` as a standalone tool is valid, but `execute/runInTerminal` as a prefix (e.g., writing `execute/runInTerminal` when you mean the group) is broken. Use the group `execute` to get all execute tools.
 - **Consistent model tiers**: use Opus for agents requiring deep reasoning (planner, reviewer, security). Use Sonnet for execution-focused agents (devops, refactorer, testing).
 - **`$input` in prompts**: always include `$input` so the user can pass context to the prompt.
 - **Handoffs**: use `send: false` (user confirms) by default. Only use `send: true` for trusted chains.

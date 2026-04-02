@@ -1,7 +1,7 @@
 ---
 description: Review current changes for code quality issues and auto-fix them
 agent: Code Reviewer
-tools: ['read', 'search', 'edit', 'execute/runInTerminal', 'execute/getTerminalOutput']
+tools: ['read', 'search', 'edit', 'execute', 'io.github.github/github-mcp-server/*']
 ---
 
 Review all changes on the current branch compared to main, then fix any Critical or Major issues found.

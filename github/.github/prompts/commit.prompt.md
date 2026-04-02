@@ -1,9 +1,15 @@
 ---
 description: Stage, commit, and optionally push using GitKraken CLI for AI messages and issue linking
-tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'read', 'search/changes']
+tools: ['runInTerminal', 'getTerminalOutput', 'read', 'read/problems', 'search/changes']
 ---
 
 Create a commit for the current changes using GitKraken CLI (`gk`) when available, with fallback to plain git.
+
+## 0. Check Problems panel
+
+- Read the VS Code Problems panel (`read/problems`) for errors and warnings
+- If there are any **errors**, warn the user before proceeding — a broken commit may fail CI or `pre-commit` hooks
+- If only warnings, proceed but mention them in the commit notes
 
 ## 1. Assess state
 
@@ -42,5 +48,6 @@ Offer these follow-up actions after a successful commit:
 - To link an issue before committing: `gk work start -i <ISSUE-KEY>` (creates work item + branch from Jira/GitHub/GitLab issue)
 - `gk ai commit -d` adds an AI-generated description body; without `-d` it generates subject line only
 - Use `-f` / `--force` flag to skip confirmation prompts if the user requests it
+- `pre-commit` hooks may reject the commit — if they fail, fix the reported issue, re-stage, and commit again (do NOT use `--no-verify` unless the user explicitly requests it)
 
 $input

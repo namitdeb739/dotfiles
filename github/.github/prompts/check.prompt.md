@@ -1,6 +1,6 @@
 ---
 description: Run tests, check diagnostics, and report project health
-tools: ['execute', 'read', 'search']
+tools: ['execute', 'read', 'search', 'read/problems', 'search/changes', 'io.github.github/github-mcp-server/*']
 ---
 
 Run the project's test suite and check for outstanding issues.
@@ -18,8 +18,9 @@ Detect the test framework and run:
 ## 2. Check diagnostics
 
 - Read the VS Code Problems panel (`read/problems`) for errors/warnings from linters and Error Lens
-- Check for any failing test details via `execute/testFailure` if available
-- Scan for TODO/FIXME comments in changed files (`search/textSearch` for `TODO|FIXME|HACK|XXX`)
+- Use `search/changes` to scope TODO/FIXME scans to recently changed files only
+- Scan for TODO/FIXME comments in changed files (`search/codebase` for `TODO|FIXME|HACK|XXX`)
+- Use `io.github.github/github-mcp-server/*` tools to compare CI status for the current branch if available
 
 ## 3. Report
 
