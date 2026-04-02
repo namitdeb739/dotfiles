@@ -304,8 +304,65 @@ cleanup_backups() {
   fi
 }
 
+cleanup_legacy() {
+  # Remove tools replaced by our new stack
+  local removed=0
+
+  # Oh-My-Zsh → replaced by antidote
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    echo "Removing Oh-My-Zsh (replaced by antidote)..."
+    rm -rf "$HOME/.oh-my-zsh"
+    removed=$((removed + 1))
+  fi
+
+  # Powerlevel10k config → replaced by Starship
+  if [[ -f "$HOME/.p10k.zsh" ]]; then
+    echo "Removing Powerlevel10k config (replaced by Starship)..."
+    rm -f "$HOME/.p10k.zsh"
+    removed=$((removed + 1))
+  fi
+
+  # NVM → replaced by fnm
+  if [[ -d "$HOME/.nvm" ]]; then
+    echo "Removing NVM (replaced by fnm)..."
+    rm -rf "$HOME/.nvm"
+    removed=$((removed + 1))
+  fi
+
+  # SDKMAN → not needed
+  if [[ -d "$HOME/.sdkman" ]]; then
+    echo "Removing SDKMAN (not needed)..."
+    rm -rf "$HOME/.sdkman"
+    removed=$((removed + 1))
+  fi
+
+  # Anaconda/Conda → replaced by uv
+  if [[ -d "/opt/anaconda3" ]]; then
+    echo "Removing Anaconda (replaced by uv)..."
+    rm -rf /opt/anaconda3 2>/dev/null || echo "  Needs sudo — run: sudo rm -rf /opt/anaconda3"
+    removed=$((removed + 1))
+  fi
+  if [[ -d "$HOME/anaconda3" ]]; then
+    echo "Removing Anaconda (replaced by uv)..."
+    rm -rf "$HOME/anaconda3"
+    removed=$((removed + 1))
+  fi
+  if [[ -d "$HOME/miniconda3" ]]; then
+    echo "Removing Miniconda (replaced by uv)..."
+    rm -rf "$HOME/miniconda3"
+    removed=$((removed + 1))
+  fi
+
+  if [[ $removed -gt 0 ]]; then
+    echo "Removed $removed legacy tool(s)."
+  else
+    echo "No legacy tools found."
+  fi
+}
+
 echo ""
 echo "--- Cleanup ---"
+cleanup_legacy
 cleanup_backups
 
 # --- 3. Brew packages (install tools before stowing, so stow/starship/etc. are available) ---
