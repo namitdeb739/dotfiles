@@ -1,56 +1,76 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Tokyo Night palette, customized for Python/Git/Docker/Node dev
-# Curved powerline separators (U+E0B4) matching official Tokyo Night preset
+# Tokyo Night layout (separators) + Nerd Font symbols
+# Palette inspired by VS Code: Dracula Theme Soft
 
 format = """
-[░▒▓](#a3aed2)[  ](bg:#a3aed2 fg:#090c0c)[](bg:#769ff0 fg:#a3aed2)$directory[](fg:#769ff0 bg:#394260)$git_branch$git_status$git_state[](fg:#394260 bg:#212736)$python$nodejs$docker_context$package[](fg:#212736 bg:#1d2230)$cmd_duration$jobs$direnv$time[ ](fg:#1d2230)
-$character"""
+[░▒▓](#7b7f8b)\
+[  ](bg:#7b7f8b fg:#191a21)\
+[](bg:#bf9eee fg:#7b7f8b)\
+$directory\
+[](fg:#bf9eee bg:#44475a)\
+$git_branch\
+$git_status\
+$git_state\
+[](fg:#44475a bg:#282a36)\
+$python\
+$nodejs\
+$docker_context\
+$package\
+[](fg:#282a36 bg:#191a21)\
+$cmd_duration\
+$jobs\
+$direnv\
+$time\
+[ ](fg:#191a21)\
+\n$character"""
 
 # --- Prompt character ---
 
 [character]
-success_symbol = "[❯](bold #769ff0)"
-error_symbol = "[❯](bold #f7768e)"
+success_symbol = "[❯](bold #62e884)"
+error_symbol = "[❯](bold #ee6666)"
 
 # --- Directory ---
 
 [directory]
-style = "fg:#e3e5e5 bg:#769ff0"
+style = "fg:#191a21 bg:#bf9eee"
 format = "[ $path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
-read_only = " "
+read_only = " 󰌾"
 
 [directory.substitutions]
 "Documents" = "󰈙 "
 "Downloads" = " "
 "Developer" = " "
+"Music" = " "
+"Pictures" = " "
 
 # --- Git ---
 
 [git_branch]
-symbol = ""
-style = "bg:#394260"
-format = '[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)'
+symbol = " "
+style = "bg:#44475a"
+format = '[[ $symbol$branch ](fg:#f49dda bg:#44475a)]($style)'
 
 [git_status]
-style = "bg:#394260"
-format = '[[($all_status$ahead_behind )](bg:#394260)]($style)'
-ahead = "[⇡${count}](fg:#9ece6a bg:#394260)"
-behind = "[⇣${count}](fg:#f7768e bg:#394260)"
-diverged = "[⇕⇡${ahead_count}⇣${behind_count}](fg:#e0af68 bg:#394260)"
-modified = "[!${count}](fg:#e0af68 bg:#394260)"
-staged = "[+${count}](fg:#9ece6a bg:#394260)"
-untracked = "[?${count}](fg:#bb9af7 bg:#394260)"
-stashed = "[*${count}](fg:#7aa2f7 bg:#394260)"
-deleted = "[✘${count}](fg:#f7768e bg:#394260)"
-renamed = "[»${count}](fg:#e0af68 bg:#394260)"
-conflicted = "[=${count}](fg:#f7768e bg:#394260)"
+style = "bg:#44475a"
+format = '[[($all_status$ahead_behind )](fg:#f6f6f4 bg:#44475a)]($style)'
+ahead = "[ ⇡${count}](fg:#62e884 bg:#44475a)"
+behind = "[ ⇣${count}](fg:#ee6666 bg:#44475a)"
+diverged = "[ ⇕ ⇡${ahead_count} ⇣${behind_count}](fg:#ffb86c bg:#44475a)"
+modified = "[ !${count}](fg:#ffb86c bg:#44475a)"
+staged = "[ +${count}](fg:#62e884 bg:#44475a)"
+untracked = "[ ?${count}](fg:#bf9eee bg:#44475a)"
+stashed = "[ *${count}](fg:#97e1f1 bg:#44475a)"
+deleted = "[ ✘${count}](fg:#ee6666 bg:#44475a)"
+renamed = "[ »${count}](fg:#ffb86c bg:#44475a)"
+conflicted = "[ =${count}](fg:#ee6666 bg:#44475a)"
 
 [git_state]
-style = "bg:#394260"
-format = '[[ $state( $progress_current/$progress_total) ](fg:#e0af68 bg:#394260)]($style)'
+style = "bg:#44475a"
+format = '[[ $state( $progress_current/$progress_total) ](fg:#ffb86c bg:#44475a)]($style)'
 rebase = "REBASING"
 merge = "MERGING"
 revert = "REVERTING"
@@ -63,66 +83,71 @@ disabled = true
 # --- Python ---
 
 [python]
-symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol ($version)( \($virtualenv\)) ](fg:#769ff0 bg:#212736)]($style)'
+symbol = " "
+style = "bg:#282a36"
+format = '[[ $symbol($version)( \($virtualenv\)) ](fg:#f286c4 bg:#282a36)]($style)'
 detect_extensions = ["py"]
-detect_files = ["pyproject.toml", "requirements.txt", ".python-version", "uv.lock"]
+detect_files = [
+    "pyproject.toml",
+    "requirements.txt",
+    ".python-version",
+    "uv.lock",
+]
 
 # --- Node.js ---
 
 [nodejs]
-symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+symbol = " "
+style = "bg:#282a36"
+format = '[[ $symbol($version) ](fg:#62e884 bg:#282a36)]($style)'
 detect_files = ["package.json", ".nvmrc", ".node-version"]
 
 # --- Docker ---
 
 [docker_context]
-symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol $context ](fg:#769ff0 bg:#212736)]($style)'
+symbol = " "
+style = "bg:#282a36"
+format = '[[ $symbol$context ](fg:#97e1f1 bg:#282a36)]($style)'
 only_with_files = true
 detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
 
 # --- Package version ---
 
 [package]
-symbol = ""
-style = "bg:#212736"
-format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
+symbol = "󰏗 "
+style = "bg:#282a36"
+format = '[[ $symbol($version) ](fg:#d6b4f7 bg:#282a36)]($style)'
 display_private = true
 
 # --- Command duration ---
 
 [cmd_duration]
 min_time = 2_000
-style = "bg:#1d2230"
-format = '[[  $duration ](fg:#a0a9cb bg:#1d2230)]($style)'
+style = "bg:#191a21"
+format = '[[  $duration ](fg:#bf9eee bg:#191a21)]($style)'
 
 # --- Background jobs ---
 
 [jobs]
-symbol = "✨"
-style = "bg:#1d2230"
-format = '[[ $symbol $number ](fg:#e0af68 bg:#1d2230)]($style)'
+symbol = " "
+style = "bg:#191a21"
+format = '[[ $symbol$number ](fg:#ffb86c bg:#191a21)]($style)'
 number_threshold = 1
 
 # --- Direnv ---
 
 [direnv]
-style = "bg:#1d2230"
-format = '[[ direnv ](fg:#a0a9cb bg:#1d2230)]($style)'
+style = "bg:#191a21"
+format = '[[ direnv ](fg:#bf9eee bg:#191a21)]($style)'
 detect_files = [".envrc"]
 
 # --- Time ---
 
 [time]
 disabled = false
-time_format = "%R"
-style = "bg:#1d2230"
-format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
+time_format = "%R"                                      # Hour:Minute Format
+style = "bg:#191a21"
+format = '[[  $time ](fg:#f49dda bg:#191a21)]($style)'
 
 # --- Disable irrelevant modules ---
 

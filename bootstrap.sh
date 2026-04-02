@@ -154,21 +154,94 @@ configure_starship() {
 
   mkdir -p "$(dirname "$config")"
 
-  if [[ -L "$config" ]]; then
-    if [[ "$(readlink "$config")" == "$dotfiles_config" ]]; then
-      echo "Starship already configured."
-      return
+  # No existing config: link dotfiles default and return.
+  if [[ ! -e "$config" ]]; then
+    if [[ -f "$dotfiles_config" ]]; then
+      ln -sf "$dotfiles_config" "$config"
+      echo "Starship configured (dotfiles default)."
     fi
-    rm "$config"
-  elif [[ -f "$config" ]]; then
-    local backup="$BACKUP_DIR/starship.toml.${TIMESTAMP}"
-    mv "$config" "$backup"
+    return 0
   fi
 
-  if [[ -f "$dotfiles_config" ]]; then
-    ln -sf "$dotfiles_config" "$config"
-    echo "Starship configured."
+  echo "--- Starship ---"
+  echo "Found existing config at: $config"
+  if [[ -L "$config" ]]; then
+    echo "Current symlink target: $(readlink "$config")"
   fi
+
+  if [[ ! -t 0 ]]; then
+    echo "Non-interactive shell detected — unable to prompt."
+    echo "Keeping existing Starship config. Re-run interactively to change it."
+    return 0
+  fi
+
+  echo "Choose Starship config:"
+  echo "  0) Keep existing"
+  echo "  1) Use dotfiles default"
+  echo "  2) Choose a preset (1-9)"
+
+  local choice
+  read -rp "> " choice
+
+  case "$choice" in
+    0)
+      echo "Keeping existing Starship config."
+      return 0
+      ;;
+    1)
+      if [[ ! -f "$dotfiles_config" ]]; then
+        echo "Dotfiles Starship config not found: $dotfiles_config"
+        return 0
+      fi
+
+      local backup="$BACKUP_DIR/starship.toml.${TIMESTAMP}"
+      mv "$config" "$backup"
+      ln -sf "$dotfiles_config" "$config"
+      echo "Starship configured (dotfiles default)."
+      echo "Backed up: $backup"
+      return 0
+      ;;
+    2)
+      mapfile -t _starship_presets < <(starship preset --list 2>/dev/null | sed '/^\s*$/d' | head -n 9)
+
+      if (( ${#_starship_presets[@]} == 0 )); then
+        echo "No presets found (does your Starship support 'starship preset --list'?)."
+        return 0
+      fi
+
+      echo "Select a preset:"
+      local i
+      for i in "${!_starship_presets[@]}"; do
+        printf "  %d) %s\n" "$((i + 1))" "${_starship_presets[$i]}"
+      done
+
+      local preset_num
+      read -rp "> " preset_num
+
+      if [[ ! "$preset_num" =~ ^[1-9]$ ]]; then
+        echo "Invalid preset selection."
+        return 0
+      fi
+
+      local preset_index=$((preset_num - 1))
+      if (( preset_index >= ${#_starship_presets[@]} )); then
+        echo "Preset $preset_num is not available on this system."
+        return 0
+      fi
+
+      local preset_name="${_starship_presets[$preset_index]}"
+      local backup="$BACKUP_DIR/starship.toml.${TIMESTAMP}"
+      mv "$config" "$backup"
+      starship preset "$preset_name" > "$config"
+      echo "Starship configured (preset: $preset_name)."
+      echo "Backed up: $backup"
+      return 0
+      ;;
+    *)
+      echo "Invalid selection. Keeping existing Starship config."
+      return 0
+      ;;
+  esac
 }
 
 init_zsh_plugins() {

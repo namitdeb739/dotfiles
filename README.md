@@ -2,8 +2,6 @@
 
 Personal development environment configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-<!-- cspell:words Fira atuin direnv glog Refactorer docstrings pytest ipynb mkcd ghclone killport -->
-
 One command sets up a new machine: shell, git, editor, AI tooling, CLI tools, and prompt theme.
 
 ## Prerequisites

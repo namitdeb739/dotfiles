@@ -8,3 +8,6 @@ Thumbs.db
 .env
 .env.*
 credentials*
+
+# Editor/workspace files
+.vscode/
