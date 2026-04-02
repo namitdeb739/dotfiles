@@ -9,7 +9,7 @@ TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 command_exists() { command -v "$1" &>/dev/null; }
 
 backup_conflicts() {
-  # Back up any real files/dirs that would conflict with stow symlinks
+  # Back up or remove any files/symlinks that would conflict with stow
   local pkg="$1"
   local pkg_dir="$REPO_DIR/$pkg"
 
@@ -17,12 +17,36 @@ backup_conflicts() {
   while IFS= read -r -d '' file; do
     local rel="${file#"$pkg_dir"/}"
     local target="$HOME/$rel"
-    if [[ -e "$target" && ! -L "$target" ]]; then
+    if [[ -L "$target" ]]; then
+      # Stale symlink (from old bootstrap or another tool) — remove it
+      local link_target
+      link_target="$(readlink "$target")"
+      # Only remove if it doesn't already point into our stow package
+      if [[ "$link_target" != *"$pkg_dir"* ]]; then
+        echo "Removing stale symlink: $target -> $link_target"
+        rm "$target"
+      fi
+    elif [[ -e "$target" ]]; then
+      # Real file — back it up
       local backup="${target}.backup-${TIMESTAMP}"
       echo "Backing up: $target -> $backup"
       mv "$target" "$backup"
     fi
   done < <(find "$pkg_dir" -type f -print0)
+
+  # Also handle directory-level conflicts (e.g., ~/.github/ is a symlink)
+  while IFS= read -r -d '' dir; do
+    local rel="${dir#"$pkg_dir"/}"
+    local target="$HOME/$rel"
+    if [[ -L "$target" ]]; then
+      local link_target
+      link_target="$(readlink "$target")"
+      if [[ "$link_target" != *"$pkg_dir"* ]]; then
+        echo "Removing stale directory symlink: $target -> $link_target"
+        rm "$target"
+      fi
+    fi
+  done < <(find "$pkg_dir" -mindepth 1 -type d -print0)
 }
 
 stow_package() {
