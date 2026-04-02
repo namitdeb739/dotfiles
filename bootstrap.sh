@@ -142,6 +142,76 @@ install_brew_packages() {
   echo "Brewfile installed."
 }
 
+configure_starship() {
+  if ! command_exists starship; then
+    echo "Starship not installed — skipping prompt configuration."
+    return
+  fi
+
+  local config_dir="$HOME/.config"
+  local config_file="$config_dir/starship.toml"
+  mkdir -p "$config_dir"
+
+  # If a config already exists (from stow or previous run), ask whether to reconfigure
+  if [[ -f "$config_file" || -L "$config_file" ]]; then
+    echo ""
+    echo "Starship config already exists at $config_file"
+    read -rp "Reconfigure prompt style? [y/N] " reconfigure
+    if [[ ! "$reconfigure" =~ ^[Yy]$ ]]; then
+      echo "Keeping existing Starship config."
+      return
+    fi
+    # Remove stow-managed symlink if present so we can write a real file
+    [[ -L "$config_file" ]] && rm "$config_file"
+  fi
+
+  echo ""
+  echo "--- Starship Prompt Style ---"
+  echo ""
+  echo "Choose a prompt preset:"
+  echo ""
+  echo "  Rich / Powerline:"
+  echo "    1) pastel-powerline     — Colorful segments with powerline arrows"
+  echo "    2) gruvbox-rainbow      — Warm retro palette, powerline style"
+  echo "    3) catppuccin-powerline — Soft pastels, powerline segments"
+  echo "    4) tokyo-night          — Cool dark theme with powerline"
+  echo ""
+  echo "  Clean / Minimal:"
+  echo "    5) nerd-font            — Default layout with Nerd Font icons"
+  echo "    6) bracketed-segments   — [bracketed] module names"
+  echo "    7) jetpack              — Minimalist with clean geometry"
+  echo "    8) pure-preset          — Pure-style minimal (like sindresorhus/pure)"
+  echo ""
+  echo "  Compatibility:"
+  echo "    9) plain-text           — No special characters (SSH/basic terminals)"
+  echo ""
+  echo "    0) Skip — keep current config or use dotfiles default"
+  echo ""
+
+  local choice
+  read -rp "Enter choice [0-9]: " choice
+
+  local preset=""
+  case "$choice" in
+    1) preset="pastel-powerline" ;;
+    2) preset="gruvbox-rainbow" ;;
+    3) preset="catppuccin-powerline" ;;
+    4) preset="tokyo-night" ;;
+    5) preset="nerd-font" ;;
+    6) preset="bracketed-segments" ;;
+    7) preset="jetpack" ;;
+    8) preset="pure-preset" ;;
+    9) preset="plain-text" ;;
+    0|"") echo "Skipping Starship configuration."; return ;;
+    *) echo "Invalid choice — skipping."; return ;;
+  esac
+
+  echo "Applying preset: $preset"
+  starship preset "$preset" -o "$config_file"
+  echo "Starship config written to $config_file"
+  echo "You can reconfigure anytime with: starship preset <name> -o ~/.config/starship.toml"
+}
+
 init_zsh_plugins() {
   # Source antidote once to generate the static plugin file
   local antidote_path
@@ -203,15 +273,19 @@ stow_package "zsh"
 # VSCode needs special handling (platform-specific paths with spaces)
 link_vscode
 
-# --- 4. VS Code extensions ---
+# --- 4. Starship prompt style ---
+
+configure_starship
+
+# --- 5. VS Code extensions ---
 
 install_vscode_extensions
 
-# --- 5. Zsh plugin pre-compile ---
+# --- 6. Zsh plugin pre-compile ---
 
 init_zsh_plugins
 
-# --- 6. Verification ---
+# --- 7. Verification ---
 
 if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
   echo ""
