@@ -1,0 +1,14 @@
+# Antidote plugin file — one plugin per line
+# Docs: https://antidote.sh
+
+# Essential: fish-style inline suggestions
+zsh-users/zsh-autosuggestions
+
+# Essential: real-time syntax highlighting (faster fork of zsh-syntax-highlighting)
+zdharma-continuum/fast-syntax-highlighting
+
+# Extended completion definitions
+zsh-users/zsh-completions
+
+# Fuzzy tab completion via fzf
+Aloxaf/fzf-tab

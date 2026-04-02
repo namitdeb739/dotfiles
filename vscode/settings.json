@@ -1,0 +1,287 @@
+{
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.colorTheme": "Dracula Theme Soft",
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 10,
+  "workbench.editor.useModal": "off",
+
+  // --- Editor Core ---
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": true,
+  "editor.wordWrap": "on",
+  "editor.suggestSelection": "first",
+  "editor.linkedEditing": true,
+
+  // --- Editor Visual Features ---
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "editor.guides.bracketPairs": true,
+  "editor.inlayHints.enabled": "onUnlessPressed",
+  "editor.stickyScroll.enabled": true,
+  "editor.wrapOnEscapedLineFeeds": true,
+  "editor.smoothScrolling": true,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+  "editor.unicodeHighlight.ambiguousCharacters": true,
+
+  // --- Editor Intelligence ---
+  "editor.aiStats.enabled": true,
+  "editor.codeActions.triggerOnFocusChange": true,
+
+  // --- File Management ---
+  "files.autoSave": "afterDelay",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // --- Diff Editor ---
+  "diffEditor.codeLens": true,
+  "diffEditor.hideUnchangedRegions.enabled": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+
+  // --- Window ---
+  "window.openFilesInNewWindow": "off",
+
+  // --- Explorer ---
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+
+  // --- Search & Navigation ---
+  "search.smartCase": true,
+  "search.showLineNumbers": true,
+  "search.searchView.semanticSearchBehavior": "runOnEmpty",
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "breadcrumbs.enabled": true,
+
+  // --- Git Integration ---
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "scm.defaultViewMode": "tree",
+
+  // --- Terminal ---
+  "terminal.integrated.fontFamily": "MesloLGLDZ Nerd Font",
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.enablePersistentSessions": true,
+
+  // --- Copilot / AI ---
+  "github.copilot.chat.codesearch.enabled": true,
+  "github.copilot.chat.followUps": "always",
+  "github.copilot.chat.localeOverride": "en",
+  "github.copilot.chat.agent.thinkingTool": true,
+  "chat.commandCenter.enabled": true,
+  "chat.mcp.gallery.enabled": true,
+
+  // --- AI: Code Editing ---
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+  "github.copilot.chat.editor.temporalContext.enabled": true,
+  "github.copilot.chat.edits.suggestRelatedFilesFromGitHistory": true,
+
+  // --- AI: Agent Mode ---
+  "github.copilot.chat.agent.autoFix": true,
+  "chat.agent.maxRequests": 50,
+  "github.copilot.chat.summarizeAgentConversationHistory.enabled": true,
+  "chat.checkpoints.enabled": true,
+  "chat.math.enabled": true,
+  "chat.tools.global.autoApprove": true,
+
+  // --- AI: MCP ---
+  "chat.mcp.discovery.enabled": {},
+  "chat.mcp.autoStart": "newAndOutdated",
+
+  // --- AI: Terminal Auto-Approve ---
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "git status": true,
+    "git diff": true,
+    "git log": true,
+    "git branch": true,
+    "git show": true,
+    "ls": true,
+    "cat": true,
+    "head": true,
+    "tail": true,
+    "wc": true,
+    "find": true,
+    "grep": true,
+    "which": true,
+    "echo": true,
+    "pwd": true,
+    "env": true,
+    "go test": true,
+    "go vet": true,
+    "npm test": true,
+    "npm run lint": true,
+    "pytest": true,
+    "ruff check": true,
+    "tsc --noEmit": true,
+    "rm": false,
+    "rmdir": false,
+    "del": false,
+    "kill": false,
+    "chmod": false,
+    "chown": false
+  },
+
+  // --- AI: Custom Instructions & Prompt Files ---
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "chat.includeApplyingInstructions": true,
+  "chat.includeReferencedInstructions": true,
+  "chat.useAgentsMdFile": true,
+  "chat.instructionsFilesLocations": {
+    "~/.github/instructions": true,
+    ".github/instructions": true
+  },
+  "chat.agentFilesLocations": {
+    "~/.github/agents": true,
+    ".github/agents": true
+  },
+  "chat.promptFilesLocations": {
+    "~/.github/prompts": true,
+    ".github/prompts": true
+  },
+  "chat.agentSkillsLocations": {
+    "~/.copilot/skills": true,
+    ".github/skills": true
+  },
+
+  // --- AI: Commit Message Instructions ---
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Keep subject line under 72 chars. Use imperative mood. Add body for non-trivial changes explaining what and why."
+    }
+  ],
+
+  // --- GitLens ---
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+
+  // --- Material Icon Theme ---
+  "material-icon-theme.activeIconPack": "react_redux",
+  "material-icon-theme.folders.theme": "specific",
+  "material-icon-theme.files.associations": {
+    "*.tf": "terraform",
+    "*.tfvars": "terraform",
+    "*.hcl": "terraform",
+    "*.proto": "proto",
+    "*.pem": "key",
+    "*.key": "key",
+    "*.cert": "cert",
+    "*.crt": "cert",
+    "*.toml": "toml",
+    "*.cfg": "settings",
+    "*.ini": "settings",
+    "*.conf": "settings",
+    "*.pid": "settings",
+    "Pipfile": "python-misc",
+    "Pipfile.lock": "python-misc",
+    "*.nix": "nix",
+    "Taskfile.yml": "todo",
+    "Taskfile.yaml": "todo",
+    "Tiltfile": "docker",
+    "skaffold.yaml": "kubernetes",
+    "helmfile.yaml": "helm",
+    "Chart.yaml": "helm",
+    "Chart.lock": "helm",
+    "values.yaml": "helm",
+    "values.*.yaml": "helm",
+    "kustomization.yaml": "kubernetes",
+    "*.gradle": "gradle",
+    "*.gradle.kts": "gradle",
+    "Justfile": "console",
+    "justfile": "console",
+    ".envrc": "tune",
+    ".tool-versions": "tune",
+    "*.tfstate": "json",
+    "*.tfstate.backup": "json",
+    "buf.yaml": "proto",
+    "buf.gen.yaml": "proto",
+    "*.graphql": "graphql",
+    "*.gql": "graphql",
+    "*.http": "http",
+    "*.rest": "http"
+  },
+  "material-icon-theme.folders.associations": {
+    "infra": "kubernetes",
+    "infrastructure": "kubernetes",
+    "k8s": "kubernetes",
+    "kubernetes": "kubernetes",
+    "helm": "helm",
+    "charts": "helm",
+    "terraform": "terraform",
+    "tf": "terraform",
+    "deploy": "ci",
+    "deployments": "ci",
+    "ci": "ci",
+    "cd": "ci",
+    ".ci": "ci",
+    "pipeline": "ci",
+    "pipelines": "ci",
+    "proto": "contract",
+    "protobuf": "contract",
+    "grpc": "contract",
+    "graphql": "graphql",
+    "schema": "graphql",
+    "schemas": "graphql",
+    "migrations": "database",
+    "db": "database",
+    "seeds": "database",
+    "fixtures": "database",
+    "scripts": "scripts",
+    "bin": "scripts",
+    "tools": "tools",
+    "hack": "tools",
+    "cmd": "console",
+    "cli": "console",
+    "internal": "private",
+    "private": "private",
+    "pkg": "lib",
+    "vendor": "lib",
+    "middleware": "middleware",
+    "handlers": "controller",
+    "controllers": "controller",
+    "services": "server",
+    "gateway": "server",
+    "api": "api",
+    "apis": "api",
+    "routes": "routes",
+    "manifests": "kubernetes",
+    "overlays": "kubernetes",
+    "base": "base",
+    "envs": "environment",
+    "environments": "environment",
+    "secrets": "keys",
+    "certs": "keys",
+    "mock": "mock",
+    "mocks": "mock",
+    "__mocks__": "mock",
+    "stubs": "mock",
+    "e2e": "test",
+    "integration": "test",
+    "spec": "test",
+    "bench": "benchmark",
+    "benchmarks": "benchmark"
+  },
+
+  // --- Language-Specific ---
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // --- Schema Trust ---
+  "json.schemaDownload.trustedDomains": {
+    "https://developer.microsoft.com/json-schemas/": true,
+    "https://esm.sh": true,
+    "https://json-schema.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://raw.githubusercontent.com/devcontainers/spec/": true,
+    "https://raw.githubusercontent.com/microsoft/vscode/": true,
+    "https://schemastore.azurewebsites.net/": true,
+    "https://www.schemastore.org/": true
+  }
+}

@@ -24,7 +24,23 @@
 - Use Conventional Commits: type(scope): description
 - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
 - Keep subject line under 72 characters, use imperative mood
+- Body: explain what and why (not how), wrap at 72 chars
+- Breaking changes: add `!` after type/scope, explain in body
 - Branch names: type/description (e.g., feat/user-auth, fix/login-timeout)
+- Never force-push to main/master
+- Never commit secrets, credentials, or large binary files
+
+## Pull Requests
+- Title: concise summary under 70 chars
+- Body: Summary (bullet points), Type of Change, Test Plan
+- One logical change per PR — split large changes into stacked PRs
+- Link related issues/tickets in the description
+
+## Merge Strategy
+- Squash merge for feature branches (clean history)
+- Merge commit for release/integration branches (preserve history)
+- Rebase to update feature branches from main
+- Delete branches after merge
 
 ## Testing
 - Write tests for new functionality and bug fixes

@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ctrl+cmd+c",
+    "command": "workbench.action.chat.openInEditor"
+  },
+  {
+    "key": "ctrl+cmd+i",
+    "command": "workbench.action.chat.openInSidebar"
+  },
+  {
+    "key": "cmd+alt+r",
+    "command": "workbench.action.terminal.relaunch"
+  },
+  {
+    "key": "cmd+,",
+    "command": "workbench.action.openSettings"
+  },
+  {
+    "key": "ctrl+cmd+,",
+    "command": "workbench.action.openApplicationSettingsJson"
+  },
+  {
+    "key": "cmd+d d",
+    "command": "editor.action.deleteLines",
+    "when": "textInputFocus && !editorReadonly"
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "-editor.action.deleteLines",
+    "when": "textInputFocus && !editorReadonly"
+  }
+]

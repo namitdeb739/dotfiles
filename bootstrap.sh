@@ -4,42 +4,112 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 
-link_with_backup() {
-  local source_path="$1"
-  local target_path="$2"
+# --- Helpers ---
 
-  if [[ ! -e "$source_path" ]]; then
-    echo "Source missing: $source_path"
-    exit 1
-  fi
+command_exists() { command -v "$1" &>/dev/null; }
 
-  if [[ -L "$target_path" ]]; then
-    local current_target
-    current_target="$(readlink "$target_path")"
-    if [[ "$current_target" == "$source_path" ]]; then
-      echo "Already linked: $target_path -> $source_path"
-      return
+backup_conflicts() {
+  # Back up any real files/dirs that would conflict with stow symlinks
+  local pkg="$1"
+  local pkg_dir="$REPO_DIR/$pkg"
+
+  # Walk the package and check each target path
+  while IFS= read -r -d '' file; do
+    local rel="${file#"$pkg_dir"/}"
+    local target="$HOME/$rel"
+    if [[ -e "$target" && ! -L "$target" ]]; then
+      local backup="${target}.backup-${TIMESTAMP}"
+      echo "Backing up: $target -> $backup"
+      mv "$target" "$backup"
     fi
-
-    local backup_path="${target_path}.backup-${TIMESTAMP}"
-    echo "Backing up existing symlink: $target_path -> $backup_path"
-    mv "$target_path" "$backup_path"
-  elif [[ -e "$target_path" ]]; then
-    local backup_path="${target_path}.backup-${TIMESTAMP}"
-    echo "Backing up existing path: $target_path -> $backup_path"
-    mv "$target_path" "$backup_path"
-  fi
-
-  ln -s "$source_path" "$target_path"
-  echo "Linked: $target_path -> $source_path"
+  done < <(find "$pkg_dir" -type f -print0)
 }
 
-link_with_backup "$REPO_DIR/.github" "$HOME/.github"
-link_with_backup "$REPO_DIR/.gitconfig" "$HOME/.gitconfig"
+stow_package() {
+  local pkg="$1"
+  local pkg_dir="$REPO_DIR/$pkg"
+
+  # Skip empty packages (no files yet)
+  if [[ ! -d "$pkg_dir" ]] || [[ -z "$(ls -A "$pkg_dir" 2>/dev/null)" ]]; then
+    echo "Skipping $pkg (empty)"
+    return
+  fi
+
+  backup_conflicts "$pkg"
+  stow -d "$REPO_DIR" -t "$HOME" --restow "$pkg"
+  echo "Stowed: $pkg"
+}
+
+link_vscode() {
+  # VSCode settings live in platform-specific paths with spaces — handle separately
+  local vscode_src="$REPO_DIR/vscode"
+  [[ ! -d "$vscode_src" ]] || [[ -z "$(ls -A "$vscode_src" 2>/dev/null)" ]] && return
+
+  local vscode_target
+  case "$(uname -s)" in
+    Darwin) vscode_target="$HOME/Library/Application Support/Code/User" ;;
+    Linux)  vscode_target="$HOME/.config/Code/User" ;;
+    *)      vscode_target="$APPDATA/Code/User" ;;  # Windows (Git Bash/WSL)
+  esac
+
+  mkdir -p "$vscode_target"
+  for file in "$vscode_src"/*.json; do
+    [[ -f "$file" ]] || continue
+    local name
+    name="$(basename "$file")"
+    local target="$vscode_target/$name"
+    if [[ -e "$target" && ! -L "$target" ]]; then
+      mv "$target" "${target}.backup-${TIMESTAMP}"
+      echo "Backed up: $target"
+    fi
+    ln -sf "$file" "$target"
+    echo "Linked: $target -> $file"
+  done
+}
+
+# --- Prerequisites ---
+
+if ! command_exists stow; then
+  echo "GNU Stow is not installed."
+  if command_exists brew; then
+    echo "Installing via Homebrew..."
+    brew install stow
+  elif command_exists apt-get; then
+    echo "Installing via apt..."
+    sudo apt-get install -y stow
+  else
+    echo "Please install GNU Stow manually: https://www.gnu.org/software/stow/"
+    exit 1
+  fi
+fi
+
+# --- Stow packages ---
+# Each subdirectory mirrors ~ structure and is independently installable
+
+echo "=== Dotfiles Bootstrap ==="
+
+stow_package "git"
+stow_package "github"
+stow_package "zsh"
+stow_package "mcp"
+
+# VSCode needs special handling (platform-specific paths with spaces)
+link_vscode
+
+# Brewfile isn't stowed — it stays in the repo, run `brew bundle` manually
+if [[ -f "$REPO_DIR/brew/Brewfile" ]]; then
+  echo ""
+  echo "Brewfile available at: $REPO_DIR/brew/Brewfile"
+  echo "Run 'brew bundle --file=$REPO_DIR/brew/Brewfile' to install tools."
+fi
+
+# --- Verification ---
 
 if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
+  echo ""
   echo "Running ~/.github management verification..."
   bash "$REPO_DIR/check-github-managed.sh"
 fi
 
+echo ""
 echo "Dotfiles bootstrap complete."

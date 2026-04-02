@@ -1,0 +1,63 @@
+# CI for dotfiles — validates scripts, configs, and bootstrap
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: '.'
+          additional_files: 'bootstrap.sh check-github-managed.sh'
+
+  validate-json:
+    name: Validate JSON configs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate hook JSON files
+        run: |
+          find github/.github/hooks -name '*.json' -exec sh -c '
+            for f; do
+              echo "Validating: $f"
+              python3 -c "import json; json.load(open(\"$f\"))" || exit 1
+            done
+          ' _ {} +
+
+      - name: Validate MCP config
+        run: |
+          if [ -f mcp/.mcp.json ]; then
+            python3 -c "import json; json.load(open('mcp/.mcp.json'))"
+            echo "mcp/.mcp.json is valid JSON"
+          fi
+
+  bootstrap-smoke:
+    name: Bootstrap smoke test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install stow
+        run: brew install stow
+
+      - name: Run bootstrap
+        run: |
+          chmod +x bootstrap.sh check-github-managed.sh
+          ./bootstrap.sh
+
+      - name: Verify symlinks
+        run: |
+          test -L ~/.gitconfig && echo "OK: ~/.gitconfig is symlinked"
+          test -L ~/.github && echo "OK: ~/.github is symlinked"
+          grep -q "Namit Deb" ~/.gitconfig && echo "OK: gitconfig has correct user"

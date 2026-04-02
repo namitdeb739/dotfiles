@@ -1,0 +1,47 @@
+# Dotfiles Brewfile — run: brew bundle --file=~/Developer/dotfiles/brew/Brewfile
+
+# --- Shell ---
+brew "stow"              # Symlink farm manager (dotfiles)
+brew "starship"          # Cross-shell prompt
+brew "antidote"          # Zsh plugin manager
+brew "zoxide"            # Smart cd with frecency
+brew "atuin"             # Shell history search (SQLite-backed)
+
+# --- Core CLI ---
+brew "git"               # Version control
+brew "gh"                # GitHub CLI
+brew "git-delta"         # Better git diffs (used as core.pager)
+brew "fzf"               # Fuzzy finder
+brew "fd"                # Better find
+brew "ripgrep"           # Better grep
+brew "bat"               # Better cat
+brew "eza"               # Better ls (maintained exa fork)
+brew "jq"                # JSON processor
+brew "tree"              # Directory tree viewer
+brew "htop"              # Process viewer
+brew "tldr"              # Simplified man pages
+brew "direnv"            # Per-directory env vars
+
+# --- Python ---
+brew "uv"                # Fast Python package manager
+brew "ruff"              # Python linter/formatter
+
+# --- Node ---
+brew "fnm"               # Fast Node Manager (replaces nvm)
+
+# --- Containers ---
+brew "docker-compose"    # Docker Compose CLI
+
+# --- Build ---
+brew "just"              # Command runner (better make)
+brew "pre-commit"        # Git hooks framework
+
+# --- Casks ---
+cask "visual-studio-code"
+cask "docker"            # Docker Desktop
+cask "iterm2"            # Terminal alternative
+cask "raycast"           # Spotlight replacement
+
+# --- Fonts ---
+cask "font-jetbrains-mono-nerd-font"
+cask "font-fira-code-nerd-font"
