@@ -1,7 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 # Tokyo Night palette, customized for Python/Git/Docker/Node dev
-# Palette: #a3aed2 (light), #769ff0 (blue), #394260 (dark blue), #212736 (darker), #1d2230 (darkest)
+# Uses curved separators () matching the official Tokyo Night preset
 
 format = """
 [░▒▓](#a3aed2)\
@@ -21,6 +21,7 @@ $package\
 $cmd_duration\
 $jobs\
 $direnv\
+$time\
 [ ](fg:#1d2230)\
 \n$character"""
 
@@ -47,9 +48,9 @@ read_only = " 󰌾"
 # --- Git ---
 
 [git_branch]
-symbol = " "
+symbol = ""
 style = "bg:#394260"
-format = '[[ $symbol$branch ](fg:#769ff0 bg:#394260)]($style)'
+format = '[[ $symbol $branch ](fg:#769ff0 bg:#394260)]($style)'
 
 [git_status]
 style = "bg:#394260"
@@ -73,8 +74,6 @@ merge = " MERGING"
 revert = " REVERTING"
 cherry_pick = " CHERRY"
 bisect = " BISECTING"
-am = " AM"
-am_or_rebase = " AM/REBASE"
 
 [git_metrics]
 disabled = true
@@ -82,35 +81,35 @@ disabled = true
 # --- Python ---
 
 [python]
-symbol = " "
+symbol = ""
 style = "bg:#212736"
-format = '[[ $symbol$version( \($virtualenv\)) ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol ($version)( \($virtualenv\)) ](fg:#769ff0 bg:#212736)]($style)'
 detect_extensions = ["py"]
 detect_files = ["pyproject.toml", "requirements.txt", ".python-version", "uv.lock"]
 
 # --- Node.js ---
 
 [nodejs]
-symbol = " "
+symbol = ""
 style = "bg:#212736"
-format = '[[ $symbol$version ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 detect_files = ["package.json", ".nvmrc", ".node-version"]
 
 # --- Docker ---
 
 [docker_context]
-symbol = " "
+symbol = ""
 style = "bg:#212736"
-format = '[[ $symbol$context ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol $context ](fg:#769ff0 bg:#212736)]($style)'
 only_with_files = true
 detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
 
 # --- Package version ---
 
 [package]
-symbol = "󰏗 "
+symbol = "󰏗"
 style = "bg:#212736"
-format = '[[ $symbol$version ](fg:#769ff0 bg:#212736)]($style)'
+format = '[[ $symbol ($version) ](fg:#769ff0 bg:#212736)]($style)'
 display_private = true
 
 # --- Command duration ---
@@ -123,17 +122,25 @@ format = '[[ 󱎫 $duration ](fg:#a0a9cb bg:#1d2230)]($style)'
 # --- Background jobs ---
 
 [jobs]
-symbol = "✦ "
+symbol = "✦"
 style = "bg:#1d2230"
-format = '[[ $symbol$number ](fg:#e0af68 bg:#1d2230)]($style)'
+format = '[[ $symbol $number ](fg:#e0af68 bg:#1d2230)]($style)'
 number_threshold = 1
 
 # --- Direnv ---
 
 [direnv]
 style = "bg:#1d2230"
-format = '[[ 󰒍 direnv ](fg:#a0a9cb bg:#1d2230)]($style)'
+format = '[[  direnv ](fg:#a0a9cb bg:#1d2230)]($style)'
 detect_files = [".envrc"]
+
+# --- Time ---
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:#1d2230"
+format = '[[  $time ](fg:#a0a9cb bg:#1d2230)]($style)'
 
 # --- Disable irrelevant modules ---
 
