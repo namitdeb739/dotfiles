@@ -26,12 +26,8 @@ backup_conflicts() {
         echo "Removing stale symlink: $target -> $link_target"
         rm "$target"
       fi
-    elif [[ -e "$target" ]]; then
-      # Skip files that are already backups from previous runs
-      if [[ "$target" == *.backup-* ]]; then
-        continue
-      fi
-      # Real file — back it up
+    elif [[ -e "$target" && "$target" != *.backup-* ]]; then
+      # Real file (not a previous backup) — back it up
       local backup="${target}.backup-${TIMESTAMP}"
       echo "Backing up: $target -> $backup"
       mv "$target" "$backup"
