@@ -152,7 +152,7 @@ configure_starship() {
   local config_file="$config_dir/starship.toml"
   mkdir -p "$config_dir"
 
-  local dotfiles_config="$REPO_DIR/zsh/.config/starship.toml"
+  local dotfiles_config="$REPO_DIR/starship/starship.toml"
 
   # If config already exists and is NOT our stow symlink, ask whether to reconfigure
   if [[ -f "$config_file" || -L "$config_file" ]]; then

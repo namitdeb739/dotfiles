@@ -213,6 +213,7 @@ dotfiles/
 ├── bootstrap.sh                     # One-command setup script
 ├── check-github-managed.sh          # Verifies ~/.github/ integrity
 ├── brew/Brewfile                    # Homebrew packages, casks, fonts
+├── starship/starship.toml           # Tokyo Night prompt config (managed by bootstrap)
 ├── git/
 │   ├── .gitconfig                   # Git config (aliases, defaults, delta pager)
 │   └── .gitignore_global            # Global gitignore (OS, editor, Python, Node)
@@ -229,7 +230,6 @@ dotfiles/
 └── zsh/
     ├── .zshrc                       # Shell config (antidote, Starship, tool inits)
     ├── .zsh_plugins.txt             # Antidote plugin list
-    ├── .config/starship.toml        # Tokyo Night prompt config
     └── .zsh/
         ├── aliases.zsh              # Git, navigation, Python, Docker aliases
         ├── functions.zsh            # mkcd, extract, ghclone, killport
