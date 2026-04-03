@@ -2,7 +2,7 @@
 name: Doc Writer
 description: Explores code and generates well-organized technical documentation
 tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.upstash/context7/*', 'microsoft/markitdown/*', 'makenotion/notion-mcp-server/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 ---
 
 # Doc Writer

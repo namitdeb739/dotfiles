@@ -2,7 +2,7 @@
 name: Planner
 description: Explores codebase and designs implementation plans without making code changes
 tools: ['read', 'search', 'web', 'execute', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*']
-model: ['Claude Opus 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Implement Plan
     agent: Implementor

@@ -1,6 +1,7 @@
 ---
-description: Stage, commit, and optionally push with AI-generated Conventional Commit messages
+description: Stage, commit, and push with AI-generated Conventional Commit messages
 tools: ['execute', 'read', 'search']
+model: ['GPT-5.3 Codex High']
 ---
 
 Create a commit for the current changes.
@@ -28,12 +29,20 @@ Then commit with `git commit -m "message"`.
 
 **Important**: Do NOT use `gk ai commit` or any interactive CLI commands — they require y/n confirmation prompts that cannot be answered in agent mode. Always use `git commit -m` directly.
 
-## 3. Post-commit (optional, based on user input)
+## 3. Push after commit (default behavior)
 
-Offer these follow-up actions after a successful commit:
+After a successful commit, push immediately:
 
-- **Push**: `git push` (or `git push -u origin HEAD` if no upstream)
-- **Push + create PR**: push then run `/pr`
+- First try `git push`
+- If the branch has no upstream, run `git push -u origin HEAD`
+
+If push fails, report the error and stop.
+
+## 4. Optional follow-up actions
+
+Offer these follow-up actions after a successful push:
+
+- **Create PR**: run `/pr`
 - **Visualize**: `git log --oneline --graph -10`
 
 ## Notes

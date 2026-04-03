@@ -1,7 +1,8 @@
 ---
 description: Discussion-only chat (no file edits, no commands; read-only tools allowed)
 agent: Chat Researcher
-tools: ['read', 'search', 'web', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+tools: ['read', 'search', 'web', 'vscode', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 You are in discussion-only mode.

@@ -2,7 +2,7 @@
 name: PR Writer
 description: Analyzes git changes and creates structured pull requests
 tools: ['read', 'search', 'execute', 'io.github.github/github-mcp-server/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 ---
 
 # PR Writer

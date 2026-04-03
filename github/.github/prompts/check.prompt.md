@@ -1,6 +1,7 @@
 ---
 description: Run tests, check diagnostics, and report project health
 tools: ['execute', 'read', 'search', 'io.github.github/github-mcp-server/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 Run the project's test suite and check for outstanding issues.

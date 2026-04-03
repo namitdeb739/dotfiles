@@ -1,7 +1,8 @@
 ---
 description: Deep web research + synthesis (multi-source) with a short Sources list
 agent: Chat Researcher
-tools: ['read', 'search', 'web', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+tools: ['read', 'search', 'web', 'vscode', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 Do deep web research to answer the user.

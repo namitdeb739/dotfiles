@@ -2,7 +2,7 @@
 name: Code Reviewer
 description: Reviews code changes for SOLID violations, security issues, and clean code principles
 tools: ['read', 'search', 'execute', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*']
-model: ['Claude Opus 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Auto-fix Issues
     agent: Implementor

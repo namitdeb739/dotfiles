@@ -2,6 +2,7 @@
 description: Analyze git changes and create a structured pull request
 agent: PR Writer
 tools: ['execute', 'read', 'search', 'io.github.github/github-mcp-server/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 Create a pull request for the current branch.

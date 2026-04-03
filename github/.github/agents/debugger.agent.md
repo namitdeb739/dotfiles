@@ -1,8 +1,8 @@
 ---
 name: Debugger
 description: Traces bugs through code, follows data flow, reports root cause with file:line references
-tools: ['read', 'search', 'execute', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+tools: ['read', 'search', 'execute', 'vscode', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Fix Bug
     agent: Implementor

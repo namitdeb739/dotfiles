@@ -2,7 +2,7 @@
 name: DevOps
 description: CI/CD pipelines, Docker, GitHub Actions, deployment configurations
 tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/playwright-mcp/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 ---
 
 # DevOps

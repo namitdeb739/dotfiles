@@ -1,7 +1,8 @@
 ---
 description: Python fix workflow: reproduce, patch, run tests (auto)
-agent: Implementer
+agent: Implementor
 tools: ['read', 'search', 'edit', 'execute', 'web', 'agent', 'vscode', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 You are fixing a Python issue end-to-end as fast as possible.

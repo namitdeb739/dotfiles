@@ -2,7 +2,7 @@
 name: Dotfiles Editor
 description: Maintains the dotfiles repo — agents, prompts, hooks, instructions, and global config
 tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.github/github-mcp-server/*']
-model: ['Claude Opus 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 ---
 
 # Dotfiles Editor
@@ -32,7 +32,7 @@ dotfiles/
 name: Agent Name
 description: One-line description of what this agent does
 tools: ['read', 'search', 'edit', 'execute']
-model: ['Claude Opus 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:                    # Optional — delegate to another agent
   - label: Button Label
     agent: Other Agent
@@ -122,7 +122,7 @@ These MCP servers are installed and can be added to agent `tools:` arrays:
 - **Least privilege**: give agents only the tools they need. Read-only agents (reviewer, debugger, auditor) should NOT get `edit`.
 - **Group shorthands over individual tools**: use `read` instead of listing `read/readFile`, `read/problems` separately — cleaner and future-proof.
 - **Never use prefix notation**: `execute/runInTerminal` as a standalone tool is valid, but `execute/runInTerminal` as a prefix (e.g., writing `execute/runInTerminal` when you mean the group) is broken. Use the group `execute` to get all execute tools.
-- **Consistent model tiers**: use Opus for agents requiring deep reasoning (planner, reviewer, security). Use Sonnet for execution-focused agents (devops, refactorer, testing).
+- **Consistent model tier**: use GPT-5.3 Codex High for all agents and prompts unless the user explicitly requests a different model.
 - **`$input` in prompts**: always include `$input` so the user can pass context to the prompt.
 - **Handoffs**: use `send: false` (user confirms) by default. Only use `send: true` for trusted chains.
 - **applyTo globs in instructions**: be specific — `**/*.py` not `**/*`. Instructions bloat context if they match too broadly.

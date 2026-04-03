@@ -2,7 +2,7 @@
 name: Testing Expert
 description: Finds coverage gaps, writes comprehensive tests following project conventions
 tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.upstash/context7/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Fix Failing Code
     agent: Implementor

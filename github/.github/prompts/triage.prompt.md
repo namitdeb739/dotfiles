@@ -1,7 +1,8 @@
 ---
 description: Triage logs/tracebacks into root-cause hypotheses + next actions (fast)
 agent: Debugger
-tools: ['read', 'search', 'io.github.upstash/context7/*']
+tools: ['read', 'search', 'vscode', 'io.github.upstash/context7/*']
+model: ['GPT-5.3 Codex High']
 ---
 
 Triage the user’s problem quickly.

@@ -2,7 +2,7 @@
 name: Implementor
 description: Full autonomy task execution — explore, plan, implement, test, summarize
 tools: ['*']
-model: ['Claude Opus 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Review Changes
     agent: Code Reviewer

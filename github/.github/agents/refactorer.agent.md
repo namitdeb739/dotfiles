@@ -2,7 +2,7 @@
 name: Refactorer
 description: Restructures code — extract methods, rename, simplify, reduce duplication
 tools: ['read', 'search', 'edit', 'execute', 'web', 'io.github.upstash/context7/*']
-model: ['Claude Sonnet 4.6', 'GPT-5.2']
+model: ['GPT-5.3 Codex High']
 handoffs:
   - label: Verify Tests
     agent: Testing Expert
