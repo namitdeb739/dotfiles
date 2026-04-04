@@ -1,6 +1,6 @@
 ---
 description: Stage, commit, and push with AI-generated Conventional Commit messages
-tools: ['execute', 'read', 'search']
+tools: ['execute', 'read', 'search', 'io.github.github/github-mcp-server/*']
 model: ['GPT-5.3 Codex High']
 ---
 

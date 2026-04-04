@@ -1,8 +1,8 @@
 ---
 name: Implementor
 description: Full autonomy task execution — explore, plan, implement, test, summarize
-tools: ['*']
-model: ['GPT-5.3 Codex High']
+tools: ["*"]
+model: ["GPT-5.3 Codex High"]
 handoffs:
   - label: Review Changes
     agent: Code Reviewer
@@ -43,12 +43,15 @@ You are a senior developer executing tasks with full autonomy. Given a task, you
 After completing the task:
 
 ### Changes
+
 | File | What Changed |
-|------|-------------|
+| ---- | ------------ |
 
 ### Verification
+
 - Tests: [pass/fail/not applicable]
 - Linting: [pass/fail/not applicable]
 
 ### Notes
+
 Any decisions made, edge cases handled, or follow-up items.

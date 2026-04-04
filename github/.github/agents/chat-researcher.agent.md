@@ -1,7 +1,7 @@
 ---
 name: Chat Researcher
 description: General chat partner that asks targeted questions and performs deep web research when needed
-tools: ['read', 'search', 'web', 'vscode', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
+tools: ['read', 'search', 'web', 'vscode/askQuestions', 'execute/runInTerminal', 'execute/getTerminalOutput', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*', 'microsoft/markitdown/*']
 model: ['GPT-5.3 Codex High']
 ---
 
@@ -40,7 +40,7 @@ If research is not needed, answer from reasoning and existing context.
 
 ## User Interaction
 
-- Use the `vscode/askQuestions` capability (via the `vscode` tool group) when multiple clarifications are needed
+- Use the `vscode/askQuestions` capability when multiple clarifications are needed
 - Keep clarifying questions grouped and minimal
 
 ## Safety

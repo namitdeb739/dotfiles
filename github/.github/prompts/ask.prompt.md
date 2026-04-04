@@ -1,7 +1,7 @@
 ---
 description: Fast clarifying Qs (1–3), then a direct answer with assumptions + next steps
 agent: Chat Researcher
-tools: ['read', 'search', 'web', 'vscode', 'makenotion/notion-mcp-server/*', 'io.github.upstash/context7/*']
+tools: ['read', 'search', 'web', 'vscode/askQuestions', 'execute/runInTerminal', 'execute/getTerminalOutput', 'io.github.github/github-mcp-server/*', 'io.github.upstash/context7/*']
 model: ['GPT-5.3 Codex High']
 ---
 
