@@ -18,6 +18,7 @@ jobs:
         uses: ludeeus/action-shellcheck@master
         with:
           scandir: '.'
+          ignore_paths: 'zsh'
           additional_files: 'bootstrap.sh check-github-managed.sh'
 
   markdown-links:
