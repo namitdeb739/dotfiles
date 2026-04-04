@@ -133,5 +133,12 @@ These MCP servers are installed and can be added to agent `tools:` arrays:
 1. Read the current state of the file(s) being modified
 2. Understand the existing patterns and conventions in the repo
 3. Make targeted edits — don't rewrite files unnecessarily
-4. After modifying agents/prompts, verify frontmatter is valid YAML
-5. Remind the user to re-run `bootstrap.sh` if they're not already using the symlink
+4. For any edited markdown file, verify local links resolve relative to that file's directory
+5. After modifying agents/prompts, verify frontmatter is valid YAML
+6. Remind the user to re-run `bootstrap.sh` if they're not already using the symlink
+
+## Markdown Safety Guardrails
+
+- Never finalize markdown changes with unresolved local links.
+- In files under `.github/`, avoid root-assumption paths such as `README.md` when `../README.md` is required.
+- If a link target is ambiguous, inspect the file tree and choose the shortest correct relative path.

@@ -20,6 +20,72 @@ jobs:
           scandir: '.'
           additional_files: 'bootstrap.sh check-github-managed.sh'
 
+  markdown-links:
+    name: Validate markdown links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate local markdown links
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          md_files = [
+              p
+              for p in Path('.').rglob('*.md')
+              if '.git' not in p.parts
+          ]
+          # Match inline markdown links: [text](target)
+          link_re = re.compile(r'\[[^\]]+\]\(([^)]+)\)')
+          failures = []
+
+          def is_external(target: str) -> bool:
+              lowered = target.lower()
+              return (
+                  lowered.startswith('http://')
+                  or lowered.startswith('https://')
+                  or lowered.startswith('mailto:')
+                  or lowered.startswith('#')
+                  or '://' in lowered
+              )
+
+          for md in md_files:
+              text = md.read_text(encoding='utf-8', errors='ignore')
+              for lineno, line in enumerate(text.splitlines(), start=1):
+                  for raw_target in link_re.findall(line):
+                      target = raw_target.strip()
+
+                      # Ignore title suffixes: path "title"
+                      if ' "' in target:
+                          target = target.split(' "', 1)[0].strip()
+
+                      # Ignore angle-wrapped targets: <path>
+                      if target.startswith('<') and target.endswith('>'):
+                          target = target[1:-1].strip()
+
+                      # Remove anchors
+                      if '#' in target:
+                          target = target.split('#', 1)[0]
+
+                      if not target or is_external(target):
+                          continue
+
+                      resolved = (md.parent / target).resolve()
+                      if not resolved.exists():
+                          failures.append((md.as_posix(), lineno, raw_target))
+
+          if failures:
+              print('Broken local markdown links found:')
+              for path, line, target in failures:
+                  print(f'- {path}:{line} -> {target}')
+              sys.exit(1)
+
+          print(f'OK: validated local links in {len(md_files)} markdown files')
+          PY
+
   validate-json:
     name: Validate JSON configs
     runs-on: ubuntu-latest

@@ -15,4 +15,9 @@ If no specific request is given, list the current inventory:
 - Instructions in `.github/instructions/` (name, applyTo glob)
 - Hooks in `.github/hooks/` (event, what it checks)
 
+Before you finalize any markdown edits:
+- Verify all local markdown links resolve from the current file's directory.
+- For files under `.github/`, use paths relative to `.github/` (for example `../README.md` and `workflows/ci.yml`).
+- If any local link target does not exist, fix the path before returning results.
+
 $input

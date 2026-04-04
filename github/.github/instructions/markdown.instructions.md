@@ -23,6 +23,11 @@ applyTo: '**/*.md'
 - Use descriptive link text, never "click here" or bare URLs
 - Prefer relative links for internal references within the same repo
 - Use reference-style links for URLs used multiple times
+- Resolve internal links relative to the current file directory, not repository root
+- Validate each edited internal link target before finishing the task
+- Use path patterns that reflect file location.
+- Example from `.github/file.md`: root files use `../` (for example `../README.md`).
+- Example from `.github/file.md`: nested `.github` content can use local paths when applicable (for example `workflows/ci.yml`).
 
 ## Code Blocks
 - Always specify the language for syntax highlighting
