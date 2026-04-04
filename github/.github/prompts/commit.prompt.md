@@ -1,7 +1,7 @@
 ---
 description: Stage, commit, and push with AI-generated Conventional Commit messages
-tools: ['execute', 'read', 'search', 'io.github.github/github-mcp-server/*']
-model: ['GPT-5.3 Codex High']
+tools: ["execute", "read", "search", "io.github.github/github-mcp-server/*"]
+model: ["GPT-5.3 Codex High"]
 ---
 
 Create a commit for the current changes.
@@ -20,6 +20,7 @@ Create a commit for the current changes.
 ## 2. Generate commit message and commit
 
 Analyze the staged diff and generate a Conventional Commit message:
+
 - Format: `type(scope): description`
 - Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore
 - Subject: imperative mood, under 72 chars, no period
