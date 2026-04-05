@@ -7,7 +7,7 @@ This repository includes task-launch prompt files aligned with the installed age
 | Prompt | Recommended Custom Agent | Purpose |
 | --- | --- | --- |
 | [../prompts/help.prompt.md](../prompts/help.prompt.md) | `Context Architect` | Summarize available built-in, custom, and MCP/plugin prompt commands in a single help table. |
-| [../prompts/commit-push.prompt.md](../prompts/commit-push.prompt.md) | `SWE` | Present grouping options, then proceed autonomously to split commits, generate standards-compliant messages, and push. |
+| [../prompts/commit-push.prompt.md](../prompts/commit-push.prompt.md) | `SWE` | Present grouping options, then proceed autonomously to split commits, generate standards-compliant messages, push, and report branch-protection blockers without PR authoring. |
 | [../prompts/plan-feature.prompt.md](../prompts/plan-feature.prompt.md) | `Plan Mode - Strategic Planning & Architecture` | Build phased implementation plans for features/refactors. |
 | [../prompts/research-task.prompt.md](../prompts/research-task.prompt.md) | `Task Researcher Instructions` | Deep task/problem research before planning or coding. |
 | [../prompts/task-plan.prompt.md](../prompts/task-plan.prompt.md) | `Task Planner Instructions` | Convert research into executable implementation steps. |
