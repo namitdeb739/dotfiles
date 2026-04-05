@@ -89,63 +89,22 @@ Each directory is an independent stow package that mirrors `~/` structure:
 - Full Copilot/AI configuration: agent mode, MCP auto-start, terminal auto-approve lists, custom instructions/agents/prompts locations, commit message generation
 - 44 extensions (synced via extensions.json)
 
-### Copilot AI Agents
+### Copilot AI Configuration
 
-11 specialized agents with role-based tool grants, MCP server access, and workflow handoffs:
+This repository manages Copilot customizations as code under `github/.github` (stowed to `~/.github`).
 
-| Agent | Model Tier | Purpose | MCP Servers |
-| ------- | ----------- | --------- | ------------- |
-| Code Reviewer | Opus | SOLID/security review, severity reporting | GitHub, Context7 |
-| Debugger | Sonnet | Read-only root cause investigation | GitHub, Context7 |
-| DevOps | Sonnet | CI/CD, Docker, GitHub Actions | GitHub, Context7, Playwright |
-| Doc Writer | Sonnet | READMEs, API docs, architecture docs | Context7, MarkItDown, Notion |
-| Dotfiles Editor | Opus | Maintains this repo | GitHub |
-| Implementor | Opus | Full-autonomy task execution | All (wildcard) |
-| Planner | Opus | Codebase exploration, implementation planning | GitHub, Context7 |
-| PR Writer | Sonnet | Structured PR creation from git changes | GitHub |
-| Refactorer | Sonnet | Behavior-preserving code restructuring | Context7 |
-| Security Auditor | Opus | OWASP, secrets, dependency vulnerability scan | GitHub |
-| Testing Expert | Sonnet | Coverage gap analysis, test writing | Context7 |
+Use these docs as the canonical inventories:
 
-**Workflow handoffs**: Planner → Implementor → Code Reviewer / Testing Expert. Debugger → Implementor. Refactorer → Testing Expert.
+| Area | Canonical Inventory |
+| --- | --- |
+| Agents | [github/.github/docs/README.agents.md](github/.github/docs/README.agents.md) |
+| Hooks | [github/.github/docs/README.hooks.md](github/.github/docs/README.hooks.md) |
+| Prompts | [github/.github/docs/README.prompts.md](github/.github/docs/README.prompts.md) |
+| Instructions | [github/.github/docs/README.instructions.md](github/.github/docs/README.instructions.md) |
+| Skills | [github/.github/docs/README.skills.md](github/.github/docs/README.skills.md) |
+| Workflows | [github/.github/docs/README.workflows.md](github/.github/docs/README.workflows.md) |
 
-### Copilot Hooks
-
-7 safety and quality hooks:
-
-| Hook | Event | Behavior |
-| ------ | ------- | ---------- |
-| Secrets Guard | PreToolUse | Blocks commits containing `.env`, `.pem`, `.key`, credentials |
-| Dangerous Git Guard | PreToolUse | Blocks `push --force`, `reset --hard`, `clean -f`, `branch -D` |
-| Commit Message Standards | PreToolUse | Blocks non-Conventional-Commits messages |
-| Branch Name Validator | PreToolUse | Warns on non-standard branch names |
-| Pre-commit Format | PreToolUse | Auto-runs `ruff format` / `prettier` before commits |
-| Commit Reminder | PostToolUse | Reminds to commit after 5+ uncommitted file changes |
-| Test Reminder | PostToolUse | Reminds to run tests after 5+ file edits |
-
-### Copilot Prompts (Slash Commands)
-
-| Command | Routes to | Purpose |
-| --------- | ----------- | --------- |
-| `/check` | (inline) | Run tests, diagnostics, report project health |
-| `/commit` | (inline) | Smart commit with GitKraken AI or plain git |
-| `/do` | Implementor | Full-autonomy task execution |
-| `/dotfiles` | Dotfiles Editor | Edit this dotfiles repo |
-| `/plan` | Planner | Implementation planning without code changes |
-| `/pr` | PR Writer | Create a structured PR |
-| `/review` | Code Reviewer | Review + auto-fix critical/major issues |
-
-### Copilot Instructions
-
-Context-aware instruction files auto-applied by file pattern:
-
-| File | Applies to | Content |
-| ------ | ----------- | --------- |
-| `copilot-instructions.md` | Always | Global coding standards, SOLID, security, git conventions |
-| `python.instructions.md` | `**/*.py` | Type hints, Google docstrings, pytest, Ruff style |
-| `ml.instructions.md` | `**/*.ipynb`, `**/ml/**` | Reproducibility, data splitting, experiment tracking |
-| `docker-infra.instructions.md` | `**/Dockerfile*`, `**/docker-compose*`, `**/*.tf` | Image pinning, layer ordering, no secrets |
-| `markdown.instructions.md` | `**/*.md` | Heading structure, active voice, code block language tags |
+Built-in slash commands are client-version dependent and are intentionally not listed as repository-managed commands.
 
 ### Brewfile (CLI Tools)
 
@@ -222,10 +181,10 @@ dotfiles/
 │   └── .gitignore_global            # Global gitignore (OS, editor, Python, Node)
 ├── github/.github/
 │   ├── copilot-instructions.md      # Global Copilot instructions (always-on)
-│   ├── agents/                      # 11 custom Copilot agents
-│   ├── hooks/                       # 7 safety/quality hooks
-│   ├── instructions/                # 4 context-aware instruction files
-│   └── prompts/                     # 7 slash commands
+│   ├── agents/                      # Custom Copilot agents
+│   ├── hooks/                       # Copilot hook packs
+│   ├── instructions/                # Context-aware instruction files
+│   └── prompts/                     # Custom slash-command prompts
 ├── vscode/
 │   ├── settings.json                # Editor, AI, theme, formatter settings
 │   ├── keybindings.json             # Custom keyboard shortcuts
