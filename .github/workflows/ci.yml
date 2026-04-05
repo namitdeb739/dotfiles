@@ -109,6 +109,64 @@ jobs:
             echo "mcp/.mcp.json is valid JSON"
           fi
 
+  validate-prompts:
+    name: Validate prompt agent routing
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate prompt frontmatter agents
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import sys
+
+          prompts_dir = Path('github/.github/prompts')
+          agents_dir = Path('github/.github/agents')
+
+          # Enforce deterministic routing through custom agents only.
+          forbidden_builtin_prompt_agents = {'agent', 'ask', 'edit', 'Plan', 'Ask'}
+
+          available_agents = set()
+          for agent_file in agents_dir.glob('*.agent.md'):
+              text = agent_file.read_text(encoding='utf-8', errors='ignore')
+              match = re.search(r'^name:\s*"?([^"\n]+)"?\s*$', text, re.M)
+              if match:
+                available_agents.add(match.group(1).strip().strip("\"'"))
+
+          errors = []
+
+          for prompt_file in sorted(prompts_dir.glob('*.prompt.md')):
+              text = prompt_file.read_text(encoding='utf-8', errors='ignore')
+              match = re.search(r'^agent:\s*"?([^"\n]+)"?\s*$', text, re.M)
+
+              if not match:
+                  errors.append(f"{prompt_file}: missing 'agent' frontmatter")
+                  continue
+
+              agent_name = match.group(1).strip().strip("\"'")
+
+              if agent_name in forbidden_builtin_prompt_agents:
+                  errors.append(
+                      f"{prompt_file}: agent '{agent_name}' is not allowed for repository prompts; use a custom installed agent"
+                  )
+                  continue
+
+              if agent_name not in available_agents:
+                  errors.append(
+                      f"{prompt_file}: unknown agent '{agent_name}' (not found in github/.github/agents/*.agent.md)"
+                  )
+
+          if errors:
+              print('Prompt routing validation failed:')
+              for err in errors:
+                  print(f'- {err}')
+              sys.exit(1)
+
+          print(f"OK: validated prompt routing for {len(list(prompts_dir.glob('*.prompt.md')))} prompt files")
+          PY
+
   bootstrap-smoke:
     name: Bootstrap smoke test
     runs-on: macos-latest
