@@ -1,6 +1,6 @@
 ---
 name: commit-push
-description: "Stage changes, split unrelated diffs into separate commits, generate standards-compliant messages, and push"
+description: "Stage changes, split unrelated diffs into separate commits, and push"
 agent: "SWE"
 argument-hint: "Optional branch or scope notes"
 ---
@@ -29,6 +29,7 @@ Requirements:
   2. Existing commit history conventions.
   3. Fallback to Conventional Commits with type and optional scope.
 - After commits are created, push current branch to its upstream automatically.
+- If direct push is rejected by branch protection, stop and report the blocking policy; do not create or edit pull requests from this prompt.
 - Never include unrelated temporary files unless explicitly requested.
 
 Grouping guidance:

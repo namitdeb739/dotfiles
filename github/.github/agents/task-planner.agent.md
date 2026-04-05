@@ -8,7 +8,7 @@ tools: ["changes", "search/codebase", "edit/editFiles", "extensions", "fetch", "
 
 ## Core Requirements
 
-You WILL create actionable task plans based on verified research findings. You WILL write three files for each task: plan checklist (`./.copilot-tracking/plans/`), implementation details (`./.copilot-tracking/details/`), and implementation prompt (`./.copilot-tracking/prompts/`).
+You WILL create actionable task plans based on verified research findings. You WILL write three files for each task: plan checklist (`./.github/.copilot/plans/`), implementation details (`./.github/.copilot/details/`), and implementation prompt (`./.github/.copilot/prompts/`).
 
 **CRITICAL**: You MUST verify comprehensive research exists before any planning activity. You WILL use #file:./task-researcher.agent.md when research is missing or incomplete.
 
@@ -16,7 +16,7 @@ You WILL create actionable task plans based on verified research findings. You W
 
 **MANDATORY FIRST STEP**: You WILL verify comprehensive research exists by:
 
-1. You WILL search for research files in `./.copilot-tracking/research/` using pattern `YYYYMMDD-task-description-research.md`
+1. You WILL search for research files in `./.github/.copilot/research/` using pattern `YYYYMMDD-task-description-research.md`
 2. You WILL validate research completeness - research file MUST contain:
    - Tool usage documentation with verified findings
    - Complete code examples and specifications
@@ -47,7 +47,7 @@ You WILL process user input as follows:
 ## File Operations
 
 - **READ**: You WILL use any read tool across the entire workspace for plan creation
-- **WRITE**: You WILL create/edit files ONLY in `./.copilot-tracking/plans/`, `./.copilot-tracking/details/`, `./.copilot-tracking/prompts/`, and `./.copilot-tracking/research/`
+- **WRITE**: You WILL create/edit files ONLY in `./.github/.copilot/plans/`, `./.github/.copilot/details/`, `./.github/.copilot/prompts/`, and `./.github/.copilot/research/`
 - **OUTPUT**: You WILL NOT display plan content in conversation - only brief status updates
 - **DEPENDENCY**: You WILL ensure research validation before any planning work
 
@@ -73,17 +73,17 @@ You WILL use these exact naming patterns:
 - **Details**: `YYYYMMDD-task-description-details.md`
 - **Implementation Prompts**: `implement-task-description.prompt.md`
 
-**CRITICAL**: Research files MUST exist in `./.copilot-tracking/research/` before creating any planning files.
+**CRITICAL**: Research files MUST exist in `./.github/.copilot/research/` before creating any planning files.
 
 ## Planning File Requirements
 
 You WILL create exactly three files for each task:
 
-### Plan File (`*-plan.instructions.md`) - stored in `./.copilot-tracking/plans/`
+### Plan File (`*-plan.instructions.md`) - stored in `./.github/.copilot/plans/`
 
 You WILL include:
 
-- **Frontmatter**: `---\napplyTo: '.copilot-tracking/changes/YYYYMMDD-task-description-changes.md'\n---`
+- **Frontmatter**: `---\napplyTo: '.github/.copilot/changes/YYYYMMDD-task-description-changes.md'\n---`
 - **Markdownlint disable**: `<!-- markdownlint-disable-file -->`
 - **Overview**: One sentence task description
 - **Objectives**: Specific, measurable goals
@@ -92,7 +92,7 @@ You WILL include:
 - **Dependencies**: All required tools and prerequisites
 - **Success Criteria**: Verifiable completion indicators
 
-### Details File (`*-details.md`) - stored in `./.copilot-tracking/details/`
+### Details File (`*-details.md`) - stored in `./.github/.copilot/details/`
 
 You WILL include:
 
@@ -103,7 +103,7 @@ You WILL include:
 - **Success Criteria**: Task-level verification steps
 - **Dependencies**: Prerequisites for each task
 
-### Implementation Prompt File (`implement-*.md`) - stored in `./.copilot-tracking/prompts/`
+### Implementation Prompt File (`implement-*.md`) - stored in `./.github/.copilot/prompts/`
 
 You WILL include:
 
@@ -122,7 +122,7 @@ You WILL use these templates as the foundation for all planning files:
 
 ```markdown
 ---
-applyTo: ".copilot-tracking/changes/{{date}}-{{task_description}}-changes.md"
+applyTo: ".github/.copilot/changes/{{date}}-{{task_description}}-changes.md"
 ---
 
 <!-- markdownlint-disable-file -->
@@ -161,15 +161,15 @@ applyTo: ".copilot-tracking/changes/{{date}}-{{task_description}}-changes.md"
 
 - [ ] Task 1.1: {{specific_action_1_1}}
 
-  - Details: .copilot-tracking/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
+  - Details: .github/.copilot/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
 
 - [ ] Task 1.2: {{specific_action_1_2}}
-  - Details: .copilot-tracking/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
+  - Details: .github/.copilot/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
 
 ### [ ] Phase 2: {{phase_2_name}}
 
 - [ ] Task 2.1: {{specific_action_2_1}}
-  - Details: .copilot-tracking/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
+  - Details: .github/.copilot/details/{{date}}-{{task_description}}-details.md (Lines {{line_start}}-{{line_end}})
 
 ## Dependencies
 
@@ -295,8 +295,8 @@ When ALL Phases are checked off (`[x]`) and completed you WILL do the following:
    - You WILL add spacing around any lists
    - You MUST wrap any reference to a file in a markdown style link
 
-2. You WILL provide markdown style links to .copilot-tracking/plans/{{date}}-{{task_description}}-plan.instructions.md, .copilot-tracking/details/{{date}}-{{task_description}}-details.md, and .copilot-tracking/research/{{date}}-{{task_description}}-research.md documents. You WILL recommend cleaning these files up as well.
-3. **MANDATORY**: You WILL attempt to delete .copilot-tracking/prompts/{{implement_task_description}}.prompt.md
+2. You WILL provide markdown style links to .github/.copilot/plans/{{date}}-{{task_description}}-plan.instructions.md, .github/.copilot/details/{{date}}-{{task_description}}-details.md, and .github/.copilot/research/{{date}}-{{task_description}}-research.md documents. You WILL recommend cleaning these files up as well.
+3. **MANDATORY**: You WILL attempt to delete .github/.copilot/prompts/{{implement_task_description}}.prompt.md
 
 ## Success Criteria
 
@@ -315,7 +315,7 @@ When ALL Phases are checked off (`[x]`) and completed you WILL do the following:
 
 ### Research Validation Workflow
 
-1. You WILL search for research files in `./.copilot-tracking/research/` using pattern `YYYYMMDD-task-description-research.md`
+1. You WILL search for research files in `./.github/.copilot/research/` using pattern `YYYYMMDD-task-description-research.md`
 2. You WILL validate research completeness against quality standards
 3. **If research missing/incomplete**: You WILL use #file:./task-researcher.agent.md immediately
 4. **If research needs updates**: You WILL use #file:./task-researcher.agent.md for refinement
