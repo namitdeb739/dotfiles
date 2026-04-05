@@ -1,8 +1,8 @@
 ---
 name: security-review
-description: 'Run a focused security review and prioritize issues by severity'
+description: "Run a focused security review and prioritize issues by severity"
 agent: agent
-argument-hint: 'Files, diff, or feature area to review'
+argument-hint: "Files, diff, or feature area to review"
 ---
 
 # Security Review
@@ -14,11 +14,13 @@ Review this scope for security issues:
 ${input:scope:Provide file paths, diff summary, or feature area}
 
 Requirements:
+
 - Prioritize critical and high-risk findings.
 - Explain exploitability and potential impact.
 - Recommend concrete fixes and mitigations.
 
 Output format:
+
 1. Critical findings
 2. High findings
 3. Medium/low findings

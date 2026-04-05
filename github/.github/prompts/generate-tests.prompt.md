@@ -1,8 +1,8 @@
 ---
 name: generate-tests
-description: 'Generate practical tests using the polyglot test pipeline'
+description: "Generate practical tests using the polyglot test pipeline"
 agent: agent
-argument-hint: 'Code area to test and test goals'
+argument-hint: "Code area to test and test goals"
 ---
 
 # Generate Tests
@@ -14,11 +14,13 @@ Generate tests for this scope:
 ${input:scope:Files, module, or feature to test}
 
 Requirements:
+
 - Use repository testing conventions and existing patterns.
 - Cover happy path, edge cases, and error paths.
 - Ensure generated tests compile and run.
 
 Output format:
+
 1. Scope and assumptions
 2. Test plan summary
 3. Generated test files
