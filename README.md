@@ -25,13 +25,29 @@ chmod +x bootstrap.sh check-github-managed.sh
 # 3. Open a new terminal
 ```
 
-The bootstrap script runs these steps automatically:
+Common bootstrap modes:
+
+```bash
+# Non-interactive run (CI/automation friendly)
+./bootstrap.sh --non-interactive
+
+# Skip extension installs
+./bootstrap.sh --skip-extensions
+
+# Select sections to run (interactive shell)
+./bootstrap.sh --select-sections
+
+# Force plain output (disable gum-based UI enhancements)
+./bootstrap.sh --ui=plain
+```
+
+The bootstrap script runs these steps automatically and prints a phase-by-phase status summary at the end:
 
 1. **Prerequisites** — installs GNU Stow via Homebrew
 2. **Brewfile** — installs all CLI tools, casks, and fonts (`brew bundle`)
 3. **Stow packages** — symlinks git, github, zsh configs into `~/`
 4. **VSCode** — symlinks settings, keybindings into the platform-specific VSCode User dir
-5. **Starship prompt** — interactive preset chooser (Tokyo Night default, or pick from 9 presets)
+5. **Starship prompt** — interactive preset chooser (Tokyo Night default, or pick from 9 presets); non-interactive runs keep the existing config
 6. **VSCode extensions** — installs any missing extensions from `extensions.json`
 7. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
 8. **Verification** — confirms `~/.github/` integrity

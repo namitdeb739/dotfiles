@@ -4,15 +4,476 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$HOME/.dotfiles_backup"
+START_EPOCH="$(date +%s)"
 
 mkdir -p "$BACKUP_DIR"
 
 # Prevent stow from touching backup files
 export STOW_IGNORE='\.backup-'
 
+# Runtime controls
+FORCE_INTERACTIVE=0
+FORCE_NONINTERACTIVE=0
+INTERACTIVE_MODE=0
+SELECT_SECTIONS=0
+SKIP_EXTENSIONS=0
+BOOTSTRAP_NONINTERACTIVE="${BOOTSTRAP_NONINTERACTIVE:-0}"
+BOOTSTRAP_UI="${BOOTSTRAP_UI:-auto}"
+GUM_AVAILABLE=0
+
+# Section toggles
+RUN_CLEANUP=1
+RUN_BREW=1
+RUN_STOW=1
+RUN_VSCODE=1
+RUN_STARSHIP=1
+RUN_EXTENSIONS=1
+RUN_ZSH_PLUGINS=1
+RUN_VERIFICATION=1
+
+# Summary tracking
+SUMMARY_PRINTED=0
+PHASE_NAMES=()
+PHASE_STATUSES=()
+PHASE_SECONDS=()
+
+# Colors and style
+STYLE_RESET=""
+STYLE_BOLD=""
+COLOR_BLUE=""
+COLOR_GREEN=""
+COLOR_YELLOW=""
+COLOR_RED=""
+
 # --- Helpers ---
 
 command_exists() { command -v "$1" &>/dev/null; }
+
+setup_styles() {
+  if [[ -t 1 && -z "${NO_COLOR:-}" ]]; then
+    STYLE_RESET="\033[0m"
+    STYLE_BOLD="\033[1m"
+    COLOR_BLUE="\033[34m"
+    COLOR_GREEN="\033[32m"
+    COLOR_YELLOW="\033[33m"
+    COLOR_RED="\033[31m"
+  fi
+}
+
+log_info() {
+  printf "%b[INFO]%b %s\n" "$COLOR_BLUE" "$STYLE_RESET" "$*"
+}
+
+log_warn() {
+  printf "%b[WARN]%b %s\n" "$COLOR_YELLOW" "$STYLE_RESET" "$*"
+}
+
+log_error() {
+  printf "%b[ERROR]%b %s\n" "$COLOR_RED" "$STYLE_RESET" "$*" >&2
+}
+
+phase_start() {
+  local name="$1"
+  printf "\n%b==>%b %s\n" "$STYLE_BOLD" "$STYLE_RESET" "$name"
+}
+
+phase_end() {
+  local name="$1"
+  local status="$2"
+  local elapsed="$3"
+  local color="$COLOR_GREEN"
+
+  if [[ "$status" == "SKIPPED" ]]; then
+    color="$COLOR_YELLOW"
+  elif [[ "$status" != "OK" ]]; then
+    color="$COLOR_RED"
+  fi
+
+  printf "%b[%s]%b %s (%ss)\n" "$color" "$status" "$STYLE_RESET" "$name" "$elapsed"
+}
+
+record_phase() {
+  local name="$1"
+  local status="$2"
+  local elapsed="$3"
+
+  PHASE_NAMES+=("$name")
+  PHASE_STATUSES+=("$status")
+  PHASE_SECONDS+=("$elapsed")
+}
+
+run_phase() {
+  local name="$1"
+  shift
+
+  local start_epoch
+  local end_epoch
+  local elapsed
+
+  phase_start "$name"
+  start_epoch="$(date +%s)"
+
+  if "$@"; then
+    end_epoch="$(date +%s)"
+    elapsed=$((end_epoch - start_epoch))
+    record_phase "$name" "OK" "$elapsed"
+    phase_end "$name" "OK" "$elapsed"
+    return 0
+  fi
+
+  local rc=$?
+  end_epoch="$(date +%s)"
+  elapsed=$((end_epoch - start_epoch))
+  record_phase "$name" "FAILED(${rc})" "$elapsed"
+  phase_end "$name" "FAILED(${rc})" "$elapsed"
+  return "$rc"
+}
+
+skip_phase() {
+  local name="$1"
+  record_phase "$name" "SKIPPED" "0"
+  phase_end "$name" "SKIPPED" "0"
+}
+
+print_usage() {
+  echo "Usage: ./bootstrap.sh [options]"
+  echo
+  echo "Options:"
+  echo "  --interactive       Force interactive behavior when TTY is available"
+  echo "  --non-interactive   Disable all interactive prompts"
+  echo "  --skip-extensions   Skip VS Code extension installation"
+  echo "  --select-sections   Interactively select which sections to run"
+  echo "  --ui=MODE           Output mode: auto|plain|gum (default: auto)"
+  echo "  -h, --help          Show this help message"
+}
+
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --interactive)
+        FORCE_INTERACTIVE=1
+        ;;
+      --non-interactive)
+        FORCE_NONINTERACTIVE=1
+        ;;
+      --skip-extensions)
+        SKIP_EXTENSIONS=1
+        ;;
+      --select-sections)
+        SELECT_SECTIONS=1
+        ;;
+      --ui=*)
+        BOOTSTRAP_UI="${1#*=}"
+        ;;
+      -h|--help)
+        print_usage
+        exit 0
+        ;;
+      *)
+        log_error "Unknown option: $1"
+        print_usage
+        exit 1
+        ;;
+    esac
+    shift
+  done
+
+  if [[ "$FORCE_INTERACTIVE" -eq 1 && "$FORCE_NONINTERACTIVE" -eq 1 ]]; then
+    log_error "Cannot use --interactive and --non-interactive together"
+    exit 1
+  fi
+
+  case "$BOOTSTRAP_UI" in
+    auto|plain|gum)
+      ;;
+    *)
+      log_error "Invalid --ui mode: $BOOTSTRAP_UI (expected: auto|plain|gum)"
+      exit 1
+      ;;
+  esac
+}
+
+detect_runtime_mode() {
+  local has_tty=0
+
+  if [[ -t 0 && -t 1 ]]; then
+    has_tty=1
+  fi
+
+  if command_exists gum; then
+    GUM_AVAILABLE=1
+  fi
+
+  if [[ "$FORCE_NONINTERACTIVE" -eq 1 ]]; then
+    BOOTSTRAP_NONINTERACTIVE=1
+  fi
+
+  if [[ "$FORCE_INTERACTIVE" -eq 1 ]]; then
+    if [[ "$has_tty" -eq 1 ]]; then
+      INTERACTIVE_MODE=1
+      BOOTSTRAP_NONINTERACTIVE=0
+    else
+      log_warn "--interactive requested without TTY; falling back to non-interactive mode"
+      INTERACTIVE_MODE=0
+      BOOTSTRAP_NONINTERACTIVE=1
+    fi
+    return
+  fi
+
+  if [[ "$BOOTSTRAP_NONINTERACTIVE" == "1" ]]; then
+    INTERACTIVE_MODE=0
+    return
+  fi
+
+  INTERACTIVE_MODE="$has_tty"
+}
+
+enable_all_sections() {
+  RUN_CLEANUP=1
+  RUN_BREW=1
+  RUN_STOW=1
+  RUN_VSCODE=1
+  RUN_STARSHIP=1
+  RUN_EXTENSIONS=1
+  RUN_ZSH_PLUGINS=1
+  RUN_VERIFICATION=1
+}
+
+disable_all_sections() {
+  RUN_CLEANUP=0
+  RUN_BREW=0
+  RUN_STOW=0
+  RUN_VSCODE=0
+  RUN_STARSHIP=0
+  RUN_EXTENSIONS=0
+  RUN_ZSH_PLUGINS=0
+  RUN_VERIFICATION=0
+}
+
+enable_section() {
+  local section="$1"
+
+  case "$section" in
+    cleanup)
+      RUN_CLEANUP=1
+      ;;
+    brew)
+      RUN_BREW=1
+      ;;
+    stow)
+      RUN_STOW=1
+      ;;
+    vscode)
+      RUN_VSCODE=1
+      ;;
+    starship)
+      RUN_STARSHIP=1
+      ;;
+    extensions)
+      RUN_EXTENSIONS=1
+      ;;
+    zsh-plugins)
+      RUN_ZSH_PLUGINS=1
+      ;;
+    verification)
+      RUN_VERIFICATION=1
+      ;;
+    *)
+      log_warn "Unknown section '$section' ignored"
+      ;;
+  esac
+}
+
+apply_section_defaults() {
+  if [[ "$SKIP_EXTENSIONS" -eq 1 ]]; then
+    RUN_EXTENSIONS=0
+  fi
+}
+
+prompt_section_selection() {
+  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification")
+
+  if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
+    return
+  fi
+
+  if [[ "$INTERACTIVE_MODE" -ne 1 ]]; then
+    log_warn "--select-sections requested in non-interactive mode; using defaults"
+    return
+  fi
+
+  disable_all_sections
+
+  if [[ "$BOOTSTRAP_UI" != "plain" && "$GUM_AVAILABLE" -eq 1 ]]; then
+    local picked
+    picked="$(gum choose --no-limit "${sections[@]}" || true)"
+
+    if [[ -z "$picked" ]]; then
+      log_warn "No sections selected; running all sections"
+      enable_all_sections
+      return
+    fi
+
+    while IFS= read -r line; do
+      [[ -n "$line" ]] && enable_section "$line"
+    done <<< "$picked"
+  else
+    log_info "Select sections to run (comma-separated names or numbers, Enter for all):"
+    echo "  1) cleanup"
+    echo "  2) brew"
+    echo "  3) stow"
+    echo "  4) vscode"
+    echo "  5) starship"
+    echo "  6) extensions"
+    echo "  7) zsh-plugins"
+    echo "  8) verification"
+
+    local input
+    read -rp "> " input
+
+    if [[ -z "$input" ]]; then
+      enable_all_sections
+      return
+    fi
+
+    local item
+    local picks=()
+    IFS=',' read -r -a picks <<< "$input"
+
+    for item in "${picks[@]}"; do
+      item="${item//[[:space:]]/}"
+      case "$item" in
+        1|cleanup) enable_section "cleanup" ;;
+        2|brew) enable_section "brew" ;;
+        3|stow) enable_section "stow" ;;
+        4|vscode) enable_section "vscode" ;;
+        5|starship) enable_section "starship" ;;
+        6|extensions) enable_section "extensions" ;;
+        7|zsh-plugins) enable_section "zsh-plugins" ;;
+        8|verification) enable_section "verification" ;;
+        all) enable_all_sections ;;
+        *) log_warn "Ignoring unknown selection: $item" ;;
+      esac
+    done
+  fi
+
+  if [[ "$SKIP_EXTENSIONS" -eq 1 ]]; then
+    RUN_EXTENSIONS=0
+  fi
+
+  local selected_total
+  selected_total=$((
+    RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
+    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION
+  ))
+
+  if [[ "$selected_total" -eq 0 ]]; then
+    log_warn "No valid section selected; running all sections"
+    enable_all_sections
+    if [[ "$SKIP_EXTENSIONS" -eq 1 ]]; then
+      RUN_EXTENSIONS=0
+    fi
+  fi
+}
+
+run_or_skip_phase() {
+  local name="$1"
+  local enabled="$2"
+  shift 2
+
+  if [[ "$enabled" -eq 1 ]]; then
+    run_phase "$name" "$@"
+    return $?
+  fi
+
+  skip_phase "$name"
+  return 0
+}
+
+print_runtime_context() {
+  local mode="non-interactive"
+  if [[ "$INTERACTIVE_MODE" -eq 1 ]]; then
+    mode="interactive"
+  fi
+
+  log_info "Mode: $mode"
+  log_info "UI: $BOOTSTRAP_UI"
+  if [[ "$SKIP_EXTENSIONS" -eq 1 ]]; then
+    log_info "VS Code extensions: skipped by flag"
+  fi
+}
+
+print_summary() {
+  if [[ "$SUMMARY_PRINTED" -eq 1 ]]; then
+    return
+  fi
+
+  SUMMARY_PRINTED=1
+
+  local total_elapsed
+  total_elapsed=$(( $(date +%s) - START_EPOCH ))
+
+  local ok_count=0
+  local skipped_count=0
+  local failed_count=0
+  local i
+
+  echo
+  printf "%b=== Bootstrap Summary ===%b\n" "$STYLE_BOLD" "$STYLE_RESET"
+  printf "%-28s %-12s %s\n" "Phase" "Status" "Seconds"
+
+  for i in "${!PHASE_NAMES[@]}"; do
+    local status="${PHASE_STATUSES[$i]}"
+    local color="$COLOR_GREEN"
+
+    if [[ "$status" == "SKIPPED" ]]; then
+      skipped_count=$((skipped_count + 1))
+      color="$COLOR_YELLOW"
+    elif [[ "$status" == OK* ]]; then
+      ok_count=$((ok_count + 1))
+      color="$COLOR_GREEN"
+    else
+      failed_count=$((failed_count + 1))
+      color="$COLOR_RED"
+    fi
+
+    printf "%-28s %b%-12s%b %s\n" "${PHASE_NAMES[$i]}" "$color" "$status" "$STYLE_RESET" "${PHASE_SECONDS[$i]}"
+  done
+
+  echo
+  printf "Completed: %s | Skipped: %s | Failed: %s\n" "$ok_count" "$skipped_count" "$failed_count"
+  printf "Total time: %ss\n" "$total_elapsed"
+  printf "Backup directory: %s\n" "$BACKUP_DIR"
+}
+
+ensure_prerequisites() {
+  if ! command_exists brew; then
+    log_error "Homebrew required. Install it first."
+    return 1
+  fi
+
+  if ! command_exists stow; then
+    brew install stow
+  fi
+
+  return 0
+}
+
+stow_core_packages() {
+  stow_package "git"
+  stow_package "github"
+  stow_package "zsh"
+}
+
+run_verification() {
+  if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
+    bash "$REPO_DIR/check-github-managed.sh"
+    return 0
+  fi
+
+  log_warn "check-github-managed.sh not found; skipping verification"
+  return 0
+}
 
 backup_conflicts() {
   local pkg="$1"
@@ -169,7 +630,7 @@ configure_starship() {
     echo "Current symlink target: $(readlink "$config")"
   fi
 
-  if [[ ! -t 0 ]]; then
+  if [[ "$INTERACTIVE_MODE" -ne 1 || "${BOOTSTRAP_NONINTERACTIVE}" == "1" || ! -t 0 ]]; then
     echo "Non-interactive shell detected — unable to prompt."
     echo "Keeping existing Starship config. Re-run interactively to change it."
     return 0
@@ -267,37 +728,64 @@ cleanup_legacy() {
 # Main
 # ===========================================================
 
-echo "=== Dotfiles Bootstrap ==="
+main() {
+  setup_styles
+  parse_args "$@"
+  detect_runtime_mode
+  apply_section_defaults
+  prompt_section_selection
 
-echo "--- Prerequisites ---"
+  printf "%b=== Dotfiles Bootstrap ===%b\n" "$STYLE_BOLD" "$STYLE_RESET"
+  print_runtime_context
 
-if ! command_exists brew; then
-  echo "Homebrew required. Install it first."
-  exit 1
-fi
+  run_phase "Prerequisites" ensure_prerequisites || {
+    print_summary
+    return 1
+  }
 
-if ! command_exists stow; then
-  brew install stow
-fi
+  run_or_skip_phase "Cleanup" "$RUN_CLEANUP" cleanup_legacy || {
+    print_summary
+    return 1
+  }
 
-echo "--- Cleanup ---"
-cleanup_legacy
+  run_or_skip_phase "Brew Packages" "$RUN_BREW" install_brew_packages || {
+    print_summary
+    return 1
+  }
 
-install_brew_packages
+  run_or_skip_phase "Stow Packages" "$RUN_STOW" stow_core_packages || {
+    print_summary
+    return 1
+  }
 
-echo "--- Stow Packages ---"
-stow_package "git"
-stow_package "github"
-stow_package "zsh"
+  run_or_skip_phase "VS Code Linking" "$RUN_VSCODE" link_vscode || {
+    print_summary
+    return 1
+  }
 
-link_vscode
-configure_starship
-install_vscode_extensions
-init_zsh_plugins
+  run_or_skip_phase "Starship" "$RUN_STARSHIP" configure_starship || {
+    print_summary
+    return 1
+  }
 
-if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
-  echo "--- Verification ---"
-  bash "$REPO_DIR/check-github-managed.sh"
-fi
+  run_or_skip_phase "VS Code Extensions" "$RUN_EXTENSIONS" install_vscode_extensions || {
+    print_summary
+    return 1
+  }
 
-echo "=== Bootstrap Complete ==="
+  run_or_skip_phase "Zsh Plugins" "$RUN_ZSH_PLUGINS" init_zsh_plugins || {
+    print_summary
+    return 1
+  }
+
+  run_or_skip_phase "Verification" "$RUN_VERIFICATION" run_verification || {
+    print_summary
+    return 1
+  }
+
+  print_summary
+  printf "%b=== Bootstrap Complete ===%b\n" "$STYLE_BOLD" "$STYLE_RESET"
+  return 0
+}
+
+main "$@"
