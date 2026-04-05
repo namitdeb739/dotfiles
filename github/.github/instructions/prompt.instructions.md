@@ -63,6 +63,13 @@ Every prompt file should include YAML frontmatter with the following fields:
 - Include success criteria and failure triggers so Copilot knows when to halt or retry.
 - Provide validation steps—manual checks, automated commands, or acceptance criteria lists—that reviewers can execute after running the prompt.
 
+### Pull Request Body Formatting
+
+- For prompts that create or edit pull requests, include an explicit markdown body template with heading and list spacing shown.
+- Require a blank line between each heading and the following list.
+- Require CLI usage that preserves formatting, for example `gh pr create --body-file <file>` or `gh pr edit --body-file <file>`.
+- Avoid shell-escaped inline multiline body strings for PR descriptions because they are error-prone and can produce malformed markdown.
+
 ## Examples and Reusable Assets
 - Embed Good/Bad examples or scaffolds (Markdown templates, JSON stubs) that the prompt should produce or follow.
 - Maintain reference tables (capabilities, status codes, role descriptions) inline to keep the prompt self-contained. Update these tables when upstream resources change.

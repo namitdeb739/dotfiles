@@ -1,6 +1,6 @@
 ---
 name: commit-push
-description: "Stage changes, split unrelated diffs into separate commits, generate standards-compliant messages, and push"
+description: "Stage changes, split unrelated diffs into separate commits, push safely, and open a well-formatted PR when needed"
 agent: "SWE"
 argument-hint: "Optional branch or scope notes"
 ---
@@ -29,6 +29,27 @@ Requirements:
   2. Existing commit history conventions.
   3. Fallback to Conventional Commits with type and optional scope.
 - After commits are created, push current branch to its upstream automatically.
+- If direct push to default branch is rejected by protection rules, create or update a pull request instead of stopping.
+- For any PR create/update action, generate body content using this exact markdown structure:
+
+  ```markdown
+  ## Summary
+
+  - <concise change 1>
+  - <concise change 2>
+
+  ## Validation
+
+  - <check 1>
+  - <check 2>
+
+  ## Residual Risks
+
+  - <risk or "None noted">
+  ```
+
+- Ensure a blank line exists between each heading and list for consistent rendering.
+- Use `gh pr create --body-file <file>` or `gh pr edit --body-file <file>` (never shell-escaped inline multiline body strings) to preserve markdown formatting.
 - Never include unrelated temporary files unless explicitly requested.
 
 Grouping guidance:
@@ -63,4 +84,9 @@ Output format:
 | Remote | Branch | Result | Details |
 | ------ | ------ | ------ | ------- |
 
-5. Follow-ups (if any changes remain uncommitted)
+5. PR result table (if PR was created or updated):
+
+| PR | Action | Result | Details |
+| -- | ------ | ------ | ------- |
+
+6. Follow-ups (if any changes remain uncommitted)
