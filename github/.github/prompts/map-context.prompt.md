@@ -1,13 +1,13 @@
 ---
 name: map-context
 description: "Map all relevant files and dependencies before planning or implementation"
-agent: agent
+agent: "Context Architect"
 argument-hint: "Task or feature to map"
 ---
 
 # Map Context
 
-Preferred custom agent: context-architect.
+Preferred custom agent: Context Architect.
 
 Map the repository context for this task:
 

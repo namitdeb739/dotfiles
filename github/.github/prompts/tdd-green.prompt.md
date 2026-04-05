@@ -1,13 +1,13 @@
 ---
 name: tdd-green
 description: "Implement the minimal code needed to make red tests pass"
-agent: agent
+agent: "TDD Green Phase - Make Tests Pass Quickly"
 argument-hint: "Failing tests and implementation target"
 ---
 
 # TDD Green
 
-Preferred custom agent: tdd-green.
+Preferred custom agent: TDD Green Phase - Make Tests Pass Quickly.
 
 Make the current failing tests pass for:
 

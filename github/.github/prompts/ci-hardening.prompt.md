@@ -1,13 +1,13 @@
 ---
 name: ci-hardening
 description: "Audit and improve GitHub Actions pipelines for security and reliability"
-agent: agent
+agent: "GitHub Actions Expert"
 argument-hint: "Workflow files or CI pain points"
 ---
 
 # CI Hardening
 
-Preferred custom agent: github-actions-expert.
+Preferred custom agent: GitHub Actions Expert.
 
 Audit and improve CI/CD for this scope:
 

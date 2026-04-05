@@ -1,13 +1,13 @@
 ---
 name: tdd-red
 description: "Write failing tests first for an upcoming change"
-agent: agent
+agent: "TDD Red Phase - Write Failing Tests First"
 argument-hint: "Behavior or issue to encode as tests"
 ---
 
 # TDD Red
 
-Preferred custom agent: tdd-red.
+Preferred custom agent: TDD Red Phase - Write Failing Tests First.
 
 Write failing tests first for:
 

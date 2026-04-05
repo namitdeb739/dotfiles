@@ -1,13 +1,13 @@
 ---
 name: resource-staleness-report
 description: "Generate or refine periodic staleness reporting for Copilot resources"
-agent: agent
+agent: "GitHub Actions Expert"
 argument-hint: "Staleness thresholds and reporting preferences"
 ---
 
 # Resource Staleness Report
 
-Preferred custom agent: github-actions-expert.
+Preferred custom agent: GitHub Actions Expert.
 
 Set up or improve staleness reporting for Copilot resource files:
 

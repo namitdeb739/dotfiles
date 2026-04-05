@@ -1,13 +1,13 @@
 ---
 name: dependabot-maintenance
 description: "Create or optimize Dependabot configuration for safer, lower-noise updates"
-agent: agent
+agent: "SE: DevOps/CI"
 argument-hint: "Repository paths/ecosystems and update policy goals"
 ---
 
 # Dependabot Maintenance
 
-Preferred custom agent: se-gitops-ci-specialist.
+Preferred custom agent: SE: DevOps/CI.
 
 Review and optimize Dependabot setup for this repository:
 

@@ -1,13 +1,13 @@
 ---
 name: pytest-coverage
 description: "Increase pytest coverage with targeted tests for uncovered lines"
-agent: agent
+agent: "Polyglot Test Generator"
 argument-hint: "Module or package to improve coverage for"
 ---
 
 # Pytest Coverage
 
-Preferred custom agent: polyglot-test-generator.
+Preferred custom agent: Polyglot Test Generator.
 
 Improve coverage for this target:
 

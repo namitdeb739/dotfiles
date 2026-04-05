@@ -1,13 +1,13 @@
 ---
 name: security-review
 description: "Run a focused security review and prioritize issues by severity"
-agent: agent
+agent: "SE: Security"
 argument-hint: "Files, diff, or feature area to review"
 ---
 
 # Security Review
 
-Preferred custom agent: se-security-reviewer.
+Preferred custom agent: SE: Security.
 
 Review this scope for security issues:
 

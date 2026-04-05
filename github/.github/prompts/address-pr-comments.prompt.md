@@ -1,13 +1,13 @@
 ---
 name: address-pr-comments
 description: "Resolve and summarize pull request review comments"
-agent: agent
+agent: "Universal PR Comment Addresser"
 argument-hint: "PR context and comment scope"
 ---
 
 # Address PR Comments
 
-Preferred custom agent: address-comments.
+Preferred custom agent: Universal PR Comment Addresser.
 
 Address review comments for this pull request scope:
 

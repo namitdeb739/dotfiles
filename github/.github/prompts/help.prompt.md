@@ -1,13 +1,13 @@
 ---
 name: help
 description: "Summarize available prompt commands from built-in, custom, and MCP/plugin sources"
-agent: agent
+agent: "Context Architect"
 argument-hint: "Optional filter such as testing, security, docs, or planning"
 ---
 
 # Help
 
-Preferred custom agent: context-architect.
+Preferred custom agent: Context Architect.
 
 Generate a workspace-specific help table of prompt commands.
 

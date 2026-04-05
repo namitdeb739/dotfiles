@@ -1,13 +1,13 @@
 ---
 name: technical-spike
 description: "Run a structured technical spike for uncertain implementation decisions"
-agent: agent
+agent: "Technical spike research mode"
 argument-hint: "Technical uncertainty to investigate"
 ---
 
 # Technical Spike
 
-Preferred custom agent: research-technical-spike.
+Preferred custom agent: Technical spike research mode.
 
 Run a technical spike on this topic:
 

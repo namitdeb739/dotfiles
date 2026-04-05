@@ -1,13 +1,13 @@
 ---
 name: implement-plan
 description: "Implement a provided plan with minimal, safe, validated changes"
-agent: agent
+agent: "SWE"
 argument-hint: "Plan or implementation brief"
 ---
 
 # Implement Plan
 
-Preferred custom agent: swe-subagent.
+Preferred custom agent: SWE.
 
 Implement this plan or implementation brief:
 

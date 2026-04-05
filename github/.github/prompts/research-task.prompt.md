@@ -1,13 +1,13 @@
 ---
 name: research-task
 description: "Research a task deeply and summarize findings before planning or coding"
-agent: agent
+agent: "Task Researcher Instructions"
 argument-hint: "Task or problem statement to research"
 ---
 
 # Research Task
 
-Preferred custom agent: task-researcher.
+Preferred custom agent: Task Researcher Instructions.
 
 Research this task comprehensively before implementation:
 

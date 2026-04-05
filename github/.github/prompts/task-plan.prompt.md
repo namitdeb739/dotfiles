@@ -1,13 +1,13 @@
 ---
 name: task-plan
 description: "Convert researched context into an actionable execution plan"
-agent: agent
+agent: "Task Planner Instructions"
 argument-hint: "Task details or research notes"
 ---
 
 # Task Plan
 
-Preferred custom agent: task-planner.
+Preferred custom agent: Task Planner Instructions.
 
 Create an execution plan for:
 

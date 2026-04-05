@@ -1,13 +1,13 @@
 ---
 name: pr-duplicate-check
 description: "Set up or refine workflow checks for duplicate resource additions in PRs"
-agent: agent
+agent: "GitHub Actions Expert"
 argument-hint: "PR quality goals and resource directories to protect"
 ---
 
 # PR Duplicate Check
 
-Preferred custom agent: github-actions-expert.
+Preferred custom agent: GitHub Actions Expert.
 
 Set up or refine duplicate-resource detection in pull requests:
 

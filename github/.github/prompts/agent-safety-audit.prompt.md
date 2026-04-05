@@ -1,13 +1,13 @@
 ---
 name: agent-safety-audit
 description: "Audit agent/tool governance for least-privilege and fail-closed behavior"
-agent: agent
+agent: "SE: Security"
 argument-hint: "Agent files, hook configs, or governance scope to assess"
 ---
 
 # Agent Safety Audit
 
-Preferred custom agent: se-security-reviewer.
+Preferred custom agent: SE: Security.
 
 Audit agent governance and safety controls for this scope:
 

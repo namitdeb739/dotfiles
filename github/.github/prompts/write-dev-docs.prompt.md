@@ -1,13 +1,13 @@
 ---
 name: write-dev-docs
 description: "Create or update developer documentation based on implemented changes"
-agent: agent
+agent: "SE: Tech Writer"
 argument-hint: "Change summary or files to document"
 ---
 
 # Write Developer Docs
 
-Preferred custom agent: se-technical-writer.
+Preferred custom agent: SE: Tech Writer.
 
 Create or update docs for these changes:
 

@@ -1,13 +1,13 @@
 ---
 name: cleanup-tech-debt
 description: "Clean up code quality and reduce technical debt with low-risk changes"
-agent: agent
+agent: "Universal Janitor"
 argument-hint: "Module or file set with debt to clean up"
 ---
 
 # Cleanup Tech Debt
 
-Preferred custom agent: janitor.
+Preferred custom agent: Universal Janitor.
 
 Perform targeted cleanup on this scope:
 

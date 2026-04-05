@@ -1,13 +1,13 @@
 ---
 name: plan-feature
 description: "Create a phased implementation plan for a feature or refactor request"
-agent: agent
+agent: "Plan Mode - Strategic Planning & Architecture"
 argument-hint: "Feature request, issue, or refactor goal"
 ---
 
 # Plan Feature
 
-Preferred custom agent: plan.
+Preferred custom agent: Plan Mode - Strategic Planning & Architecture.
 
 Create a practical implementation plan for this request:
 

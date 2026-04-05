@@ -1,13 +1,13 @@
 ---
 name: ruff-recursive-fix
 description: "Run iterative Ruff autofix and manual cleanup until findings are resolved"
-agent: agent
+agent: "SWE"
 argument-hint: "Target path plus optional Ruff rule overrides"
 ---
 
 # Ruff Recursive Fix
 
-Preferred custom agent: swe-subagent.
+Preferred custom agent: SWE.
 
 Run an iterative Ruff remediation workflow for this scope:
 

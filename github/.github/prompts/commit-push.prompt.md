@@ -1,13 +1,13 @@
 ---
 name: commit-push
 description: "Stage changes, split unrelated diffs into separate commits, generate standards-compliant messages, and push"
-agent: agent
+agent: "SWE"
 argument-hint: "Optional branch or scope notes"
 ---
 
 # Commit Push
 
-Preferred custom agent: swe-subagent.
+Preferred custom agent: SWE.
 
 Create one or more high-quality commits from current changes, then push.
 

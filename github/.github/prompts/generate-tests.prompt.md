@@ -1,13 +1,13 @@
 ---
 name: generate-tests
 description: "Generate practical tests using the polyglot test pipeline"
-agent: agent
+agent: "Polyglot Test Generator"
 argument-hint: "Code area to test and test goals"
 ---
 
 # Generate Tests
 
-Preferred custom agent: polyglot-test-generator.
+Preferred custom agent: Polyglot Test Generator.
 
 Generate tests for this scope:
 

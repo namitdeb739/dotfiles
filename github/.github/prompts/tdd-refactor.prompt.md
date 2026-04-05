@@ -1,13 +1,13 @@
 ---
 name: tdd-refactor
 description: "Refactor safely after green tests while keeping behavior stable"
-agent: agent
+agent: "TDD Refactor Phase - Improve Quality & Security"
 argument-hint: "Code area ready for refactor"
 ---
 
 # TDD Refactor
 
-Preferred custom agent: tdd-refactor.
+Preferred custom agent: TDD Refactor Phase - Improve Quality & Security.
 
 Refactor this green state safely:
 
