@@ -1,6 +1,6 @@
 # Agents in This Repo
 
-This repository contains an expanded, curated set of 30 agents imported from github/awesome-copilot.
+This repository contains an expanded, curated set of 31 agents, primarily sourced from github/awesome-copilot with repository-specific additions.
 
 ## Newly Added In This Pass
 
@@ -18,6 +18,7 @@ This repository contains an expanded, curated set of 30 agents imported from git
 
 ## Existing Core Sets
 
+- [../agents/github-ops-executor.agent.md](../agents/github-ops-executor.agent.md)
 - Polyglot test pipeline agents
 - Security/DevOps/technical-writing specialist agents
 - Planning/debug/janitor and custom-agent authoring agents

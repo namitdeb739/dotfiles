@@ -12,6 +12,19 @@ This repository includes task-launch prompt files aligned with the installed age
 | [../prompts/research-task.prompt.md](../prompts/research-task.prompt.md) | `Task Researcher Instructions` | Deep task/problem research before planning or coding. |
 | [../prompts/task-plan.prompt.md](../prompts/task-plan.prompt.md) | `Task Planner Instructions` | Convert research into executable implementation steps. |
 | [../prompts/implement-plan.prompt.md](../prompts/implement-plan.prompt.md) | `SWE` | Implement approved plans with minimal validated changes. |
+| [../prompts/create-pr.prompt.md](../prompts/create-pr.prompt.md) | `GitHub Ops Executor` | Create or update pull requests from the current branch using body-file markdown. |
+| [../prompts/update-pr.prompt.md](../prompts/update-pr.prompt.md) | `GitHub Ops Executor` | Update pull request title/body/metadata with explicit change reporting. |
+| [../prompts/merge-pr.prompt.md](../prompts/merge-pr.prompt.md) | `GitHub Ops Executor` | Merge pull requests with default squash+delete-branch strategy and blocker reporting. |
+| [../prompts/close-pr.prompt.md](../prompts/close-pr.prompt.md) | `GitHub Ops Executor` | Close pull requests without merging and report final state. |
+| [../prompts/reopen-pr.prompt.md](../prompts/reopen-pr.prompt.md) | `GitHub Ops Executor` | Reopen closed pull requests and verify state transition. |
+| [../prompts/create-issue.prompt.md](../prompts/create-issue.prompt.md) | `GitHub Ops Executor` | Create issues with type-first policy and structured markdown content. |
+| [../prompts/update-issue.prompt.md](../prompts/update-issue.prompt.md) | `GitHub Ops Executor` | Update issue fields while preserving unchanged metadata. |
+| [../prompts/close-issue.prompt.md](../prompts/close-issue.prompt.md) | `GitHub Ops Executor` | Close issues with optional closure context. |
+| [../prompts/reopen-issue.prompt.md](../prompts/reopen-issue.prompt.md) | `GitHub Ops Executor` | Reopen closed issues and confirm final state. |
+| [../prompts/delete-issue.prompt.md](../prompts/delete-issue.prompt.md) | `GitHub Ops Executor` | Delete issues behind an explicit confirmation gate. |
+| [../prompts/create-branch.prompt.md](../prompts/create-branch.prompt.md) | `GitHub Ops Executor` | Create semantic working branches from main. |
+| [../prompts/sync-branch.prompt.md](../prompts/sync-branch.prompt.md) | `GitHub Ops Executor` | Sync working branches with main using rebase or merge strategy. |
+| [../prompts/delete-branch.prompt.md](../prompts/delete-branch.prompt.md) | `GitHub Ops Executor` | Delete local/remote branches with default-branch safety guards. |
 | [../prompts/security-review.prompt.md](../prompts/security-review.prompt.md) | `SE: Security` | Security-focused review with prioritized findings. |
 | [../prompts/ci-hardening.prompt.md](../prompts/ci-hardening.prompt.md) | `GitHub Actions Expert` | Harden GitHub Actions pipelines and improve reliability. |
 | [../prompts/dependabot-maintenance.prompt.md](../prompts/dependabot-maintenance.prompt.md) | `SE: DevOps/CI` | Configure and optimize Dependabot updates for low-noise, secure dependency management. |

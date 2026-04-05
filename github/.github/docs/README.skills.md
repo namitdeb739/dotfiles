@@ -1,6 +1,6 @@
 # Skills in This Repo
 
-This repository now includes 20 custom skills imported from github/awesome-copilot.
+This repository now includes 25 custom skills imported from github/awesome-copilot (with local adaptation where needed).
 
 ## Newly Added In This Pass
 
@@ -23,6 +23,11 @@ This repository now includes 20 custom skills imported from github/awesome-copil
 - [../skills/ruff-recursive-fix/SKILL.md](../skills/ruff-recursive-fix/SKILL.md)
 - [../skills/pytest-coverage/SKILL.md](../skills/pytest-coverage/SKILL.md)
 - [../skills/dependabot/SKILL.md](../skills/dependabot/SKILL.md)
+- [../skills/gh-cli/SKILL.md](../skills/gh-cli/SKILL.md)
+- [../skills/github-issues/SKILL.md](../skills/github-issues/SKILL.md)
+- [../skills/make-repo-contribution/SKILL.md](../skills/make-repo-contribution/SKILL.md)
+- [../skills/create-github-pull-request-from-specification/SKILL.md](../skills/create-github-pull-request-from-specification/SKILL.md)
+- [../skills/git-flow-branch-creator/SKILL.md](../skills/git-flow-branch-creator/SKILL.md)
 
 ## Existing Skill
 
