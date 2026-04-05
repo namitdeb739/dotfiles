@@ -22,6 +22,16 @@ Requirements:
 Output format:
 
 1. What changed
-2. Files touched
-3. Validation performed
+   - Concise summary paragraph.
+
+2. Files touched table:
+
+| File | Change Type | Purpose |
+| ---- | ----------- | ------- |
+
+3. Validation performed table:
+
+| Check | Command/Method | Result |
+| ----- | -------------- | ------ |
+
 4. Residual risks or follow-ups

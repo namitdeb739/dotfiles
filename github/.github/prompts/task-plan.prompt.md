@@ -23,6 +23,17 @@ Output format:
 
 1. Objective
 2. Constraints
-3. Step-by-step plan
-4. Verification gates
-5. Rollback/fallback strategy
+3. Step-by-step plan table:
+
+| Phase | Step | Dependency | Outcome |
+| ----- | ---- | ---------- | ------- |
+
+4. Verification gates table:
+
+| Phase | Verification Gate | Command/Method | Pass Criteria |
+| ----- | ----------------- | -------------- | ------------- |
+
+5. Rollback/fallback strategy table:
+
+| Trigger | Fallback Action | Recovery Verification |
+| ------- | --------------- | --------------------- |

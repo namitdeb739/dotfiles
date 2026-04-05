@@ -43,8 +43,24 @@ Grouping guidance:
 
 Output format:
 
-1. Git state summary
-2. Proposed commit groups
-3. Commits created (hash + message + file list)
-4. Push result
+1. Git state summary table:
+
+| Branch | Staged Files | Unstaged Files | Untracked Files | Ahead/Behind |
+| ------ | ------------ | -------------- | --------------- | ------------ |
+
+2. Proposed commit groups table:
+
+| Group | Intent | Files/Hunks Included | Rationale |
+| ----- | ------ | -------------------- | --------- |
+
+3. Commits created table:
+
+| Hash | Message | Files Included |
+| ---- | ------- | -------------- |
+
+4. Push result table:
+
+| Remote | Branch | Result | Details |
+| ------ | ------ | ------ | ------- |
+
 5. Follow-ups (if any changes remain uncommitted)

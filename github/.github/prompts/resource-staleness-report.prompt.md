@@ -22,8 +22,21 @@ Requirements:
 
 Output format:
 
-1. Scope and thresholds
-2. Classification logic
-3. Issue/report format
-4. Scheduling and automation details
+1. Scope and thresholds table:
+
+| Resource Scope | Stale Threshold | Aging Threshold | Fresh Threshold |
+| -------------- | --------------- | --------------- | --------------- |
+
+2. Classification logic table:
+
+| Bucket | Criteria | Action |
+| ------ | -------- | ------ |
+
+3. Issue/report format section with a markdown table template for entries.
+
+4. Scheduling and automation details table:
+
+| Trigger | Cadence | Workflow/Job | Notification Target |
+| ------- | ------- | ------------ | ------------------- |
+
 5. Maintenance checklist

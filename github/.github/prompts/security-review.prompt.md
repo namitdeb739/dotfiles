@@ -21,8 +21,21 @@ Requirements:
 
 Output format:
 
-1. Critical findings
-2. High findings
-3. Medium/low findings
-4. Recommended fixes
-5. Security validation checklist
+1. Severity summary table:
+
+| Severity | Count | Highest-Risk Area |
+| -------- | ----- | ----------------- |
+
+2. Findings table (group by severity):
+
+| Severity | File/Scope | Issue | Exploitability | Impact |
+| -------- | ---------- | ----- | -------------- | ------ |
+
+3. Recommended fixes table:
+
+| Priority | Fix | Target File/Area | Verification |
+| -------- | --- | ---------------- | ------------ |
+
+4. Security validation checklist
+
+5. Residual risks (if unresolved)

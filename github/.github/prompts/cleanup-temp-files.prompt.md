@@ -33,9 +33,29 @@ Requirements:
 
 Output format:
 
-1. Discovery summary
-2. Proposed deletions (dry-run)
-3. Safety exclusions and rationale
+1. Discovery summary table:
+
+| Path | Type | Size | Tracked by Git | Notes |
+| ---- | ---- | ---- | -------------- | ----- |
+
+2. Proposed deletions (dry-run) table:
+
+| Path | Estimated Reclaim | Risk | Rationale |
+| ---- | ----------------- | ---- | --------- |
+
+3. Safety exclusions and rationale table:
+
+| Excluded Path/Pattern | Reason |
+| --------------------- | ------ |
+
 4. Confirmation checkpoint
-5. Deletion results
-6. Post-cleanup verification
+
+5. Deletion results table:
+
+| Path | Action | Result |
+| ---- | ------ | ------ |
+
+6. Post-cleanup verification table:
+
+| Verification Check | Result |
+| ------------------ | ------ |
