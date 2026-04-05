@@ -155,6 +155,7 @@ jobs:
                 available_agents.add(match.group(1).strip().strip("\"'"))
 
           errors = []
+          warnings = []
 
           for prompt_file in sorted(prompts_dir.glob('*.prompt.md')):
               text = prompt_file.read_text(encoding='utf-8', errors='ignore')
@@ -173,8 +174,9 @@ jobs:
                   continue
 
               if agent_name not in available_agents:
-                  errors.append(
-                      f"{prompt_file}: unknown agent '{agent_name}' (not found in github/.github/agents/*.agent.md)"
+                  # Prompts may intentionally target user-installed or extension-provided custom agents.
+                  warnings.append(
+                    f"{prompt_file}: agent '{agent_name}' not found in github/.github/agents/*.agent.md (allowed external/custom agent)"
                   )
 
           if errors:
@@ -183,7 +185,15 @@ jobs:
                   print(f'- {err}')
               sys.exit(1)
 
-          print(f"OK: validated prompt routing for {len(list(prompts_dir.glob('*.prompt.md')))} prompt files")
+          if warnings:
+              print('Prompt routing validation warnings:')
+              for warning in warnings:
+                  print(f'- {warning}')
+
+          print(
+              f"OK: validated prompt routing for {len(list(prompts_dir.glob('*.prompt.md')))} prompt files "
+              f"(repo agents: {len(available_agents)}, external-agent warnings: {len(warnings)})"
+          )
           PY
 
   bootstrap-smoke:

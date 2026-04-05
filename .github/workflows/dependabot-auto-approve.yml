@@ -1,0 +1,45 @@
+name: Dependabot Auto Approve
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-approve-and-enable-automerge:
+    if: >-
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    concurrency:
+      group: dependabot-auto-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      - name: Approve Dependabot pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+          gh pr review --approve "$PR_URL" --body "Auto-approving Dependabot PR. Auto-merge is enabled and will complete once required checks pass."
+
+      - name: Enable auto-merge when required checks pass
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          set -euo pipefail
+
+          for method in --squash --rebase --merge; do
+            if gh pr merge --auto "$method" "$PR_URL"; then
+              echo "Enabled auto-merge using ${method}."
+              exit 0
+            fi
+          done
+
+          echo "Failed to enable auto-merge with available merge methods." >&2
+          exit 1
