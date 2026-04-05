@@ -125,7 +125,7 @@
     "del": false,
     "kill": false,
     "chmod": false,
-    "chown": false
+    "chown": false,
   },
 
   // --- AI: Custom Instructions & Prompt Files ---
@@ -135,26 +135,26 @@
   "chat.useAgentsMdFile": true,
   "chat.instructionsFilesLocations": {
     "~/.github/instructions": true,
-    ".github/instructions": true
+    ".github/instructions": true,
   },
   "chat.agentFilesLocations": {
     "~/.github/agents": true,
-    ".github/agents": true
+    ".github/agents": true,
   },
   "chat.promptFilesLocations": {
     "~/.github/prompts": true,
-    ".github/prompts": true
+    ".github/prompts": true,
   },
   "chat.agentSkillsLocations": {
     "~/.copilot/skills": true,
-    ".github/skills": true
+    ".github/skills": true,
   },
 
   // --- AI: Commit Message Instructions ---
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Keep subject line under 72 chars. Use imperative mood. Add body for non-trivial changes explaining what and why."
-    }
+      "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Keep subject line under 72 chars. Use imperative mood. Add body for non-trivial changes explaining what and why.",
+    },
   ],
 
   // --- GitLens ---
@@ -204,7 +204,7 @@
     "*.graphql": "graphql",
     "*.gql": "graphql",
     "*.http": "http",
-    "*.rest": "http"
+    "*.rest": "http",
   },
   "material-icon-theme.folders.associations": {
     "infra": "kubernetes",
@@ -265,12 +265,12 @@
     "integration": "test",
     "spec": "test",
     "bench": "benchmark",
-    "benchmarks": "benchmark"
+    "benchmarks": "benchmark",
   },
 
   // --- Language-Specific ---
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
 
   // --- Schema Trust ---
@@ -282,9 +282,12 @@
     "https://raw.githubusercontent.com/devcontainers/spec/": true,
     "https://raw.githubusercontent.com/microsoft/vscode/": true,
     "https://schemastore.azurewebsites.net/": true,
-    "https://www.schemastore.org/": true
+    "https://www.schemastore.org/": true,
   },
   "[markdown]": {
-    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
-  }
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+  },
 }
