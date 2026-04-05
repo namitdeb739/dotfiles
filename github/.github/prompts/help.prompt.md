@@ -41,14 +41,14 @@ Output format:
 2. Category index table:
 
 | Category | Command Count |
-| --- | --- |
+| -------- | ------------- |
 
 3. One markdown table per category (multiple tables):
 
 ### <Category Name>
 
 | Command | Source | Purpose | How discovered | Availability |
-| --- | --- | --- | --- | --- |
+| ------- | ------ | ------- | -------------- | ------------ |
 
 4. If a focus was provided, add a final focused table that includes matching commands from all categories.
 5. Final notes with any limitations and quick validation steps.
