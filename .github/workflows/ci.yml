@@ -55,8 +55,20 @@ jobs:
 
           for md in md_files:
               text = md.read_text(encoding='utf-8', errors='ignore')
+              in_fenced_code = False
               for lineno, line in enumerate(text.splitlines(), start=1):
-                  for raw_target in link_re.findall(line):
+                  stripped = line.lstrip()
+                  if stripped.startswith('```') or stripped.startswith('~~~'):
+                      in_fenced_code = not in_fenced_code
+                      continue
+
+                  if in_fenced_code:
+                      continue
+
+                  # Ignore inline code spans to avoid flagging syntax examples.
+                  line_for_links = re.sub(r'`[^`]*`', '', line)
+
+                  for raw_target in link_re.findall(line_for_links):
                       target = raw_target.strip()
 
                       # Ignore title suffixes: path "title"
