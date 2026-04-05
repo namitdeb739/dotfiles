@@ -188,8 +188,8 @@ Exits non-zero if any file under `~/.github/` is not tracked by this repo.
 ## Verify Local Planning Artifacts Are Ignored
 
 ```bash
-# Should print an ignore rule match and no tracked changes from .copilot-tracking/
-git check-ignore -v .copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
+# Should print an ignore rule match and no tracked changes from .github/.copilot-tracking/
+git check-ignore -v .github/.copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
 git status --short
 ```
 
