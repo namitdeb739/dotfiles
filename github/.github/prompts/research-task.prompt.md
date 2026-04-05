@@ -22,22 +22,29 @@ Requirements:
 
 Output format:
 
-1. Problem framing (bullet list)
-2. Relevant files/components table:
+1. Executive summary (3-5 bullets):
+
+- What is being decided
+- What is most likely true
+- Why it matters now
+
+2. Problem framing (bullet list)
+3. Relevant files/components table:
 
 | File/Component | Files Affected | Why It Matters | Confidence |
 | -------------- | -------------- | -------------- | ---------- |
 
-3. Key findings table:
+4. Key findings table (ordered by impact):
 
 | Finding | Files Affected | Evidence | Impact |
 | ------- | -------------- | -------- | ------ |
 
-4. Open questions (bullet list)
-5. Recommended direction (bullet list)
+5. Risks and constraints (bullet list)
+6. Open questions (bullet list)
+7. Recommended direction (numbered list, 3-6 items)
 
-6. Final user-visible summary (mandatory):
+8. Final user-visible summary (mandatory):
 
 - Top 3 findings (bullets)
 - Recommendation verdict (single line)
-- 2-4 practical next steps (bullets)
+- 2-4 practical next steps (numbered list)
