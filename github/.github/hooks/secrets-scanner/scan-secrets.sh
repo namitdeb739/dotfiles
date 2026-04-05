@@ -167,7 +167,7 @@ scan_file() {
 
   # Skip common non-sensitive files
   case "$filepath" in
-    *.lock|package-lock.json|yarn.lock|pnpm-lock.yaml|Cargo.lock|go.sum|*.sum)
+    *.lock|*.sum)
       return 0 ;;
   esac
 

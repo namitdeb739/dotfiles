@@ -207,7 +207,6 @@ get_license() {
     go)
       # Check module cache for LICENSE file
       local gopath="${GOPATH:-$HOME/go}"
-      local mod_dir="$gopath/pkg/mod/$pkg"
       # Try to find the latest version directory
       if [[ -d "$gopath/pkg/mod" ]]; then
         local found_dir

@@ -8,7 +8,8 @@ if [[ "${SKIP_GOVERNANCE_AUDIT:-}" == "true" ]]; then
   exit 0
 fi
 
-INPUT=$(cat)
+# Drain stdin from hook runner to avoid blocking upstream pipes.
+cat >/dev/null
 
 mkdir -p logs/copilot/governance
 

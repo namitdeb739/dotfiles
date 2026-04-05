@@ -129,7 +129,7 @@ Installed via `brew bundle` during bootstrap:
 | Category | Tools |
 | ---------- | ------- |
 | Shell | stow, starship, antidote, zoxide, atuin |
-| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv |
+| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv, shellcheck |
 | Python | uv, ruff |
 | Node | fnm |
 | Build | just, pre-commit |
@@ -185,12 +185,17 @@ code ~/.config/starship.toml
 
 Exits non-zero if any file under `~/.github/` is not tracked by this repo.
 
-## Verify Local Planning Artifacts Are Ignored
+## Verify Copilot Planning Paths
 
 ```bash
-# Should print an ignore rule match and no tracked changes from .github/.copilot-tracking/
-git check-ignore -v .github/.copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
-git status --short
+# Canonical local Copilot planning paths are ignored
+git check-ignore -v .github/.copilot/research/20260405-dotfiles-effectiveness-research.md
+
+# Legacy root planning path remains ignored if recreated locally
+git check-ignore -v .copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
+
+# Alternate local Copilot planning path remains ignored if recreated locally
+git check-ignore -v .copilot/research/20260405-dotfiles-effectiveness-research.md
 ```
 
 ## VS Code Config Validation Policy
@@ -206,7 +211,12 @@ python3 scripts/validate_vscode_jsonc.py
 
 ```text
 dotfiles/
-├── .github/workflows/ci.yml        # CI: ShellCheck, JSON validation, smoke test
+├── .github/
+│   ├── CODEOWNERS                  # Ownership rules for GitHub-managed paths
+│   ├── dependabot.yml              # Dependabot update policy
+│   └── workflows/
+│       └── ci.yml                  # CI: ShellCheck, JSON validation, smoke test
+├── SECURITY.md                     # Security policy and disclosure guidance
 ├── bootstrap.sh                     # One-command setup script
 ├── check-github-managed.sh          # Verifies ~/.github/ integrity
 ├── brew/Brewfile                    # Homebrew packages, casks, fonts
@@ -218,9 +228,12 @@ dotfiles/
 ├── github/.github/
 │   ├── copilot-instructions.md      # Global Copilot instructions (always-on)
 │   ├── agents/                      # Custom Copilot agents
+│   ├── docs/                        # Catalog docs for agents/hooks/prompts/instructions/skills/workflows
 │   ├── hooks/                       # Copilot hook packs
 │   ├── instructions/                # Context-aware instruction files
-│   └── prompts/                     # Custom slash-command prompts
+│   ├── prompts/                     # Custom slash-command prompts
+│   ├── skills/                      # Reusable Copilot skill packs
+│   └── workflows/                   # GitHub workflow prompt definitions
 ├── vscode/
 │   ├── settings.json                # Editor, AI, theme, formatter settings
 │   ├── keybindings.json             # Custom keyboard shortcuts
