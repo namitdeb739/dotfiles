@@ -18,6 +18,8 @@ Requirements:
 - Break work into ordered, atomic steps.
 - Include dependencies and sequencing constraints.
 - Include test/verification gates per phase.
+- Always present the final plan directly to the user in-chat using the format below (do not only write planning files).
+- Use concise bullets for narrative sections and markdown tables for operational sections.
 
 Output format:
 
@@ -37,3 +39,9 @@ Output format:
 
 | Trigger | Fallback Action | Recovery Verification |
 | ------- | --------------- | --------------------- |
+
+6. Final user-visible summary (mandatory):
+
+- Brief readiness verdict (ready/not-ready to implement).
+- 3-5 bullets highlighting key sequencing decisions.
+- Explicit request for implementation approval.
