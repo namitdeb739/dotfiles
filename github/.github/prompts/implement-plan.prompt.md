@@ -26,12 +26,12 @@ Output format:
 
 2. Files touched table:
 
-| File | Change Type | Purpose |
-| ---- | ----------- | ------- |
+| Files Affected | Change Type | Purpose |
+| -------------- | ----------- | ------- |
 
 3. Validation performed table:
 
-| Check | Command/Method | Result |
-| ----- | -------------- | ------ |
+| Check | Files Affected | Command/Method | Result |
+| ----- | -------------- | -------------- | ------ |
 
 4. Residual risks or follow-ups

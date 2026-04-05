@@ -27,18 +27,18 @@ Output format:
 2. Constraints
 3. Step-by-step plan table:
 
-| Phase | Step | Dependency | Outcome |
-| ----- | ---- | ---------- | ------- |
+| Phase | Step | Files Affected | Dependency | Outcome |
+| ----- | ---- | -------------- | ---------- | ------- |
 
 4. Verification gates table:
 
-| Phase | Verification Gate | Command/Method | Pass Criteria |
-| ----- | ----------------- | -------------- | ------------- |
+| Phase | Verification Gate | Files Affected | Command/Method | Pass Criteria |
+| ----- | ----------------- | -------------- | -------------- | ------------- |
 
 5. Rollback/fallback strategy table:
 
-| Trigger | Fallback Action | Recovery Verification |
-| ------- | --------------- | --------------------- |
+| Trigger | Files Affected | Fallback Action | Recovery Verification |
+| ------- | -------------- | --------------- | --------------------- |
 
 6. Final user-visible summary (mandatory):
 

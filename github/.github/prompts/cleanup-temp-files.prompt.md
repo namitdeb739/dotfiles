@@ -2,7 +2,7 @@
 name: cleanup-temp-files
 description: "Find and clean temporary files and directories safely with preview-first execution"
 agent: "Universal Janitor"
-argument-hint: "Optional scope or patterns (for example .copilot-tracking, caches, build outputs)"
+argument-hint: "Optional scope or patterns (for example .github/.copilot-tracking, caches, build outputs)"
 ---
 
 # Cleanup Temp Files
@@ -17,7 +17,7 @@ Requirements:
 
 - Start with discovery and dry-run only. Do not delete anything on first pass.
 - Include likely temporary targets such as:
-  - `.copilot-tracking/`
+  - `.github/.copilot-tracking/`
   - `__pycache__/`, `.pytest_cache/`, `.ruff_cache/`
   - `.mypy_cache/`, `.cache/`, `.tmp/`, `tmp/`, `temp/`
   - `.DS_Store`, `Thumbs.db`

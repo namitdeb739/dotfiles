@@ -25,13 +25,13 @@ Output format:
 1. Problem framing (bullet list)
 2. Relevant files/components table:
 
-| File/Component | Why It Matters | Confidence |
-| -------------- | -------------- | ---------- |
+| File/Component | Files Affected | Why It Matters | Confidence |
+| -------------- | -------------- | -------------- | ---------- |
 
 3. Key findings table:
 
-| Finding | Evidence | Impact |
-| ------- | -------- | ------ |
+| Finding | Files Affected | Evidence | Impact |
+| ------- | -------------- | -------- | ------ |
 
 4. Open questions (bullet list)
 5. Recommended direction (bullet list)
