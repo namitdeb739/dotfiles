@@ -6,6 +6,7 @@ This repository includes task-launch prompt files aligned with the installed age
 
 | Prompt | Recommended Custom Agent | Purpose |
 | --- | --- | --- |
+| [../prompts/help.prompt.md](../prompts/help.prompt.md) | `context-architect` | Summarize available built-in, custom, and MCP/plugin prompt commands in a single help table. |
 | [../prompts/plan-feature.prompt.md](../prompts/plan-feature.prompt.md) | `plan` | Build phased implementation plans for features/refactors. |
 | [../prompts/research-task.prompt.md](../prompts/research-task.prompt.md) | `task-researcher` | Deep task/problem research before planning or coding. |
 | [../prompts/task-plan.prompt.md](../prompts/task-plan.prompt.md) | `task-planner` | Convert research into executable implementation steps. |
