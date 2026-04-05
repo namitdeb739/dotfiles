@@ -17,9 +17,9 @@ jobs:
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
         with:
-          scandir: '.'
-          ignore_paths: 'zsh'
-          additional_files: 'bootstrap.sh check-github-managed.sh'
+          scandir: "."
+          ignore_paths: "zsh"
+          additional_files: "bootstrap.sh check-github-managed.sh"
 
   markdown-links:
     name: Validate markdown links
@@ -109,6 +109,10 @@ jobs:
             echo "mcp/.mcp.json is valid JSON"
           fi
 
+      - name: Validate VS Code JSONC files
+        run: |
+          python3 scripts/validate_vscode_jsonc.py
+
   validate-prompts:
     name: Validate prompt agent routing
     runs-on: ubuntu-latest
@@ -186,3 +190,35 @@ jobs:
           test -L ~/.gitconfig && echo "OK: ~/.gitconfig is symlinked"
           test -L ~/.github && echo "OK: ~/.github is symlinked"
           grep -q "Namit Deb" ~/.gitconfig && echo "OK: gitconfig has correct user"
+
+  bootstrap-linux-sanity:
+    name: Bootstrap Linux sanity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Syntax checks
+        run: |
+          bash -n bootstrap.sh
+          bash -n check-github-managed.sh
+
+      - name: Help output works
+        run: |
+          chmod +x bootstrap.sh check-github-managed.sh
+          ./bootstrap.sh --help >/dev/null
+
+      - name: Argument guard works
+        run: |
+          set +e
+          ./bootstrap.sh --interactive --non-interactive >/tmp/bootstrap-conflict.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -eq 1
+
+      - name: UI mode validation works
+        run: |
+          set +e
+          ./bootstrap.sh --ui=invalid >/tmp/bootstrap-ui.log 2>&1
+          rc=$?
+          set -e
+          test "$rc" -eq 1

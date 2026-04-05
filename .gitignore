@@ -11,3 +11,6 @@ credentials*
 
 # Editor/workspace files
 .vscode/
+
+# Local Copilot planning artifacts
+.copilot-tracking/

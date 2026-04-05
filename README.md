@@ -142,7 +142,9 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 
 - **ShellCheck** — lints `bootstrap.sh` and `check-github-managed.sh`
 - **JSON validation** — validates all hook configs and MCP config
+- **VS Code JSONC validation** — validates `vscode/settings.json`, `vscode/keybindings.json`, and `vscode/extensions.json` via `scripts/validate_vscode_jsonc.py`
 - **Bootstrap smoke test** — runs full bootstrap on macOS runner, verifies symlinks
+- **Bootstrap Linux sanity** — verifies bootstrap script syntax/help and argument guard behavior on Ubuntu
 
 ## Selective Install
 
@@ -183,6 +185,23 @@ code ~/.config/starship.toml
 
 Exits non-zero if any file under `~/.github/` is not tracked by this repo.
 
+## Verify Local Planning Artifacts Are Ignored
+
+```bash
+# Should print an ignore rule match and no tracked changes from .copilot-tracking/
+git check-ignore -v .copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
+git status --short
+```
+
+## VS Code Config Validation Policy
+
+VS Code user config files under `vscode/` are validated in CI using JSONC-aware parsing (comments and trailing commas allowed).
+
+```bash
+# Run the same JSONC validation locally
+python3 scripts/validate_vscode_jsonc.py
+```
+
 ## File Structure
 
 ```text
@@ -191,6 +210,7 @@ dotfiles/
 ├── bootstrap.sh                     # One-command setup script
 ├── check-github-managed.sh          # Verifies ~/.github/ integrity
 ├── brew/Brewfile                    # Homebrew packages, casks, fonts
+├── scripts/validate_vscode_jsonc.py # JSONC validation for VS Code config files
 ├── starship/starship.toml           # Tokyo Night prompt config (managed by bootstrap)
 ├── git/
 │   ├── .gitconfig                   # Git config (aliases, defaults, delta pager)
