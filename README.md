@@ -129,7 +129,7 @@ Installed via `brew bundle` during bootstrap:
 | Category | Tools |
 | ---------- | ------- |
 | Shell | stow, starship, antidote, zoxide, atuin |
-| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv |
+| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv, shellcheck |
 | Python | uv, ruff |
 | Node | fnm |
 | Build | just, pre-commit |
@@ -185,12 +185,14 @@ code ~/.config/starship.toml
 
 Exits non-zero if any file under `~/.github/` is not tracked by this repo.
 
-## Verify Local Planning Artifacts Are Ignored
+## Verify Copilot Planning Paths
 
 ```bash
-# Should print an ignore rule match and no tracked changes from .github/.copilot-tracking/
-git check-ignore -v .github/.copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
-git status --short
+# Canonical Copilot planning path is tracked
+git status --short .github/.copilot
+
+# Legacy root planning path remains ignored if recreated locally
+git check-ignore -v .copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
 ```
 
 ## VS Code Config Validation Policy
