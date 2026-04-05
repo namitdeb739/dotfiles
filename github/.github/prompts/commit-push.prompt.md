@@ -19,7 +19,7 @@ Requirements:
 - Detect unrelated change groups and split them into separate commits.
 - If multiple files appear unrelated, do not force a single commit.
 - Keep each commit logically cohesive and minimal.
-- Always present the proposed grouping plan and request confirmation before creating any commit.
+- Present the proposed grouping plan, then proceed automatically using best judgment unless explicitly instructed to stop.
 - Before each commit:
   - Stage only files and hunks relevant to that commit.
   - Generate a commit message from the actual diff.
@@ -28,7 +28,7 @@ Requirements:
   1. Explicit repo config or docs (commitlint, contributing docs, hooks, templates).
   2. Existing commit history conventions.
   3. Fallback to Conventional Commits with type and optional scope.
-- After all confirmed commits are created, push current branch to its upstream automatically.
+- After commits are created, push current branch to its upstream automatically.
 - Never include unrelated temporary files unless explicitly requested.
 
 Grouping guidance:
