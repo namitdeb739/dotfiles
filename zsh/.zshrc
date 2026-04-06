@@ -104,3 +104,12 @@ fi
 if command -v direnv &>/dev/null; then
   eval "$(direnv hook zsh)"
 fi
+
+# --- Secrets ---
+# Source ~/.secrets for API keys and tokens that can't be committed.
+# Create this file on each machine; it is gitignored globally.
+# Example contents:
+#   export OPENAI_API_KEY="sk-..."
+#   export GITHUB_TOKEN="ghp_..."
+# shellcheck source=/dev/null
+[[ -f ~/.secrets ]] && source ~/.secrets
