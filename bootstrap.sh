@@ -472,6 +472,7 @@ stow_core_packages() {
   stow_package "github"
   stow_package "zsh"
   stow_package "atuin"
+  stow_package "starship"
 }
 
 run_verification() {
@@ -547,38 +548,46 @@ stow_package() {
 
 link_vscode() {
   local vscode_src="$REPO_DIR/vscode"
-  [[ ! -d "$vscode_src" ]] && return
+  [[ ! -d "$vscode_src" ]] && return 0
 
   local vscode_target
   case "$(uname -s)" in
     Darwin) vscode_target="$HOME/Library/Application Support/Code/User" ;;
     Linux)  vscode_target="$HOME/.config/Code/User" ;;
-    *)      vscode_target="$APPDATA/Code/User" ;;
+    *)
+      log_warn "Unsupported platform for VS Code stow — skipping"
+      return 0
+      ;;
   esac
 
   mkdir -p "$vscode_target"
 
+  # Back up conflicting real files before stow runs
+  local file name target backup
   for file in "$vscode_src"/*.json; do
     [[ -f "$file" ]] || continue
-
-    local name
     name="$(basename "$file")"
-    local target="$vscode_target/$name"
+    target="$vscode_target/$name"
 
     if [[ -L "$target" ]]; then
-      if [[ "$(readlink "$target")" == "$file" ]]; then
-        continue
-      fi
+      [[ "$(readlink "$target")" == "$file" ]] && continue
       rm "$target"
     elif [[ -e "$target" ]]; then
-      local backup="$BACKUP_DIR/vscode/${name}.${TIMESTAMP}"
+      backup="$BACKUP_DIR/vscode/${name}.${TIMESTAMP}"
       mkdir -p "$(dirname "$backup")"
       mv "$target" "$backup"
+      echo "Backed up: $target -> $backup"
     fi
-
-    ln -sf "$file" "$target"
-    echo "Linked: $target -> $file"
   done
+
+  stow \
+    --dir="$REPO_DIR" \
+    --target="$vscode_target" \
+    --restow \
+    --no-folding \
+    vscode
+
+  echo "VS Code config stowed to: $vscode_target"
 }
 
 install_vscode_extensions() {
@@ -620,29 +629,22 @@ configure_starship() {
   command_exists starship || return 0
 
   local config="$HOME/.config/starship.toml"
-  local dotfiles_config="$REPO_DIR/starship/starship.toml"
+  local dotfiles_config="$REPO_DIR/starship/.config/starship.toml"
 
-  mkdir -p "$(dirname "$config")"
-
-  # No existing config: link dotfiles default and return.
-  if [[ ! -e "$config" ]]; then
-    if [[ -f "$dotfiles_config" ]]; then
-      ln -sf "$dotfiles_config" "$config"
-      echo "Starship configured (dotfiles default)."
-    fi
+  # Initial symlinking is handled by stow (starship package in stow_core_packages).
+  # This phase only handles interactive preset selection on machines that want a
+  # different theme — non-interactive runs keep whatever stow put in place.
+  if [[ "$INTERACTIVE_MODE" -ne 1 || "${BOOTSTRAP_NONINTERACTIVE}" == "1" || ! -t 0 ]]; then
+    echo "Non-interactive — keeping existing Starship config."
     return 0
   fi
 
   echo "--- Starship ---"
-  echo "Found existing config at: $config"
-  if [[ -L "$config" ]]; then
-    echo "Current symlink target: $(readlink "$config")"
-  fi
-
-  if [[ "$INTERACTIVE_MODE" -ne 1 || "${BOOTSTRAP_NONINTERACTIVE}" == "1" || ! -t 0 ]]; then
-    echo "Non-interactive shell detected — unable to prompt."
-    echo "Keeping existing Starship config. Re-run interactively to change it."
-    return 0
+  if [[ -e "$config" ]]; then
+    echo "Found existing config at: $config"
+    if [[ -L "$config" ]]; then
+      echo "Current symlink target: $(readlink "$config")"
+    fi
   fi
 
   echo "Choose Starship config:"
