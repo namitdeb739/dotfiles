@@ -31,18 +31,10 @@
 	autoStash = true
 
 [alias]
-	st = status
-	co = checkout
-	sw = switch
-	br = branch
-	ci = commit
+	# Shorthands with no shell alias equivalent
 	cm = commit -m
 	ca = commit --amend
 	cp = cherry-pick
-	df = diff
-	ds = diff --staged
-	lg = log --oneline --graph --decorate -20
-	lga = log --oneline --graph --decorate --all -30
 	ll = log --pretty=format:'%C(yellow)%h%Creset %s %C(green)(%cr)%Creset %C(blue)<%an>%Creset' -20
 	undo = reset --soft HEAD~1
 	unstage = restore --staged

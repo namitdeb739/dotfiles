@@ -45,10 +45,18 @@ bindkey '^[[B' history-beginning-search-forward
 
 # --- Antidote plugin manager ---
 # Install: brew install antidote
-if [[ -f "$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh" ]]; then
-  source "$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
-  antidote load ~/.zsh_plugins.txt
+# Sources the pre-compiled static file (~/.zsh_plugins.zsh) for fast startup when
+# available; falls back to dynamic load. Re-run bootstrap to regenerate static file.
+_antidote_init="$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh"
+if [[ -f "$_antidote_init" ]]; then
+  source "$_antidote_init"
+  if [[ -f ~/.zsh_plugins.zsh ]]; then
+    source ~/.zsh_plugins.zsh
+  else
+    antidote load ~/.zsh_plugins.txt
+  fi
 fi
+unset _antidote_init
 
 # --- Source modular configs ---
 for config_file in ~/.zsh/*.zsh(N); do

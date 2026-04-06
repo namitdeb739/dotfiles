@@ -30,6 +30,7 @@ RUN_STARSHIP=1
 RUN_EXTENSIONS=1
 RUN_ZSH_PLUGINS=1
 RUN_VERIFICATION=1
+RUN_SSH_KEY=1
 
 # Summary tracking
 SUMMARY_PRINTED=0
@@ -237,6 +238,7 @@ enable_all_sections() {
   RUN_EXTENSIONS=1
   RUN_ZSH_PLUGINS=1
   RUN_VERIFICATION=1
+  RUN_SSH_KEY=1
 }
 
 disable_all_sections() {
@@ -248,6 +250,7 @@ disable_all_sections() {
   RUN_EXTENSIONS=0
   RUN_ZSH_PLUGINS=0
   RUN_VERIFICATION=0
+  RUN_SSH_KEY=0
 }
 
 enable_section() {
@@ -278,6 +281,9 @@ enable_section() {
     verification)
       RUN_VERIFICATION=1
       ;;
+    ssh-key)
+      RUN_SSH_KEY=1
+      ;;
     *)
       log_warn "Unknown section '$section' ignored"
       ;;
@@ -291,7 +297,7 @@ apply_section_defaults() {
 }
 
 prompt_section_selection() {
-  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification")
+  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification" "ssh-key")
 
   if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
     return
@@ -327,6 +333,7 @@ prompt_section_selection() {
     echo "  6) extensions"
     echo "  7) zsh-plugins"
     echo "  8) verification"
+    echo "  9) ssh-key"
 
     local input
     read -rp "> " input
@@ -351,6 +358,7 @@ prompt_section_selection() {
         6|extensions) enable_section "extensions" ;;
         7|zsh-plugins) enable_section "zsh-plugins" ;;
         8|verification) enable_section "verification" ;;
+        9|ssh-key) enable_section "ssh-key" ;;
         all) enable_all_sections ;;
         *) log_warn "Ignoring unknown selection: $item" ;;
       esac
@@ -364,7 +372,7 @@ prompt_section_selection() {
   local selected_total
   selected_total=$((
     RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
-    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION
+    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY
   ))
 
   if [[ "$selected_total" -eq 0 ]]; then
@@ -463,6 +471,7 @@ stow_core_packages() {
   stow_package "git"
   stow_package "github"
   stow_package "zsh"
+  stow_package "atuin"
 }
 
 run_verification() {
@@ -724,6 +733,52 @@ cleanup_legacy() {
   return 0
 }
 
+setup_ssh_key() {
+  local key="$HOME/.ssh/id_ed25519"
+
+  if [[ -f "$key" ]]; then
+    echo "SSH key already exists: $key"
+    return 0
+  fi
+
+  if [[ "$INTERACTIVE_MODE" -ne 1 ]]; then
+    echo "Non-interactive mode — skipping SSH key generation"
+    return 0
+  fi
+
+  echo "No SSH key found at $key"
+
+  local generate="n"
+  read -rp "Generate a new ed25519 SSH key? [y/N] " generate
+
+  if [[ "$generate" != "y" && "$generate" != "Y" ]]; then
+    echo "Skipping SSH key generation"
+    return 0
+  fi
+
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  ssh-keygen -t ed25519 -C "namitdeb739@gmail.com" -f "$key"
+  echo "SSH key generated: $key"
+
+  if ! command_exists gh; then
+    echo "gh CLI not found — skipping GitHub upload. Add the key manually."
+    return 0
+  fi
+
+  local upload="n"
+  read -rp "Upload public key to GitHub via 'gh ssh-key add'? [y/N] " upload
+
+  if [[ "$upload" == "y" || "$upload" == "Y" ]]; then
+    local title
+    title="$(hostname -s)-$(date +%Y%m%d)"
+    gh ssh-key add "${key}.pub" --title "$title"
+    echo "Public key uploaded to GitHub as: $title"
+  fi
+
+  return 0
+}
+
 # ===========================================================
 # Main
 # ===========================================================
@@ -739,6 +794,11 @@ main() {
   print_runtime_context
 
   run_phase "Prerequisites" ensure_prerequisites || {
+    print_summary
+    return 1
+  }
+
+  run_or_skip_phase "SSH Key" "$RUN_SSH_KEY" setup_ssh_key || {
     print_summary
     return 1
   }
