@@ -473,6 +473,7 @@ stow_core_packages() {
   stow_package "zsh"
   stow_package "atuin"
   stow_package "starship"
+  stow_package "nvim"
 }
 
 run_verification() {

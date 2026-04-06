@@ -23,6 +23,7 @@ brew "htop"              # Process viewer
 brew "tldr"              # Simplified man pages
 brew "direnv"            # Per-directory env vars
 brew "shellcheck"        # Shell script static analysis
+brew "neovim"            # Terminal editor
 
 # --- Python ---
 brew "uv"                # Fast Python package manager
