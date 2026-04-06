@@ -1,4 +1,4 @@
-# Dotfiles Brewfile — run: brew bundle --file=~/Developer/dotfiles/brew/Brewfile
+# Dotfiles Brewfile — run: brew bundle --file="$(git rev-parse --show-toplevel)/brew/Brewfile"
 
 # --- Shell ---
 brew "stow"              # Symlink farm manager (dotfiles)

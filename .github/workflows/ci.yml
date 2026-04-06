@@ -22,7 +22,7 @@ jobs:
         with:
           scandir: "."
           ignore_paths: "zsh"
-          additional_files: "bootstrap.sh check-github-managed.sh"
+          additional_files: "bootstrap.sh check-stow-integrity.sh"
 
   markdown-links:
     name: Validate markdown links
@@ -207,7 +207,7 @@ jobs:
 
       - name: Run bootstrap
         run: |
-          chmod +x bootstrap.sh check-github-managed.sh
+          chmod +x bootstrap.sh check-stow-integrity.sh
           ./bootstrap.sh
 
       - name: Verify symlinks
@@ -225,11 +225,11 @@ jobs:
       - name: Syntax checks
         run: |
           bash -n bootstrap.sh
-          bash -n check-github-managed.sh
+          bash -n check-stow-integrity.sh
 
       - name: Help output works
         run: |
-          chmod +x bootstrap.sh check-github-managed.sh
+          chmod +x bootstrap.sh check-stow-integrity.sh
           ./bootstrap.sh --help >/dev/null
 
       - name: Argument guard works

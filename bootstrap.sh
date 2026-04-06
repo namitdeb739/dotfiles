@@ -477,12 +477,12 @@ stow_core_packages() {
 }
 
 run_verification() {
-  if [[ -f "$REPO_DIR/check-github-managed.sh" ]]; then
-    bash "$REPO_DIR/check-github-managed.sh"
+  if [[ -f "$REPO_DIR/check-stow-integrity.sh" ]]; then
+    bash "$REPO_DIR/check-stow-integrity.sh"
     return 0
   fi
 
-  log_warn "check-github-managed.sh not found; skipping verification"
+  log_warn "check-stow-integrity.sh not found; skipping verification"
   return 0
 }
 

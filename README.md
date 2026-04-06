@@ -2,8 +2,6 @@
 
 Personal development environment configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-<!-- cspell:words Fira atuin direnv glog Refactorer docstrings pytest ipynb mkcd ghclone killport -->
-
 One command sets up a new machine: shell, git, editor, AI tooling, CLI tools, and prompt theme.
 
 ## Prerequisites
@@ -14,12 +12,12 @@ One command sets up a new machine: shell, git, editor, AI tooling, CLI tools, an
 ## Setup on a New Machine
 
 ```bash
-# 1. Clone
+# 1. Clone anywhere — the path does not need to match ~/Developer/dotfiles
 git clone https://github.com/namitdeb739/dotfiles.git ~/Developer/dotfiles
 
 # 2. Bootstrap (does everything)
 cd ~/Developer/dotfiles
-chmod +x bootstrap.sh check-github-managed.sh
+chmod +x bootstrap.sh check-stow-integrity.sh
 ./bootstrap.sh
 
 # 3. Open a new terminal
@@ -44,13 +42,14 @@ Common bootstrap modes:
 The bootstrap script runs these steps automatically and prints a phase-by-phase status summary at the end:
 
 1. **Prerequisites** — installs GNU Stow via Homebrew
-2. **Brewfile** — installs all CLI tools, casks, and fonts (`brew bundle`)
-3. **Stow packages** — symlinks git, github, zsh configs into `~/`
-4. **VSCode** — symlinks settings, keybindings into the platform-specific VSCode User dir
-5. **Starship prompt** — interactive preset chooser (Tokyo Night default, or pick from 9 presets); non-interactive runs keep the existing config
-6. **VSCode extensions** — installs any missing extensions from `extensions.json`
-7. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
-8. **Verification** — confirms `~/.github/` integrity
+2. **SSH Key** — interactive: generates `~/.ssh/id_ed25519` if missing, optionally uploads to GitHub
+3. **Brewfile** — installs all CLI tools, casks, and fonts (`brew bundle`)
+4. **Stow packages** — symlinks git, github, zsh, atuin, starship, nvim configs into `~/`
+5. **VS Code** — stows settings, keybindings into the platform-specific VSCode User dir
+6. **Starship prompt** — interactive preset chooser (Dracula default, or pick from 9 presets); non-interactive runs keep the existing config
+7. **VS Code extensions** — installs any missing extensions from `extensions.json`
+8. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
+9. **Verification** — confirms all stow symlinks are intact
 
 ## Syncing Updates
 
@@ -59,14 +58,7 @@ cd ~/Developer/dotfiles
 git pull
 ```
 
-Stow symlinks point into the repo, so `git pull` applies changes immediately. Re-run `./bootstrap.sh` only if new Brew packages or VSCode extensions were added.
-
-If the remote history was rewritten (force-push):
-
-```bash
-git fetch origin
-git reset --hard origin/main
-```
+Stow symlinks point into the repo, so `git pull` applies changes immediately. Re-run `./bootstrap.sh` only if new Brew packages or VS Code extensions were added.
 
 ## What's Included
 
@@ -75,35 +67,49 @@ git reset --hard origin/main
 Each directory is an independent stow package that mirrors `~/` structure:
 
 | Package | Contents | Target |
-| --------- | ---------- | -------- |
+| ------- | -------- | ------ |
 | `git/` | `.gitconfig`, `.gitignore_global` | `~/` |
 | `github/` | `.github/` — Copilot agents, hooks, instructions, prompts | `~/.github/` |
-| `zsh/` | `.zshrc`, Starship config, aliases, functions, PATH | `~/` |
+| `zsh/` | `.zshrc`, aliases, functions, PATH, plugin list | `~/` |
+| `atuin/` | `config.toml` — fuzzy search, noise filter, preview | `~/.config/atuin/` |
+| `starship/` | `starship.toml` — Dracula prompt config | `~/.config/starship/` |
+| `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
 
 ### Shell (zsh)
 
-- **Plugin manager**: [antidote](https://antidote.sh/) (fast, static plugin loading)
-- **Prompt**: [Starship](https://starship.rs/) with Tokyo Night theme — shows directory, git, python, node, docker, package version, command duration
+- **Plugin manager**: [antidote](https://antidote.sh/) — bootstrap pre-compiles plugins to `~/.zsh_plugins.zsh` for fast static loading; falls back to dynamic load if the file is missing
+- **Prompt**: [Starship](https://starship.rs/) with Dracula theme — shows directory, git, python, node, docker, package version, command duration
 - **Plugins**: zsh-autosuggestions, fast-syntax-highlighting, zsh-completions, fzf-tab
 - **Modular config**: `~/.zsh/aliases.zsh`, `functions.zsh`, `path.zsh`
 - **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
+- **Secrets**: `~/.secrets` is sourced silently if it exists — put API keys and tokens there; it is gitignored globally
 
 ### Git
 
-- Aliases: `gs`, `gco`, `glog`, `undo`, `wip`, `cleanup`
-- Defaults: `push.default=current`, `pull.rebase=true`, `init.defaultBranch=main`
-- Pager: [delta](https://github.com/dandavies/delta) for better diffs
+- Shell aliases: `gs`, `gco`, `glog`, `gd`, `gds` (in `aliases.zsh`)
+- Git config aliases: `cm`, `ca`, `cp`, `ll`, `undo`, `unstage`, `wip`, `cleanup` (unique shorthands only — no duplication of shell aliases)
+- Defaults: `push.default=current`, `pull.rebase=true`, `init.defaultBranch=main`, `autoSetupRemote=true`
+- Pager: [delta](https://github.com/dandavison/delta) for better diffs
 - Credential helper: GitHub CLI (`gh auth git-credential`)
-- Global `.gitignore_global` for OS/editor/Python/Node cruft
+- Global `.gitignore_global` for OS/editor/Python/Node/secrets cruft
+
+### Neovim
+
+Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
+
+- **Plugin manager**: [lazy.nvim](https://github.com/folke/lazy.nvim) — self-bootstraps on first launch, lazy-loads everything
+- **Theme**: `Mofiqul/dracula.nvim` with Dracula Soft background — matches VS Code + starship palette
+- **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
+- **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
 
 ### VSCode
 
 - Dracula Theme Soft, Material Icon Theme with extensive file/folder associations
 - Format on save with Ruff (Python) and Prettier (JSON)
 - Full Copilot/AI configuration: agent mode, MCP auto-start, terminal auto-approve lists, custom instructions/agents/prompts locations, commit message generation
-- 44 extensions (synced via extensions.json)
+- Extensions synced via `extensions.json`
 
 ### Copilot AI Configuration
 
@@ -112,7 +118,7 @@ This repository manages Copilot customizations as code under `github/.github` (s
 Use these docs as the canonical inventories:
 
 | Area | Canonical Inventory |
-| --- | --- |
+| ---- | ------------------- |
 | Agents | [github/.github/docs/README.agents.md](github/.github/docs/README.agents.md) |
 | Hooks | [github/.github/docs/README.hooks.md](github/.github/docs/README.hooks.md) |
 | Prompts | [github/.github/docs/README.prompts.md](github/.github/docs/README.prompts.md) |
@@ -120,16 +126,14 @@ Use these docs as the canonical inventories:
 | Skills | [github/.github/docs/README.skills.md](github/.github/docs/README.skills.md) |
 | Workflows | [github/.github/docs/README.workflows.md](github/.github/docs/README.workflows.md) |
 
-Built-in slash commands are client-version dependent and are intentionally not listed as repository-managed commands.
-
 ### Brewfile (CLI Tools)
 
 Installed via `brew bundle` during bootstrap:
 
 | Category | Tools |
-| ---------- | ------- |
-| Shell | stow, starship, antidote, zoxide, atuin |
-| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv, shellcheck |
+| -------- | ----- |
+| Shell | stow, starship, antidote, zoxide, atuin, gum |
+| Core CLI | git, gh, git-delta, fzf, fd, ripgrep, bat, eza, jq, tree, htop, tldr, direnv, shellcheck, neovim |
 | Python | uv, ruff |
 | Node | fnm |
 | Build | just, pre-commit |
@@ -140,7 +144,7 @@ Installed via `brew bundle` during bootstrap:
 
 GitHub Actions workflow (`.github/workflows/ci.yml`):
 
-- **ShellCheck** — lints `bootstrap.sh` and `check-github-managed.sh`
+- **ShellCheck** — lints `bootstrap.sh` and `check-stow-integrity.sh`
 - **JSON validation** — validates all hook configs and MCP config
 - **VS Code JSONC validation** — validates `vscode/settings.json`, `vscode/keybindings.json`, and `vscode/extensions.json` via `scripts/validate_vscode_jsonc.py`
 - **Bootstrap smoke test** — runs full bootstrap on macOS runner, verifies symlinks
@@ -152,8 +156,9 @@ Install only specific packages on a minimal machine (e.g., server):
 
 ```bash
 cd ~/Developer/dotfiles
-stow -t ~ git        # just git config
-stow -t ~ git zsh    # git + shell
+stow -t ~ git              # just git config
+stow -t ~ git zsh          # git + shell
+stow -t ~ git zsh atuin    # git + shell + history config
 ```
 
 ## Uninstall a Package
@@ -167,36 +172,35 @@ stow -t ~ -D zsh     # removes all zsh symlinks from ~/
 
 ```bash
 # Re-run the preset chooser
-./bootstrap.sh  # select a new preset at step 5
+./bootstrap.sh  # select a new preset at the Starship step
 
 # Or manually apply any preset
+starship preset dracula -o ~/.config/starship.toml
 starship preset tokyo-night -o ~/.config/starship.toml
-starship preset gruvbox-rainbow -o ~/.config/starship.toml
 
 # Or edit directly
 code ~/.config/starship.toml
 ```
 
-## Verify ~/.github Integrity
+## Secrets
+
+Put API keys, tokens, and any credential that cannot be committed in `~/.secrets`:
 
 ```bash
-./check-github-managed.sh
+# ~/.secrets — created manually on each machine, never committed
+export OPENAI_API_KEY="sk-..."
+export GITHUB_TOKEN="ghp_..."
 ```
 
-Exits non-zero if any file under `~/.github/` is not tracked by this repo.
+The file is sourced silently by `.zshrc` on every shell start and is covered by `.gitignore_global`.
 
-## Verify Copilot Planning Paths
+## Verify Stow Integrity
 
 ```bash
-# Canonical local Copilot planning paths are ignored
-git check-ignore -v .github/.copilot/research/20260405-dotfiles-effectiveness-research.md
-
-# Legacy root planning path remains ignored if recreated locally
-git check-ignore -v .copilot-tracking/research/20260405-dotfiles-effectiveness-research.md
-
-# Alternate local Copilot planning path remains ignored if recreated locally
-git check-ignore -v .copilot/research/20260405-dotfiles-effectiveness-research.md
+./check-stow-integrity.sh
 ```
+
+Exits non-zero if any file under a stow target is not a symlink pointing into this repo.
 
 ## VS Code Config Validation Policy
 
@@ -212,37 +216,46 @@ python3 scripts/validate_vscode_jsonc.py
 ```text
 dotfiles/
 ├── .github/
-│   ├── CODEOWNERS                  # Ownership rules for GitHub-managed paths
-│   ├── dependabot.yml              # Dependabot update policy
+│   ├── CODEOWNERS
+│   ├── dependabot.yml
 │   └── workflows/
-│       └── ci.yml                  # CI: ShellCheck, JSON validation, smoke test
-├── SECURITY.md                     # Security policy and disclosure guidance
-├── bootstrap.sh                     # One-command setup script
-├── check-github-managed.sh          # Verifies ~/.github/ integrity
-├── brew/Brewfile                    # Homebrew packages, casks, fonts
-├── scripts/validate_vscode_jsonc.py # JSONC validation for VS Code config files
-├── starship/starship.toml           # Tokyo Night prompt config (managed by bootstrap)
+│       └── ci.yml
+├── SECURITY.md
+├── bootstrap.sh                      # One-command setup script
+├── check-stow-integrity.sh           # Verifies all stow symlinks are intact
+├── brew/Brewfile                     # Homebrew packages, casks, fonts
+├── scripts/validate_vscode_jsonc.py  # JSONC validation for VS Code config files
+├── atuin/
+│   └── .config/atuin/config.toml    # atuin history config
+├── starship/
+│   └── .config/starship.toml        # Dracula prompt config
+├── nvim/
+│   └── .config/nvim/
+│       ├── init.lua
+│       └── lua/
+│           ├── config/              # options, keymaps, lazy bootstrap
+│           └── plugins/             # one file per plugin group
 ├── git/
-│   ├── .gitconfig                   # Git config (aliases, defaults, delta pager)
-│   └── .gitignore_global            # Global gitignore (OS, editor, Python, Node)
+│   ├── .gitconfig
+│   └── .gitignore_global
 ├── github/.github/
-│   ├── copilot-instructions.md      # Global Copilot instructions (always-on)
-│   ├── agents/                      # Custom Copilot agents
-│   ├── docs/                        # Catalog docs for agents/hooks/prompts/instructions/skills/workflows
-│   ├── hooks/                       # Copilot hook packs
-│   ├── instructions/                # Context-aware instruction files
-│   ├── prompts/                     # Custom slash-command prompts
-│   ├── skills/                      # Reusable Copilot skill packs
-│   └── workflows/                   # GitHub workflow prompt definitions
+│   ├── copilot-instructions.md
+│   ├── agents/
+│   ├── docs/
+│   ├── hooks/
+│   ├── instructions/
+│   ├── prompts/
+│   ├── skills/
+│   └── workflows/
 ├── vscode/
-│   ├── settings.json                # Editor, AI, theme, formatter settings
-│   ├── keybindings.json             # Custom keyboard shortcuts
-│   └── extensions.json              # 44 recommended extensions
+│   ├── settings.json
+│   ├── keybindings.json
+│   └── extensions.json
 └── zsh/
-    ├── .zshrc                       # Shell config (antidote, Starship, tool inits)
-    ├── .zsh_plugins.txt             # Antidote plugin list
+    ├── .zshrc
+    ├── .zsh_plugins.txt
     └── .zsh/
-        ├── aliases.zsh              # Git, navigation, Python, Docker aliases
-        ├── functions.zsh            # mkcd, extract, ghclone, killport
-        └── path.zsh                 # PATH, EDITOR, LANG
+        ├── aliases.zsh
+        ├── functions.zsh
+        └── path.zsh
 ```
