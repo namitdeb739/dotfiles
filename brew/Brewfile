@@ -6,6 +6,7 @@ brew "starship"          # Cross-shell prompt
 brew "antidote"          # Zsh plugin manager
 brew "zoxide"            # Smart cd with frecency
 brew "atuin"             # Shell history search (SQLite-backed)
+brew "gum"               # Interactive terminal UI (used by bootstrap)
 
 # --- Core CLI ---
 brew "git"               # Version control

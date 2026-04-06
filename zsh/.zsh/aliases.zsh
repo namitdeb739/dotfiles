@@ -16,8 +16,10 @@ alias gloga='git log --oneline --graph --decorate --all -30'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-alias ll='ls -lAh'
-alias la='ls -A'
+alias ls='eza'
+alias ll='eza -lAh --git'
+alias la='eza -A'
+alias cat='bat --pager=never'
 
 # --- Python / uv ---
 alias uvr='uv run'
