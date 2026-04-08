@@ -18,6 +18,7 @@ Requirements:
 - Preserve frontmatter keys unless the request explicitly changes them.
 - Keep behavior changes minimal and scoped to the request.
 - Validate any dependent prompt routing or references impacted by the edit.
+- Exception for Copilot tracking paths: if the request creates `.github/.copilot/` (or files under it), ensure `.gitignore` includes `.github/.copilot/`; add it only when missing.
 
 Output format:
 

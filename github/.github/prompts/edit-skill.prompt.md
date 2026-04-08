@@ -17,6 +17,7 @@ Requirements:
 - Preserve structure expected by skill consumers unless explicitly changing behavior.
 - Keep examples and commands runnable and up to date.
 - Verify links and references when skill docs are changed.
+- Exception for Copilot tracking paths: if the request creates `.github/.copilot/` (or files under it), ensure `.gitignore` includes `.github/.copilot/`; add it only when missing.
 
 Output format:
 

@@ -17,6 +17,7 @@ Requirements:
 - Preserve frontmatter structure (`description`, `applyTo`, and related metadata) unless explicitly changed.
 - Keep rule changes precise and avoid broad rewrites.
 - Ensure updated instructions remain internally consistent and unambiguous.
+- Exception for Copilot tracking paths: if the request creates `.github/.copilot/` (or files under it), ensure `.gitignore` includes `.github/.copilot/`; add it only when missing.
 
 Output format:
 
