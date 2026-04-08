@@ -37,3 +37,8 @@ alias dcl='docker compose logs -f'
 alias c='clear'
 alias path='echo $PATH | tr ":" "\n"'
 alias reload='source ~/.zshrc'
+
+# --- Project Templates ---
+# Usage: pynew <repo-name>
+# Sets up a new repo from the python-template using uvx copier
+alias pynew='uvx copier gh:namitdeb739/python-template --vcs-ref=main --trust --defaults --data repo_name'
