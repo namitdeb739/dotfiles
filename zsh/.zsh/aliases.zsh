@@ -39,6 +39,6 @@ alias path='echo $PATH | tr ":" "\n"'
 alias reload='source ~/.zshrc'
 
 # --- Project Templates ---
-# Usage: pynew <repo-name>
-# Sets up a new repo from the python-template using uvx copier
-alias pynew='uvx copier gh:namitdeb739/python-template --vcs-ref=main --trust --defaults --data repo_name'
+# Project Templates
+# pynew <repo-name> — Scaffold a new repo from python-template (Copier, trusted, skip prompts)
+alias pynew='uvx copier copy gh:namitdeb739/python-template $1'
