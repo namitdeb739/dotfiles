@@ -42,3 +42,7 @@ alias reload='source ~/.zshrc'
 # Project Templates
 # pynew <repo-name> — Scaffold a new repo from python-template (Copier, trusted, skip prompts)
 alias pynew='uvx copier copy gh:namitdeb739/python-template $1'
+
+# --- Dotfiles Bootstrap ---
+# Run dotfiles bootstrap.sh from anywhere, then return to original directory
+alias dotbootstrap='(CURDIR="$PWD"; cd ~/Developer/dotfiles && ./bootstrap.sh; cd "$CURDIR")'
