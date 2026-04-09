@@ -1,7 +1,7 @@
 # --- Git ---
 gacp() {
 	git add .
-	git commit -m "$1"
+	git commit -m "$*"
 	git push
 }
 alias gs='git status'
