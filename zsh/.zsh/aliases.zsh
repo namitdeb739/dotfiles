@@ -46,7 +46,10 @@ alias reload='source ~/.zshrc'
 # --- Project Templates ---
 # Project Templates
 # pynew <repo-name> — Scaffold a new repo from python-template (Copier, trusted, skip prompts)
-alias pynew='uvx copier copy --trust gh:namitdeb739/python-template $1'
+alias pynew='uvx copier copy --trust gh:namitdeb739/python-template $1 \
+  --data author_name="$(git config user.name)" \
+  --data author_email="$(git config user.email)" \
+  --data github_user="$(gh api user --jq .login)"'
 
 # --- Dotfiles Bootstrap ---
 # Run dotfiles bootstrap.sh from anywhere, then return to original directory
