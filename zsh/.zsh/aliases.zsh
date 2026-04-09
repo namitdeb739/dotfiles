@@ -1,4 +1,9 @@
 # --- Git ---
+gacp() {
+	git add .
+	git commit -m "$1"
+	git push
+}
 alias gs='git status'
 alias ga='git add'
 alias gc='git commit'
@@ -41,7 +46,7 @@ alias reload='source ~/.zshrc'
 # --- Project Templates ---
 # Project Templates
 # pynew <repo-name> — Scaffold a new repo from python-template (Copier, trusted, skip prompts)
-alias pynew='uvx copier copy gh:namitdeb739/python-template $1'
+alias pynew='uvx copier copy --trust gh:namitdeb739/python-template $1'
 
 # --- Dotfiles Bootstrap ---
 # Run dotfiles bootstrap.sh from anywhere, then return to original directory

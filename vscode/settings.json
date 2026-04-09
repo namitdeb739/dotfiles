@@ -290,4 +290,5 @@
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml",
   },
+  "chat.tips.enabled": false,
 }
