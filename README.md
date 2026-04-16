@@ -141,7 +141,8 @@ Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_
 | `agents/python-pro.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Python specialist: uv, ruff, mypy strict, FastAPI, pytest, bandit |
 | `agents/code-reviewer.md` | VoltAgent/awesome-claude-code-subagents | Multi-language code review: security, performance, correctness, maintainability |
 | `agents/github-ops.md` | Ported from `github-ops-executor.agent.md` | GitHub PR/issue/branch lifecycle with safety gates |
-| `commands/commit.md` | Authored | Conventional Commits workflow |
+| `commands/implement.md` | Authored | Implement a task: read context, plan, execute, verify |
+| `commands/commit-push.md` | Authored | Conventional Commits + push to remote |
 | `commands/commit-push-pr.md` | Authored | Commit + push + open PR via `gh` |
 | `commands/tdd-cycle.md` | wshobson/commands | Full TDD: spec → red → green → refactor → integration |
 | `commands/full-review.md` | wshobson/commands | Multi-agent review: quality, security, architecture, performance, coverage |
@@ -303,7 +304,8 @@ dotfiles/
 │   │   ├── code-reviewer.md
 │   │   └── github-ops.md
 │   └── commands/
-│       ├── commit.md
+│       ├── implement.md
+│       ├── commit-push.md
 │       ├── commit-push-pr.md
 │       ├── tdd-cycle.md
 │       ├── full-review.md

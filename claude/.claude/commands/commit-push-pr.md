@@ -3,6 +3,8 @@ allowed-tools: Bash(git checkout:*), Bash(git add:*), Bash(git status:*), Bash(g
 description: Commit, push, and open a pull request
 ---
 
+# Commit, Push, and Open a Pull Request
+
 Commit all staged changes, push to a remote branch, and open a pull request:
 
 1. Run `git status` and `git diff` to understand what will be committed.
@@ -16,13 +18,15 @@ Commit all staged changes, push to a remote branch, and open a pull request:
 6. Open a PR with `gh pr create`:
    - Title: mirrors the commit subject
    - Body (use `--body-file`):
-     ```
+
+     ```markdown
      ## Summary
      - <bullet points of what changed and why>
 
      ## Test plan
      - <checklist of how to verify the change>
      ```
+
    - Target branch: `main`
 7. Output the PR URL.
 

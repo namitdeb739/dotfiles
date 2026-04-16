@@ -2,6 +2,8 @@
 description: "Build a feature end-to-end: design, backend, frontend, tests, and deployment"
 ---
 
+# Feature Build
+
 Implement a new feature using specialized agents with explicit Task tool invocations:
 
 ## Development Mode Selection
@@ -9,15 +11,19 @@ Implement a new feature using specialized agents with explicit Task tool invocat
 Choose your development approach:
 
 ### Option A: Traditional Development (Default)
+
 Use the Task tool to delegate to specialized agents in sequence.
 
 ### Option B: TDD-Driven Development
+
 For test-first development, use the tdd-orchestrator agent:
+
 - Use Task tool with subagent_type="tdd-orchestrator"
 - Prompt: "Implement feature using TDD methodology: $ARGUMENTS. Follow red-green-refactor cycle strictly."
 - Alternative: Use the dedicated `/tdd-cycle` command for granular TDD control
 
 When TDD mode is selected, the workflow follows this pattern:
+
 1. Write failing tests first (Red phase)
 2. Implement minimum code to pass tests (Green phase)
 3. Refactor while keeping tests green (Refactor phase)
