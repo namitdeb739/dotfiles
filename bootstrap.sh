@@ -31,6 +31,7 @@ RUN_EXTENSIONS=1
 RUN_ZSH_PLUGINS=1
 RUN_VERIFICATION=1
 RUN_SSH_KEY=1
+RUN_CLAUDE=1
 
 # Summary tracking
 SUMMARY_PRINTED=0
@@ -239,6 +240,7 @@ enable_all_sections() {
   RUN_ZSH_PLUGINS=1
   RUN_VERIFICATION=1
   RUN_SSH_KEY=1
+  RUN_CLAUDE=1
 }
 
 disable_all_sections() {
@@ -251,6 +253,7 @@ disable_all_sections() {
   RUN_ZSH_PLUGINS=0
   RUN_VERIFICATION=0
   RUN_SSH_KEY=0
+  RUN_CLAUDE=0
 }
 
 enable_section() {
@@ -284,6 +287,9 @@ enable_section() {
     ssh-key)
       RUN_SSH_KEY=1
       ;;
+    claude)
+      RUN_CLAUDE=1
+      ;;
     *)
       log_warn "Unknown section '$section' ignored"
       ;;
@@ -297,7 +303,7 @@ apply_section_defaults() {
 }
 
 prompt_section_selection() {
-  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification" "ssh-key")
+  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification" "ssh-key" "claude")
 
   if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
     return
@@ -334,6 +340,7 @@ prompt_section_selection() {
     echo "  7) zsh-plugins"
     echo "  8) verification"
     echo "  9) ssh-key"
+    echo " 10) claude"
 
     local input
     read -rp "> " input
@@ -359,6 +366,7 @@ prompt_section_selection() {
         7|zsh-plugins) enable_section "zsh-plugins" ;;
         8|verification) enable_section "verification" ;;
         9|ssh-key) enable_section "ssh-key" ;;
+        10|claude) enable_section "claude" ;;
         all) enable_all_sections ;;
         *) log_warn "Ignoring unknown selection: $item" ;;
       esac
@@ -372,7 +380,7 @@ prompt_section_selection() {
   local selected_total
   selected_total=$((
     RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
-    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY
+    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE
   ))
 
   if [[ "$selected_total" -eq 0 ]]; then
@@ -589,6 +597,52 @@ link_vscode() {
     vscode
 
   echo "VS Code config stowed to: $vscode_target"
+}
+
+setup_claude() {
+  stow_package "claude"
+  local statusline="$HOME/.claude/statusline.sh"
+  local hook="$HOME/.claude/hooks/security-guidance.py"
+  [[ -f "$statusline" ]] && chmod +x "$statusline" \
+    && echo "Made statusline.sh executable"
+  [[ -f "$hook" ]] && chmod +x "$hook" \
+    && echo "Made security-guidance.py executable"
+
+  if ! command_exists claude; then
+    log_warn "claude CLI not found — skipping MCP server registration"
+    return 0
+  fi
+
+  echo "--- Claude MCP Servers ---"
+
+  # Helper: register idempotently (remove then add).
+  # Usage: _mcp_add <name> [mcp-add-options] -- <command> [args...]
+  # The name is passed as the first positional arg to `claude mcp add`.
+  _mcp_add() {
+    local name="$1"; shift
+    claude mcp remove --scope user "$name" &>/dev/null || true
+    if claude mcp add --scope user "$name" "$@" 2>/dev/null; then
+      echo "MCP registered: $name"
+    else
+      log_warn "MCP registration failed: $name"
+    fi
+  }
+
+  local github_token
+  github_token="$(gh auth token 2>/dev/null || echo "")"
+
+  if [[ -n "$github_token" ]]; then
+    _mcp_add github -e "GITHUB_TOKEN=${github_token}" -- \
+      npx -y @modelcontextprotocol/server-github
+  else
+    _mcp_add github -- npx -y @modelcontextprotocol/server-github
+    log_warn "GITHUB_TOKEN not set — add token later: claude mcp add -s user -e GITHUB_TOKEN=\$(gh auth token) github -- npx -y @modelcontextprotocol/server-github"
+  fi
+
+  _mcp_add context7 -- npx -y @upstash/context7-mcp
+  _mcp_add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
+  _mcp_add filesystem -- npx -y @modelcontextprotocol/server-filesystem "${HOME}"
+  _mcp_add docker -- npx -y @modelcontextprotocol/server-docker
 }
 
 install_vscode_extensions() {
@@ -822,6 +876,11 @@ main() {
   }
 
   run_or_skip_phase "VS Code Linking" "$RUN_VSCODE" link_vscode || {
+    print_summary
+    return 1
+  }
+
+  run_or_skip_phase "Claude Config" "$RUN_CLAUDE" setup_claude || {
     print_summary
     return 1
   }

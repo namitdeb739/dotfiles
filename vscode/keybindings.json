@@ -1,41 +1,49 @@
 [
   {
-    "key": "ctrl+cmd+c",
-    "command": "workbench.action.chat.openInEditor"
-  },
-  {
     "key": "ctrl+cmd+i",
-    "command": "workbench.action.chat.openInSidebar"
+    "command": "workbench.action.chat.openInSidebar",
   },
   {
     "key": "cmd+alt+r",
-    "command": "workbench.action.terminal.relaunch"
+    "command": "workbench.action.terminal.relaunch",
   },
   {
     "key": "cmd+,",
-    "command": "workbench.action.openSettings"
+    "command": "workbench.action.openSettings",
   },
   {
     "key": "ctrl+cmd+,",
-    "command": "workbench.action.openApplicationSettingsJson"
+    "command": "workbench.action.openApplicationSettingsJson",
   },
   {
     "key": "cmd+d d",
     "command": "editor.action.deleteLines",
-    "when": "textInputFocus && !editorReadonly"
+    "when": "textInputFocus && !editorReadonly",
   },
   {
     "key": "shift+cmd+k",
     "command": "-editor.action.deleteLines",
-    "when": "textInputFocus && !editorReadonly"
+    "when": "textInputFocus && !editorReadonly",
   },
   {
     "key": "cmd+w",
     "command": "-workbench.action.terminal.killEditor",
-    "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated || terminalEditorFocus && terminalFocus && terminalProcessSupported"
+    "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated || terminalEditorFocus && terminalFocus && terminalProcessSupported",
   },
   {
     "key": "ctrl+backspace",
-    "command": "workbench.action.terminal.kill"
-  }
+    "command": "workbench.action.terminal.kill",
+  },
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\u001b\r",
+    },
+    "when": "terminalFocus",
+  },
+  {
+    "key": "ctrl+cmd+c",
+    "command": "claude-vscode.primaryEditor.open",
+  },
 ]

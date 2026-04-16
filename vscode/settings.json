@@ -291,4 +291,12 @@
     "editor.defaultFormatter": "redhat.vscode-yaml",
   },
   "chat.tips.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "python.terminal.useEnvFile": true,
+  "settingsSync.ignoredSettings": ["-python.defaultInterpreterPath"],
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.allowDangerouslySkipPermissions": true,
+  "claudeCode.initialPermissionMode": "bypassPermissions",
+  "chat.useClaudeHooks": true,
+  "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
 }

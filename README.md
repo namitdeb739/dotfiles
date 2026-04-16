@@ -46,10 +46,11 @@ The bootstrap script runs these steps automatically and prints a phase-by-phase 
 3. **Brewfile** — installs all CLI tools, casks, and fonts (`brew bundle`)
 4. **Stow packages** — symlinks git, github, zsh, atuin, starship, nvim configs into `~/`
 5. **VS Code** — stows settings, keybindings into the platform-specific VSCode User dir
-6. **Starship prompt** — interactive preset chooser (Dracula default, or pick from 9 presets); non-interactive runs keep the existing config
-7. **VS Code extensions** — installs any missing extensions from `extensions.json`
-8. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
-9. **Verification** — confirms all stow symlinks are intact
+6. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and `security-guidance.py` executable
+7. **Starship prompt** — interactive preset chooser (Dracula default, or pick from 9 presets); non-interactive runs keep the existing config
+8. **VS Code extensions** — installs any missing extensions from `extensions.json`
+9. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
+10. **Verification** — confirms all stow symlinks are intact
 
 ## Syncing Updates
 
@@ -75,6 +76,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `starship/` | `starship.toml` — Dracula prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
+| `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
 
 ### Shell (zsh)
@@ -125,6 +127,45 @@ Use these docs as the canonical inventories:
 | Instructions | [github/.github/docs/README.instructions.md](github/.github/docs/README.instructions.md) |
 | Skills | [github/.github/docs/README.skills.md](github/.github/docs/README.skills.md) |
 | Workflows | [github/.github/docs/README.workflows.md](github/.github/docs/README.workflows.md) |
+
+### Claude Code Configuration
+
+Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_claude()` which stows the package and sets executable permissions on the statusline and hook scripts.
+
+| File | Source | Purpose |
+| ---- | ------ | ------- |
+| `CLAUDE.md` | Authored | Global behavioral rules: communication, code style, Python stack, shell, git, security |
+| `settings.json` | Authored | Permissions (allow/deny), PreToolUse security hook, status line command |
+| `statusline.sh` | Authored | Status bar: `folder \| branch \| model \| ctx%` with color-coded context usage |
+| `hooks/security-guidance.py` | Anthropic security-guidance plugin (adapted) | Warns once per file on dangerous patterns: `eval()`, `shell=True`, `innerHTML`, GitHub Actions injection |
+| `agents/python-pro.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Python specialist: uv, ruff, mypy strict, FastAPI, pytest, bandit |
+| `agents/code-reviewer.md` | VoltAgent/awesome-claude-code-subagents | Multi-language code review: security, performance, correctness, maintainability |
+| `agents/github-ops.md` | Ported from `github-ops-executor.agent.md` | GitHub PR/issue/branch lifecycle with safety gates |
+| `commands/commit.md` | Authored | Conventional Commits workflow |
+| `commands/commit-push-pr.md` | Authored | Commit + push + open PR via `gh` |
+| `commands/tdd-cycle.md` | wshobson/commands | Full TDD: spec → red → green → refactor → integration |
+| `commands/full-review.md` | wshobson/commands | Multi-agent review: quality, security, architecture, performance, coverage |
+| `commands/security-scan.md` | wshobson/commands | bandit + semgrep + pip-audit with OWASP Top 10 coverage |
+| `commands/feature-build.md` | wshobson/commands | End-to-end feature: design → backend → frontend → tests → deploy |
+| `commands/smart-fix.md` | wshobson/commands | Auto-routes to debugger, perf engineer, DB optimizer, or modernizer |
+| `commands/tech-debt.md` | wshobson/commands | Debt inventory with ROI-scored remediation plan |
+| `commands/doc-write.md` | wshobson/commands | Generate API docs, architecture diagrams, user guides |
+
+MCP servers are registered at user scope via `setup_claude()` in bootstrap. They are stored in `~/.claude.json` (not stowed) and registered idempotently on each bootstrap run.
+
+| MCP | Package | Purpose |
+| --- | ------- | ------- |
+| `github` | `@modelcontextprotocol/server-github` | GitHub API: search code, read issues/PRs, manage repos |
+| `context7` | `@upstash/context7-mcp` | Resolves current library docs at query time — prevents stale API usage |
+| `sequential-thinking` | `@modelcontextprotocol/server-sequential-thinking` | Structured multi-step reasoning scratchpad |
+| `filesystem` | `@modelcontextprotocol/server-filesystem` | Explicit file access rooted at `~/` |
+| `docker` | `@modelcontextprotocol/server-docker` | Container and image management |
+
+`GITHUB_TOKEN` is sourced from `gh auth token` at bootstrap time. If unavailable, register manually:
+
+```bash
+claude mcp add -s user -e GITHUB_TOKEN=$(gh auth token) github -- npx -y @modelcontextprotocol/server-github
+```
 
 ### Brewfile (CLI Tools)
 
@@ -251,6 +292,26 @@ dotfiles/
 │   ├── settings.json
 │   ├── keybindings.json
 │   └── extensions.json
+├── claude/.claude/
+│   ├── CLAUDE.md
+│   ├── settings.json
+│   ├── statusline.sh
+│   ├── hooks/
+│   │   └── security-guidance.py
+│   ├── agents/
+│   │   ├── python-pro.md
+│   │   ├── code-reviewer.md
+│   │   └── github-ops.md
+│   └── commands/
+│       ├── commit.md
+│       ├── commit-push-pr.md
+│       ├── tdd-cycle.md
+│       ├── full-review.md
+│       ├── security-scan.md
+│       ├── feature-build.md
+│       ├── smart-fix.md
+│       ├── tech-debt.md
+│       └── doc-write.md
 └── zsh/
     ├── .zshrc
     ├── .zsh_plugins.txt
