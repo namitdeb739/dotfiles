@@ -15,7 +15,10 @@ Commit all relevant changes and push to the remote branch:
    - Subject line: ≤ 72 characters, imperative mood ("add" not "added")
    - Add a body for non-trivial changes explaining **what** changed and **why**
 4. Commit with `git commit -m "..."` (use a HEREDOC for multi-line messages).
-5. Push with `git push`. If the branch has no upstream yet, use `git push -u origin HEAD`.
-   - If on `main`, confirm with the user before pushing.
+5. Determine the push command intelligently:
+   - If the branch has no upstream yet, use `git push -u origin HEAD`.
+   - Otherwise, use `git push`.
+   - Only ask the user before pushing if the current branch is `main` AND the repo has branch protection or required status checks (check with `gh repo view --json defaultBranchRef` or `git remote -v`). If it's a personal repo with no collaborators or CI gates, push directly.
+   - Never ask for confirmation on non-main branches.
 
 Do not amend previous commits. If a pre-commit hook fails, fix the underlying issue and create a new commit.
