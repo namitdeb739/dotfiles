@@ -64,7 +64,8 @@
       "WebSearch",
       "Task(*)"
     ],
-    "deny": [
+    "deny": [],
+    "ask": [
       "Bash(rm *)",
       "Bash(rm)",
       "Bash(rmdir *)",

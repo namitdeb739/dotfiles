@@ -643,6 +643,18 @@ setup_claude() {
   _mcp_add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
   _mcp_add filesystem -- npx -y @modelcontextprotocol/server-filesystem "${HOME}"
   _mcp_add docker -- npx -y @modelcontextprotocol/server-docker
+
+  local notion_token
+  notion_token="${NOTION_TOKEN:-}"
+  if [[ -n "$notion_token" ]]; then
+    local notion_headers
+    notion_headers="{\"Authorization\": \"Bearer ${notion_token}\", \"Notion-Version\": \"2022-06-28\"}"
+    _mcp_add notion -e "OPENAPI_MCP_HEADERS=${notion_headers}" -- \
+      npx -y @notionhq/notion-mcp-server
+  else
+    _mcp_add notion -- npx -y @notionhq/notion-mcp-server
+    log_warn "NOTION_TOKEN not set — add token later: NOTION_TOKEN=<token> bash bootstrap.sh"
+  fi
 }
 
 install_vscode_extensions() {
