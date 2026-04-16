@@ -141,7 +141,9 @@ Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_
 | `agents/python-pro.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Python specialist: uv, ruff, mypy strict, FastAPI, pytest, bandit |
 | `agents/code-reviewer.md` | VoltAgent/awesome-claude-code-subagents | Multi-language code review: security, performance, correctness, maintainability |
 | `agents/github-ops.md` | Ported from `github-ops-executor.agent.md` | GitHub PR/issue/branch lifecycle with safety gates |
+| `agents/researcher.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Deep research: web search, source synthesis, clarifying questions via AskUserQuestion |
 | `commands/implement.md` | Authored | Implement a task: read context, plan, execute, verify |
+| `commands/research.md` | Authored | Deep research and discussion with web-sourced, synthesised answers |
 | `commands/commit-push.md` | Authored | Conventional Commits + push to remote |
 | `commands/commit-push-pr.md` | Authored | Commit + push + open PR via `gh` |
 | `commands/tdd-cycle.md` | wshobson/commands | Full TDD: spec → red → green → refactor → integration |
@@ -302,9 +304,11 @@ dotfiles/
 │   ├── agents/
 │   │   ├── python-pro.md
 │   │   ├── code-reviewer.md
-│   │   └── github-ops.md
+│   │   ├── github-ops.md
+│   │   └── researcher.md
 │   └── commands/
 │       ├── implement.md
+│       ├── research.md
 │       ├── commit-push.md
 │       ├── commit-push-pr.md
 │       ├── tdd-cycle.md
