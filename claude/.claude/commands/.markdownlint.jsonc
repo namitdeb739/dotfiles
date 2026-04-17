@@ -1,0 +1,19 @@
+{
+  // Command/prompt files use bold labels as visual separators — not headings.
+  "MD036": false,
+
+  // Template files contain nested code fences (e.g. markdown-in-docstrings)
+  // which create false-positive MD040 reports on closing fences.
+  "MD040": false,
+
+  // Line length is not meaningful for prose/instruction files.
+  "MD013": false,
+
+  // Template files contain nested code fences with markdown examples;
+  // markdownlint parses headings inside those blocks as real headings,
+  // causing false-positive MD024 duplicate-heading reports.
+  "MD024": false,
+
+  // PR templates and command files don't require an H1 at the top.
+  "MD041": false
+}

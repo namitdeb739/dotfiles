@@ -291,10 +291,31 @@ A: [Clear answer with link to deeper docs if needed]
 - **Confident but humble**: "This approach works well" not "This is the best approach"
 
 ### Technical Elements
-- **Code blocks**: Always include language identifier
+- **Code blocks**: Always include language identifier (`python`, `bash`, `yaml`, `text`, etc.) — required by MD040
 - **Command examples**: Show both command and expected output
 - **File paths**: Use consistent relative or absolute paths
 - **Versions**: Include version numbers for all tools/libraries
+
+### Markdownlint Compliance
+All generated markdown must pass `markdownlint-cli2`. Key rules:
+
+- **MD040**: Every fenced code block must have a language specifier
+- **MD060**: Table separators must use `| --- |` style (spaces around dashes)
+- **MD012**: No more than one consecutive blank line
+- **MD022**: Headings must be surrounded by blank lines
+- **MD031**: Fenced code blocks must be surrounded by blank lines
+
+When creating documentation for a project, include a `.markdownlint.jsonc` at the root:
+
+```jsonc
+{
+  "MD013": false,
+  "MD024": { "siblings_only": true },
+  "MD041": false
+}
+```
+
+Verify before publishing: `npx markdownlint-cli2 "**/*.md" "!.venv/**" "!node_modules/**"`
 
 ### Formatting Conventions
 - **Headers**: Title Case for Levels 1-2, Sentence case for Levels 3+

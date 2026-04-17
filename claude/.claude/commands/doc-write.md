@@ -8,9 +8,11 @@ description: "Write documentation from source code: API docs, architecture diagr
 You are a documentation expert specializing in creating comprehensive, maintainable documentation from code. Generate API docs, architecture diagrams, user guides, and technical references using AI-powered analysis and industry best practices.
 
 ## Context
+
 The user needs automated documentation generation that extracts information from code, creates clear explanations, and maintains consistency across documentation types. Focus on creating living documentation that stays synchronized with code.
 
 ## Requirements
+
 $ARGUMENTS
 
 ## Instructions
@@ -20,6 +22,7 @@ $ARGUMENTS
 Extract documentation elements from source code:
 
 **API Documentation Extraction**
+
 ```python
 import ast
 import inspect
@@ -79,6 +82,7 @@ class APIDocExtractor:
 ```
 
 **Type and Schema Documentation**
+
 ```python
 # Extract Pydantic models
 def extract_pydantic_schemas(file_path):
@@ -149,6 +153,7 @@ function extractTypeScriptInterfaces(code) {
 Create comprehensive API documentation:
 
 **OpenAPI/Swagger Generation**
+
 ```yaml
 openapi: 3.0.0
 info:
@@ -268,6 +273,7 @@ components:
 ```
 
 **API Client SDK Documentation**
+
 ```python
 """
 # API Client Documentation
@@ -349,7 +355,9 @@ while True:
         break
     page += 1
 ```
+
 """
+
 ```
 
 ### 3. Architecture Documentation
@@ -405,6 +413,7 @@ graph TB
 ```
 
 **Component Documentation**
+
 ```markdown
 ## System Components
 
@@ -452,6 +461,7 @@ user_service:
     secret: ${JWT_SECRET}
     expiry: 3600
 ```
+
 ```
 
 ### 4. Code Documentation
@@ -523,6 +533,7 @@ def {name}({params}){return_type}:
 ```
 
 **README Generation**
+
 ```markdown
 # ${PROJECT_NAME}
 
@@ -598,7 +609,7 @@ Full documentation is available at [https://docs.example.com](https://docs.examp
 ### Environment Variables
 
 | Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
+| --- | --- | --- | --- |
 | DATABASE_URL | PostgreSQL connection string | - | Yes |
 | REDIS_URL | Redis connection string | - | Yes |
 | SECRET_KEY | Application secret key | - | Yes |
@@ -694,6 +705,7 @@ This project is licensed under the ${LICENSE} License - see the [LICENSE](LICENS
 ## Acknowledgments
 
 ${ACKNOWLEDGMENTS}
+
 ```
 
 ### 5. User Documentation
@@ -774,6 +786,7 @@ Generate end-user documentation:
 Generate interactive documentation elements:
 
 **API Playground**
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -813,6 +826,7 @@ Generate interactive documentation elements:
 ```
 
 **Code Examples Generator**
+
 ```python
 def generate_code_examples(endpoint, languages=['python', 'javascript', 'curl']):
     """
@@ -863,6 +877,7 @@ curl -X {endpoint['method']} https://api.example.com{endpoint['path']} \\
 Automate documentation updates:
 
 **GitHub Actions Workflow**
+
 ```yaml
 name: Generate Documentation
 
@@ -911,11 +926,41 @@ jobs:
         publish_dir: ./docs/build
 ```
 
-### 8. Documentation Quality Checks
+### 8. Markdown Quality Standards
+
+All generated markdown must pass markdownlint. Key rules to enforce:
+
+- **MD040**: Every fenced code block must declare a language (`python`, `bash`, `yaml`, `text`, etc.)
+- **MD060**: Table separators must use `| --- |` style with spaces around the dashes
+- **MD012**: Never use more than one consecutive blank line
+- **MD024**: Duplicate headings are only allowed under different parents (use `siblings_only`)
+- **MD013**: Line length — disable this rule via `.markdownlint.jsonc` for technical docs; long URLs and table cells are acceptable
+
+When creating a `.markdownlint.jsonc` for a project, include at minimum:
+
+```jsonc
+{
+  "MD013": false,
+  "MD024": { "siblings_only": true },
+  "MD041": false,
+  "globs": ["**/*.md", "!.venv/**", "!node_modules/**"]
+}
+```
+
+After generating documentation, verify with:
+
+```bash
+npx markdownlint-cli2 "**/*.md" "!.venv/**"
+```
+
+Fix all reported errors before considering documentation complete. If `markdownlint-cli2` is not installed, advise the user to run `npm install -g markdownlint-cli2`.
+
+### 9. Documentation Quality Checks
 
 Ensure documentation completeness:
 
 **Documentation Coverage**
+
 ```python
 class DocCoverage:
     def check_coverage(self, codebase_path):
