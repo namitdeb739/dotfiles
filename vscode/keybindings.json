@@ -46,4 +46,14 @@
     "key": "ctrl+cmd+c",
     "command": "claude-vscode.primaryEditor.open",
   },
+  {
+    "key": "shift+cmd+r r",
+    "command": "jupyter.restartkernelandrunuptoselectedcell",
+    "when": "isWorkspaceTrusted && jupyter.notebookeditor.canrestartNotebookkernel && notebookKernel =~ /^ms-toolsai.jupyter\\//",
+  },
+  {
+    "key": "ctrl+alt+cmd+s",
+    "command": "editor.action.inlineSuggest.snooze",
+    "when": "true",
+  },
 ]

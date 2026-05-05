@@ -274,14 +274,14 @@
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.fixAll.ruff": "explicit",
-      "source.organizeImports.ruff": "explicit"
-    }
+      "source.organizeImports.ruff": "explicit",
+    },
   },
   "notebook.defaultFormatter": "charliermarsh.ruff",
   "notebook.formatOnSave.enabled": true,
   "notebook.codeActionsOnSave": {
     "source.fixAll": "explicit",
-    "source.organizeImports": "explicit"
+    "source.organizeImports": "explicit",
   },
   "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -313,4 +313,5 @@
   "claudeCode.initialPermissionMode": "bypassPermissions",
   "chat.useClaudeHooks": true,
   "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
+  "chat.disableAIFeatures": true,
 }
