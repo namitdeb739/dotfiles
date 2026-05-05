@@ -1,7 +1,7 @@
 ---
-name: researcher
+name: discuss
 description: "Use this agent when you need comprehensive research across multiple sources with synthesis of findings into actionable insights, trend identification, and detailed reporting. Also use for open-ended discussion, opinion, or analysis where web research would improve answer quality."
-tools: Read, Grep, Glob, WebFetch, WebSearch, AskUserQuestion
+tools: Read, Grep, Glob, WebFetch, WebSearch, AskUserQuestion, ToolSearch
 model: opus
 ---
 
