@@ -599,6 +599,42 @@ link_vscode() {
   echo "VS Code config stowed to: $vscode_target"
 }
 
+ensure_node() {
+  if ! command_exists fnm; then
+    log_warn "fnm not found — skipping Node setup"
+    return 1
+  fi
+
+  eval "$(fnm env --shell bash 2>/dev/null)" || true
+
+  if ! command_exists node; then
+    log_info "Installing Node LTS via fnm..."
+    fnm install --lts
+    fnm use lts-latest
+  fi
+}
+
+install_claude_cli() {
+  if command_exists claude; then
+    echo "Claude CLI already installed: $(command -v claude)"
+    return 0
+  fi
+
+  log_info "Installing Claude Code CLI..."
+  ensure_node || {
+    log_warn "Node unavailable — cannot install Claude Code CLI"
+    return 1
+  }
+
+  if ! command_exists npm; then
+    log_warn "npm not found after Node setup — cannot install Claude Code CLI"
+    return 1
+  fi
+
+  npm install -g @anthropic-ai/claude-code
+  echo "Claude Code CLI installed: $(command -v claude)"
+}
+
 setup_claude() {
   stow_package "claude"
   local statusline="$HOME/.claude/statusline.sh"
@@ -607,6 +643,8 @@ setup_claude() {
     && echo "Made statusline.sh executable"
   [[ -f "$hook" ]] && chmod +x "$hook" \
     && echo "Made security-guidance.py executable"
+
+  install_claude_cli || true
 
   if ! command_exists claude; then
     log_warn "claude CLI not found — skipping MCP server registration"
