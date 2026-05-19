@@ -41,6 +41,7 @@ cask "visual-studio-code"
 # cask "docker"          # Install manually — requires GUI permissions
 cask "iterm2"            # Terminal alternative
 cask "raycast"           # Spotlight replacement
+cask "nightfall"         # Menu bar dark/light mode toggle
 
 # --- Fonts ---
 cask "font-jetbrains-mono-nerd-font"

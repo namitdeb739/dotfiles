@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE_FILE="$HOME/.config/appearance-mode"
+
+_current_mode() {
+  if [[ -f "$MODE_FILE" ]]; then
+    cat "$MODE_FILE"
+  elif osascript -e 'tell application "System Events" to return dark mode of appearance preferences' 2>/dev/null | grep -q "true"; then
+    echo "dark"
+  else
+    echo "light"
+  fi
+}
+
+_apply() {
+  local target="$1"
+  echo "$target" > "$MODE_FILE"
+
+  case "$target" in
+    light)
+      osascript -l JavaScript -e 'Application("System Events").appearancePreferences.darkMode = false'
+      ;;
+    dark)
+      osascript -l JavaScript -e 'Application("System Events").appearancePreferences.darkMode = true'
+      ;;
+  esac
+}
+
+mode="${1:-toggle}"
+
+case "$mode" in
+  light)
+    _apply light
+    ;;
+  dark)
+    _apply dark
+    ;;
+  toggle)
+    current="$(_current_mode)"
+    if [[ "$current" == "light" ]]; then
+      _apply dark
+    else
+      _apply light
+    fi
+    ;;
+  *)
+    echo "Usage: theme-toggle [light|dark|toggle]" >&2
+    exit 1
+    ;;
+esac

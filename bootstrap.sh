@@ -26,12 +26,12 @@ RUN_CLEANUP=1
 RUN_BREW=1
 RUN_STOW=1
 RUN_VSCODE=1
-RUN_STARSHIP=1
 RUN_EXTENSIONS=1
 RUN_ZSH_PLUGINS=1
 RUN_VERIFICATION=1
 RUN_SSH_KEY=1
 RUN_CLAUDE=1
+RUN_ITERM2=1
 
 # Summary tracking
 SUMMARY_PRINTED=0
@@ -235,12 +235,12 @@ enable_all_sections() {
   RUN_BREW=1
   RUN_STOW=1
   RUN_VSCODE=1
-  RUN_STARSHIP=1
   RUN_EXTENSIONS=1
   RUN_ZSH_PLUGINS=1
   RUN_VERIFICATION=1
   RUN_SSH_KEY=1
   RUN_CLAUDE=1
+  RUN_ITERM2=1
 }
 
 disable_all_sections() {
@@ -248,12 +248,12 @@ disable_all_sections() {
   RUN_BREW=0
   RUN_STOW=0
   RUN_VSCODE=0
-  RUN_STARSHIP=0
   RUN_EXTENSIONS=0
   RUN_ZSH_PLUGINS=0
   RUN_VERIFICATION=0
   RUN_SSH_KEY=0
   RUN_CLAUDE=0
+  RUN_ITERM2=0
 }
 
 enable_section() {
@@ -272,9 +272,6 @@ enable_section() {
     vscode)
       RUN_VSCODE=1
       ;;
-    starship)
-      RUN_STARSHIP=1
-      ;;
     extensions)
       RUN_EXTENSIONS=1
       ;;
@@ -290,6 +287,9 @@ enable_section() {
     claude)
       RUN_CLAUDE=1
       ;;
+    iterm2)
+      RUN_ITERM2=1
+      ;;
     *)
       log_warn "Unknown section '$section' ignored"
       ;;
@@ -303,7 +303,7 @@ apply_section_defaults() {
 }
 
 prompt_section_selection() {
-  local sections=("cleanup" "brew" "stow" "vscode" "starship" "extensions" "zsh-plugins" "verification" "ssh-key" "claude")
+  local sections=("cleanup" "brew" "stow" "vscode" "extensions" "zsh-plugins" "verification" "ssh-key" "claude" "iterm2")
 
   if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
     return
@@ -335,12 +335,12 @@ prompt_section_selection() {
     echo "  2) brew"
     echo "  3) stow"
     echo "  4) vscode"
-    echo "  5) starship"
-    echo "  6) extensions"
-    echo "  7) zsh-plugins"
-    echo "  8) verification"
-    echo "  9) ssh-key"
-    echo " 10) claude"
+    echo "  5) extensions"
+    echo "  6) zsh-plugins"
+    echo "  7) verification"
+    echo "  8) ssh-key"
+    echo "  9) claude"
+    echo " 10) iterm2"
 
     local input
     read -rp "> " input
@@ -361,12 +361,12 @@ prompt_section_selection() {
         2|brew) enable_section "brew" ;;
         3|stow) enable_section "stow" ;;
         4|vscode) enable_section "vscode" ;;
-        5|starship) enable_section "starship" ;;
-        6|extensions) enable_section "extensions" ;;
-        7|zsh-plugins) enable_section "zsh-plugins" ;;
-        8|verification) enable_section "verification" ;;
-        9|ssh-key) enable_section "ssh-key" ;;
-        10|claude) enable_section "claude" ;;
+        5|extensions) enable_section "extensions" ;;
+        6|zsh-plugins) enable_section "zsh-plugins" ;;
+        7|verification) enable_section "verification" ;;
+        8|ssh-key) enable_section "ssh-key" ;;
+        9|claude) enable_section "claude" ;;
+        10|iterm2) enable_section "iterm2" ;;
         all) enable_all_sections ;;
         *) log_warn "Ignoring unknown selection: $item" ;;
       esac
@@ -380,7 +380,7 @@ prompt_section_selection() {
   local selected_total
   selected_total=$((
     RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
-    RUN_STARSHIP + RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE
+    RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE + RUN_ITERM2
   ))
 
   if [[ "$selected_total" -eq 0 ]]; then
@@ -482,6 +482,7 @@ stow_core_packages() {
   stow_package "atuin"
   stow_package "starship"
   stow_package "nvim"
+  stow_package "bin"
 }
 
 run_verification() {
@@ -730,96 +731,6 @@ install_brew_packages() {
   HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file="$brewfile" --verbose --no-upgrade
 }
 
-configure_starship() {
-  command_exists starship || return 0
-
-  local config="$HOME/.config/starship.toml"
-  local dotfiles_config="$REPO_DIR/starship/.config/starship.toml"
-
-  # Initial symlinking is handled by stow (starship package in stow_core_packages).
-  # This phase only handles interactive preset selection on machines that want a
-  # different theme — non-interactive runs keep whatever stow put in place.
-  if [[ "$INTERACTIVE_MODE" -ne 1 || "${BOOTSTRAP_NONINTERACTIVE}" == "1" || ! -t 0 ]]; then
-    echo "Non-interactive — keeping existing Starship config."
-    return 0
-  fi
-
-  echo "--- Starship ---"
-  if [[ -e "$config" ]]; then
-    echo "Found existing config at: $config"
-    if [[ -L "$config" ]]; then
-      echo "Current symlink target: $(readlink "$config")"
-    fi
-  fi
-
-  echo "Choose Starship config:"
-  echo "  0) Keep existing"
-  echo "  1) Use dotfiles default"
-  echo "  2) Choose a preset (1-9)"
-
-  local choice
-  read -rp "> " choice
-
-  case "$choice" in
-    0)
-      echo "Keeping existing Starship config."
-      return 0
-      ;;
-    1)
-      if [[ ! -f "$dotfiles_config" ]]; then
-        echo "Dotfiles Starship config not found: $dotfiles_config"
-        return 0
-      fi
-
-      local backup="$BACKUP_DIR/starship.toml.${TIMESTAMP}"
-      mv "$config" "$backup"
-      ln -sf "$dotfiles_config" "$config"
-      echo "Starship configured (dotfiles default)."
-      echo "Backed up: $backup"
-      return 0
-      ;;
-    2)
-      mapfile -t _starship_presets < <(starship preset --list 2>/dev/null | sed '/^\s*$/d' | head -n 9)
-
-      if (( ${#_starship_presets[@]} == 0 )); then
-        echo "No presets found (does your Starship support 'starship preset --list'?)."
-        return 0
-      fi
-
-      echo "Select a preset:"
-      local i
-      for i in "${!_starship_presets[@]}"; do
-        printf "  %d) %s\n" "$((i + 1))" "${_starship_presets[$i]}"
-      done
-
-      local preset_num
-      read -rp "> " preset_num
-
-      if [[ ! "$preset_num" =~ ^[1-9]$ ]]; then
-        echo "Invalid preset selection."
-        return 0
-      fi
-
-      local preset_index=$((preset_num - 1))
-      if (( preset_index >= ${#_starship_presets[@]} )); then
-        echo "Preset $preset_num is not available on this system."
-        return 0
-      fi
-
-      local preset_name="${_starship_presets[$preset_index]}"
-      local backup="$BACKUP_DIR/starship.toml.${TIMESTAMP}"
-      mv "$config" "$backup"
-      starship preset "$preset_name" > "$config"
-      echo "Starship configured (preset: $preset_name)."
-      echo "Backed up: $backup"
-      return 0
-      ;;
-    *)
-      echo "Invalid selection. Keeping existing Starship config."
-      return 0
-      ;;
-  esac
-}
 
 init_zsh_plugins() {
   local antidote_path
@@ -886,6 +797,88 @@ setup_ssh_key() {
   return 0
 }
 
+import_iterm2_colors() {
+  local colors_dir="$REPO_DIR/iterm2/colors"
+  [[ ! -d "$colors_dir" ]] && return 0
+
+  local imported=0
+  local has_files=0
+  for f in "$colors_dir"/*.itermcolors; do
+    [[ -f "$f" ]] || continue
+    has_files=1
+    local raw_name preset_name
+    raw_name="$(basename "$f" .itermcolors)"
+    preset_name="$(echo "$raw_name" | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')"
+    if defaults read com.googlecode.iterm2 'Custom Color Presets' 2>/dev/null | grep -qF "\"$preset_name\""; then
+      echo "Already imported: $preset_name"
+      continue
+    fi
+    open "$f"
+    echo "Imported: $preset_name"
+    imported=$((imported + 1))
+  done
+
+  if [[ "$has_files" -eq 0 ]]; then
+    log_warn "No .itermcolors files found in $colors_dir"
+    return 0
+  fi
+
+  [[ "$imported" -gt 0 ]] && echo "iTerm2 color presets imported ($imported files)."
+
+  # Write a DynamicProfile with the correct font. iTerm2 watches this directory
+  # and applies the change live — no restart needed, safe whether running or not.
+  if command_exists python3; then
+    python3 - << 'PYEOF'
+import subprocess, plistlib, json, pathlib, datetime, sys
+
+TARGET_FONT = 'JetBrainsMonoNFM-Regular 14'
+
+dyn_dir = pathlib.Path.home() / 'Library/Application Support/iTerm2/DynamicProfiles'
+dyn_file = dyn_dir / 'dotfiles.json'
+
+if dyn_file.exists():
+    try:
+        existing = json.loads(dyn_file.read_text())
+        profiles = existing.get('Profiles', [])
+        if profiles and profiles[0].get('Normal Font') == TARGET_FONT:
+            print('iTerm2 DynamicProfile already configured — skipping')
+            sys.exit(0)
+    except (json.JSONDecodeError, KeyError):
+        pass
+
+result = subprocess.run(['defaults', 'export', 'com.googlecode.iterm2', '-'], capture_output=True)
+if result.returncode != 0:
+    sys.exit(0)
+
+data = plistlib.loads(result.stdout)
+profile = next((p for p in data.get('New Bookmarks', []) if p.get('Name') == 'Default'), None)
+if not profile:
+    sys.exit(0)
+
+profile['Normal Font'] = TARGET_FONT
+profile['Non Ascii Font'] = TARGET_FONT
+profile['Use Non-ASCII Font'] = True
+
+def to_json(obj):
+    if isinstance(obj, dict):
+        return {k: to_json(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [to_json(v) for v in obj]
+    elif isinstance(obj, bytes):
+        return obj.hex()
+    elif isinstance(obj, datetime.datetime):
+        return obj.isoformat()
+    return obj
+
+dyn_dir.mkdir(parents=True, exist_ok=True)
+dyn_file.write_text(json.dumps({'Profiles': [to_json(profile)]}, indent=2))
+print(f'iTerm2 DynamicProfile written: font set to {TARGET_FONT}')
+PYEOF
+  fi
+
+  echo "Next: Preferences → Profiles → Colors → set Light/Dark presets to Catppuccin Latte / Catppuccin Mocha"
+}
+
 # ===========================================================
 # Main
 # ===========================================================
@@ -935,7 +928,7 @@ main() {
     return 1
   }
 
-  run_or_skip_phase "Starship" "$RUN_STARSHIP" configure_starship || {
+  run_or_skip_phase "iTerm2 Colors" "$RUN_ITERM2" import_iterm2_colors || {
     print_summary
     return 1
   }

@@ -74,7 +74,6 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "autoUpdatesChannel": "stable",
   "hooks": {
     "PreToolUse": [
       {
@@ -91,5 +90,6 @@
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
-  }
+  },
+  "autoUpdatesChannel": "stable"
 }

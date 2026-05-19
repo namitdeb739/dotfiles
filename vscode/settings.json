@@ -1,6 +1,8 @@
 {
   "workbench.iconTheme": "material-icon-theme",
-  "workbench.colorTheme": "Dracula Theme Soft",
+  "window.autoDetectColorScheme": true,
+  "workbench.preferredDarkColorTheme": "Catppuccin Mocha",
+  "workbench.preferredLightColorTheme": "Catppuccin Latte",
   "workbench.editor.highlightModifiedTabs": true,
   "workbench.editor.limit.enabled": true,
   "workbench.editor.limit.value": 10,
@@ -62,6 +64,8 @@
 
   // --- Terminal ---
   "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.minimumContrastRatio": 1,
+  "terminal.integrated.gpuAcceleration": "canvas",
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.copyOnSelection": true,
@@ -208,6 +212,7 @@
     "*.rest": "http",
   },
   "material-icon-theme.folders.associations": {
+
     "infra": "kubernetes",
     "infrastructure": "kubernetes",
     "k8s": "kubernetes",
@@ -267,6 +272,7 @@
     "spec": "test",
     "bench": "benchmark",
     "benchmarks": "benchmark",
+    "brewer": "home"
   },
 
   // --- Language-Specific ---
@@ -315,4 +321,5 @@
   "claudeCode.initialPermissionMode": "bypassPermissions",
   "chat.useClaudeHooks": true,
   "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
+  "workbench.colorTheme": "Catppuccin Latte",
 }
