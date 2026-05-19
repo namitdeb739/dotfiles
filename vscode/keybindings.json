@@ -56,4 +56,14 @@
     "command": "editor.action.inlineSuggest.snooze",
     "when": "true",
   },
+  {
+    "key": "alt+cmd+b",
+    "command": "claude-vscode.sidebar.open",
+    "when": "!claudeVSCodeSidebarSecondary.visible",
+  },
+  {
+    "key": "alt+cmd+b",
+    "command": "workbench.action.closeSidebar",
+    "when": "sideBarVisible||sideBarFocus",
+  },
 ]

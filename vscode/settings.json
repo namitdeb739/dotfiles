@@ -61,7 +61,7 @@
   "scm.defaultViewMode": "tree",
 
   // --- Terminal ---
-  "terminal.integrated.fontFamily": "MesloLGLDZ Nerd Font",
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
   "terminal.integrated.scrollback": 10000,
   "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.copyOnSelection": true,
@@ -69,6 +69,7 @@
   "terminal.integrated.enablePersistentSessions": true,
 
   // --- Copilot / AI ---
+  "github.copilot.chat.enabled": false,
   "github.copilot.chat.codesearch.enabled": true,
   "github.copilot.chat.followUps": "always",
   "github.copilot.chat.localeOverride": "en",
@@ -307,11 +308,11 @@
   "chat.tips.enabled": false,
   "security.workspace.trust.untrustedFiles": "open",
   "python.terminal.useEnvFile": true,
+  "python.analysis.typeCheckingMode": "basic",
   "settingsSync.ignoredSettings": ["-python.defaultInterpreterPath"],
-  "claudeCode.preferredLocation": "panel",
+  "claudeCode.preferredLocation": "sidebar",
   "claudeCode.allowDangerouslySkipPermissions": true,
   "claudeCode.initialPermissionMode": "bypassPermissions",
   "chat.useClaudeHooks": true,
   "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
-  "chat.disableAIFeatures": true,
 }
