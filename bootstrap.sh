@@ -727,7 +727,7 @@ install_brew_packages() {
   fi
 
   echo "--- Homebrew Packages ---"
-  brew bundle --file="$brewfile"
+  HOMEBREW_NO_AUTO_UPDATE=1 brew bundle --file="$brewfile" --verbose --no-upgrade
 }
 
 configure_starship() {
