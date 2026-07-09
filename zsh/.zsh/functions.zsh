@@ -56,5 +56,6 @@ newpy() {
     --data project_name="$project" \
     --data author_name="$name" \
     --data author_email="$email" \
-    --data github_user="$user"
+    --data github_user="$user" || return
+  cd "$1"
 }
