@@ -73,6 +73,7 @@
       "Bash(sudo rm *)"
     ]
   },
+  "model": "opus",
   "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
@@ -91,5 +92,20 @@
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-  "autoUpdatesChannel": "stable"
+  "enabledPlugins": {
+    "warp@claude-code-warp": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
+    }
+  },
+  "autoUpdatesChannel": "stable",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "agentPushNotifEnabled": true
 }
