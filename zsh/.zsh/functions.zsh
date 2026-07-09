@@ -38,3 +38,15 @@ code() {
     command code "$@"
   fi
 }
+
+# Scaffold a new Python project from the template, identity pre-filled from git/gh
+newpy() {
+  if [[ -z "$1" ]]; then
+    echo "usage: newpy <dest>"
+    return 1
+  fi
+  uvx copier copy --trust gh:namitdeb739/python-template "$1" \
+    --data author_name="$(git config user.name)" \
+    --data author_email="$(git config user.email)" \
+    --data github_user="$(gh api user --jq .login)"
+}
