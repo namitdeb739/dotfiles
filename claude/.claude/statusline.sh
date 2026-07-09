@@ -62,7 +62,7 @@ case "$model_id" in
 esac
 
 ctx_int="${ctx_pct%.*}"; ctx_int="${ctx_int:-0}"
-cost_fmt="$(printf '$%.3f' "$cost" 2>/dev/null)" || cost_fmt='$0.000'
+cost_fmt="$(printf '$%.3f' "$cost" 2>/dev/null)" || cost_fmt="\$0.000"
 rate_5h_int="${rate_5h%.*}"; rate_5h_int="${rate_5h_int:-0}"
 
 # ── LINE 1: Workspace ─────────────────────────────────────────────────────────
@@ -74,10 +74,8 @@ if [[ -n "$branch" ]]; then
   line1+="${FG_PEACH}${BG_YELLOW}${SLASH}${RESET}"
   line1+="${BG_YELLOW}${CRUST}  ${branch}${dirty} ${RESET}"
   prev_fg1="${FG_YELLOW}"
-  next_bg1="${BG_GREEN}"
 else
   prev_fg1="${FG_PEACH}"
-  next_bg1="${BG_GREEN}"
 fi
 
 if [[ -n "$pr_num" ]]; then
