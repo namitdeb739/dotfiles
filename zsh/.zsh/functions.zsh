@@ -29,3 +29,12 @@ ghclone() {
 killport() {
   lsof -ti:"$1" | xargs kill -9 2>/dev/null && echo "Killed process on port $1" || echo "No process on port $1"
 }
+
+# Open VS Code defaulting to ~/Developer when called with no arguments
+code() {
+  if [[ $# -eq 0 ]]; then
+    command code ~/Developer
+  else
+    command code "$@"
+  fi
+}
