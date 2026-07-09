@@ -45,8 +45,14 @@ newpy() {
     echo "usage: newpy <dest>"
     return 1
   fi
+  # Resolve identity first so gh/git output can't clobber Copier's first prompt.
+  local name email user
+  name="$(git config user.name)"
+  email="$(git config user.email)"
+  user="$(gh api user --jq .login)"
+  printf '\nScaffolding %s — first prompt is the project name (kebab-case).\n\n' "$1"
   uvx copier copy --trust gh:namitdeb739/python-template "$1" \
-    --data author_name="$(git config user.name)" \
-    --data author_email="$(git config user.email)" \
-    --data github_user="$(gh api user --jq .login)"
+    --data author_name="$name" \
+    --data author_email="$email" \
+    --data github_user="$user"
 }
