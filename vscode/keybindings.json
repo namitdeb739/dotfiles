@@ -63,7 +63,10 @@
   },
   {
     "key": "alt+cmd+b",
-    "command": "workbench.action.closeSidebar",
-    "when": "sideBarVisible||sideBarFocus",
+    "command": "-workbench.action.toggleAuxiliaryBar",
+  },
+  {
+    "key": "alt+cmd+b",
+    "command": "workbench.action.toggleAuxiliaryBar",
   },
 ]
