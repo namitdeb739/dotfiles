@@ -482,6 +482,7 @@ stow_core_packages() {
   stow_package "atuin"
   stow_package "starship"
   stow_package "nvim"
+  stow_package "ghostty"
   stow_package "bin"
 }
 

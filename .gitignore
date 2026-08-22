@@ -16,3 +16,6 @@ credentials*
 .copilot-tracking/
 .github/.copilot/
 .copilot/
+
+# Machine-local Ghostty overrides
+ghostty/.config/ghostty/local.conf

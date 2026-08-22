@@ -73,8 +73,9 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `github/` | `.github/` — Copilot agents, hooks, instructions, prompts | `~/.github/` |
 | `zsh/` | `.zshrc`, aliases, functions, PATH, plugin list | `~/` |
 | `atuin/` | `config.toml` — fuzzy search, noise filter, preview | `~/.config/atuin/` |
-| `starship/` | `starship.toml` — Dracula prompt config | `~/.config/starship/` |
+| `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
+| `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
@@ -82,7 +83,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 ### Shell (zsh)
 
 - **Plugin manager**: [antidote](https://antidote.sh/) — bootstrap pre-compiles plugins to `~/.zsh_plugins.zsh` for fast static loading; falls back to dynamic load if the file is missing
-- **Prompt**: [Starship](https://starship.rs/) with Dracula theme — shows directory, git, python, node, docker, package version, command duration
+- **Prompt**: [Starship](https://starship.rs/) with the Catppuccin Mocha palette — shows directory, git, python, node, docker, package version, command duration
 - **Plugins**: zsh-autosuggestions, fast-syntax-highlighting, zsh-completions, fzf-tab
 - **Modular config**: `~/.zsh/aliases.zsh`, `functions.zsh`, `path.zsh`
 - **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
@@ -105,6 +106,34 @@ Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
 - **Theme**: `Mofiqul/dracula.nvim` with Dracula Soft background — matches VS Code + starship palette
 - **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
 - **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
+
+### Terminal (Ghostty)
+
+Config lives at `ghostty/.config/ghostty/config` and is stowed to `~/.config/ghostty/config`.
+
+- **Theme**: `theme = light:Catppuccin Latte,dark:Catppuccin Mocha` — follows the macOS
+  appearance setting, so `theme-toggle` switches the terminal in lockstep with VS Code's
+  `window.autoDetectColorScheme`. The bundled themes are byte-identical to
+  `iterm2/colors/catppuccin-{latte,mocha}.itermcolors`, so colours match iTerm2 exactly.
+- **Font**: `JetBrainsMono Nerd Font Mono` at 14pt — installed by the Brewfile, and the
+  source of the powerline separators and language glyphs in `starship.toml`.
+- **Shell integration**: auto-injected for zsh (no `.zshrc` changes). Enables OSC 133 prompt
+  marking, `cmd+↑`/`cmd+↓` prompt jumping, cwd inheritance for new tabs and splits, and
+  terminfo fixes for `sudo` and `ssh`.
+- **Matched to VS Code**: `copy-on-select`, blinking block cursor, and `minimum-contrast = 1`
+  mirror the `terminal.integrated.*` settings in `vscode/settings.json`.
+- **Splits**: `cmd+d` splits right and `cmd+shift+d` splits down, mirroring nvim's
+  `splitright` / `splitbelow`.
+- **Quick terminal**: `cmd+\`` drops down a Quake-style terminal. Needs Accessibility
+  permission (System Settings → Privacy & Security → Accessibility).
+- **Local overrides**: create `ghostty/.config/ghostty/local.conf` for per-machine tweaks —
+  it is gitignored and included automatically.
+
+Reload after editing with `cmd+shift+,`. Validate with `ghostty +validate-config`.
+Full option reference for the installed version: `ghostty +show-config --default --docs`.
+
+iTerm2 is kept installed as a fallback; its Catppuccin presets are still imported by the
+`iterm2` bootstrap phase.
 
 ### VSCode
 
@@ -272,7 +301,9 @@ dotfiles/
 ├── atuin/
 │   └── .config/atuin/config.toml    # atuin history config
 ├── starship/
-│   └── .config/starship.toml        # Dracula prompt config
+│   └── .config/starship.toml        # Catppuccin Mocha prompt config
+├── ghostty/
+│   └── .config/ghostty/config        # Catppuccin Latte/Mocha terminal config
 ├── nvim/
 │   └── .config/nvim/
 │       ├── init.lua
