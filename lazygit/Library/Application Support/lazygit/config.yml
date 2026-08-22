@@ -1,0 +1,55 @@
+# lazygit — https://github.com/jesseduffield/lazygit
+# macOS looks here, not ~/.config, hence the Library path in this stow package.
+
+git:
+  paging:
+    # Reuse delta, already configured as core.pager in .gitconfig, so diffs
+    # look identical in lazygit and on the command line.
+    colorArg: always
+    pager: delta --dark --paging=never
+  # Match pull.rebase = true from .gitconfig.
+  pull:
+    mode: rebase
+
+gui:
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showRandomTip: false
+  # Catppuccin Mocha. lazygit has no light/dark auto-switching, so unlike
+  # Ghostty, VS Code and nvim this is fixed — Mocha is chosen because the
+  # terminal is dark far more often than not.
+  theme:
+    activeBorderColor: ["#89b4fa", "bold"]
+    inactiveBorderColor: ["#a6adc8"]
+    optionsTextColor: ["#89b4fa"]
+    selectedLineBgColor: ["#313244"]
+    cherryPickedCommitBgColor: ["#45475a"]
+    cherryPickedCommitFgColor: ["#89b4fa"]
+    unstagedChangesColor: ["#f38ba8"]
+    defaultFgColor: ["#cdd6f4"]
+    searchingActiveBorderColor: ["#f9e2af"]
+
+# Conventional Commits, matching the repo's git convention.
+customCommands:
+  - key: "C"
+    command: "git commit -m '{{.Form.Type}}{{.Form.Scope}}: {{.Form.Subject}}'"
+    context: "files"
+    description: "Conventional commit"
+    prompts:
+      - type: "menu"
+        title: "Type"
+        key: "Type"
+        options:
+          - { name: "feat",     value: "feat" }
+          - { name: "fix",      value: "fix" }
+          - { name: "docs",     value: "docs" }
+          - { name: "refactor", value: "refactor" }
+          - { name: "test",     value: "test" }
+          - { name: "chore",    value: "chore" }
+          - { name: "ci",       value: "ci" }
+      - type: "input"
+        title: "Scope (optional, wrapped in parens)"
+        key: "Scope"
+      - type: "input"
+        title: "Subject (imperative, <= 72 chars)"
+        key: "Subject"

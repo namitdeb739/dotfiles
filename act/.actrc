@@ -1,0 +1,9 @@
+# act — run GitHub Actions locally. Requires the Docker daemon.
+#
+# GitHub's hosted runners are x86_64. On Apple Silicon most actions fail or
+# behave oddly without forcing the container architecture.
+--container-architecture linux/amd64
+
+# ubuntu-latest maps to a minimal image by default, which lacks most of the
+# tooling real runners have. This is the closest practical match.
+-P ubuntu-latest=catthehacker/ubuntu:act-latest

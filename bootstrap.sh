@@ -33,6 +33,7 @@ RUN_SSH_KEY=1
 RUN_CLAUDE=1
 RUN_ITERM2=1
 RUN_LAUNCHD=1
+RUN_MACOS=1
 
 # Summary tracking
 SUMMARY_PRINTED=0
@@ -243,6 +244,7 @@ enable_all_sections() {
   RUN_CLAUDE=1
   RUN_ITERM2=1
   RUN_LAUNCHD=1
+  RUN_MACOS=1
 }
 
 disable_all_sections() {
@@ -257,6 +259,7 @@ disable_all_sections() {
   RUN_CLAUDE=0
   RUN_ITERM2=0
   RUN_LAUNCHD=0
+  RUN_MACOS=0
 }
 
 enable_section() {
@@ -296,6 +299,9 @@ enable_section() {
     launchd)
       RUN_LAUNCHD=1
       ;;
+    macos)
+      RUN_MACOS=1
+      ;;
     *)
       log_warn "Unknown section '$section' ignored"
       ;;
@@ -309,7 +315,7 @@ apply_section_defaults() {
 }
 
 prompt_section_selection() {
-  local sections=("cleanup" "brew" "stow" "vscode" "extensions" "zsh-plugins" "verification" "ssh-key" "claude" "iterm2" "launchd")
+  local sections=("cleanup" "brew" "stow" "vscode" "extensions" "zsh-plugins" "verification" "ssh-key" "claude" "iterm2" "launchd" "macos")
 
   if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
     return
@@ -374,6 +380,7 @@ prompt_section_selection() {
         9|claude) enable_section "claude" ;;
         10|iterm2) enable_section "iterm2" ;;
         11|launchd) enable_section "launchd" ;;
+        12|macos) enable_section "macos" ;;
         all) enable_all_sections ;;
         *) log_warn "Ignoring unknown selection: $item" ;;
       esac
@@ -388,7 +395,7 @@ prompt_section_selection() {
   selected_total=$((
     RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
     RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE + RUN_ITERM2 +
-    RUN_LAUNCHD
+    RUN_LAUNCHD + RUN_MACOS
   ))
 
   if [[ "$selected_total" -eq 0 ]]; then
@@ -504,8 +511,24 @@ stow_core_packages() {
   stow_package "ghostty"
   stow_package "karabiner"
   stow_package "gh"
+  stow_package "lazygit"
+  stow_package "act"
+  stow_package "ssh"
   stow_package "bin"
   stow_package "launchd"
+}
+
+apply_macos_defaults() {
+  [[ "$(uname -s)" != "Darwin" ]] && return 0
+
+  if [[ ! -x "$REPO_DIR/macos.sh" ]]; then
+    log_warn "macos.sh not found or not executable; skipping"
+    return 0
+  fi
+
+  echo "--- macOS Defaults ---"
+  "$REPO_DIR/macos.sh"
+  return 0
 }
 
 load_launch_agents() {
@@ -1017,6 +1040,11 @@ main() {
   }
 
   run_or_skip_phase "Zsh Plugins" "$RUN_ZSH_PLUGINS" init_zsh_plugins || {
+    print_summary
+    return 1
+  }
+
+  run_or_skip_phase "macOS Defaults" "$RUN_MACOS" apply_macos_defaults || {
     print_summary
     return 1
   }

@@ -80,6 +80,11 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
 | `bin/` | `theme-toggle`, `dotfiles-update`, `secret` — personal scripts | `~/bin/` |
 | `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
+| `ssh/` | `config` — host defaults, Keychain, connection reuse | `~/.ssh/` |
+| `lazygit/` | `config.yml` — delta pager, Catppuccin, conventional-commit prompt | `~/Library/Application Support/lazygit/` |
+| `act/` | `.actrc` — Apple Silicon runner defaults | `~/` |
+| `karabiner/` | `karabiner.json` — key remapping | `~/.config/karabiner/` |
+| `gh/` | `config.yml` — aliases and protocol (not `hosts.yml`) | `~/.config/gh/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
@@ -136,6 +141,33 @@ gets migrated. If one exists, the shell warns on startup. Migrate it with:
 ```bash
 secret import ~/.secrets && secret list && rm -P ~/.secrets
 ```
+
+### macOS Defaults
+
+`macos.sh` configures the OS itself — everything else in this repo configures
+tools. Run by bootstrap, idempotent, and safe to re-run.
+
+```bash
+./macos.sh --dry-run   # print every change, write nothing
+./macos.sh             # apply
+```
+
+Covers fast key repeat (and disabling the accent picker, which otherwise breaks
+held-key navigation), disabling smart quotes and dashes, Finder showing
+extensions and hidden files, Dock autohide with no delay, and screenshots as
+shadowless PNGs in `~/Pictures/Screenshots`.
+
+It deliberately does **not** touch FileVault, Gatekeeper or SIP, and needs no
+`sudo` — those are manual decisions.
+
+### SSH
+
+`ssh/.ssh/config` sets Keychain-backed key loading, `IdentitiesOnly` (so ssh
+does not burn through a server's `MaxAuthTries` offering every key), keepalives,
+and connection multiplexing via `~/.ssh/sockets`.
+
+Machine-specific hosts go in `~/.ssh/config.local`, which is included first and
+never committed. **Keys are never in this repo** — only this config.
 
 ### Git
 
