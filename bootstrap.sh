@@ -514,6 +514,7 @@ stow_core_packages() {
   stow_package "lazygit"
   stow_package "act"
   stow_package "ssh"
+  stow_package "tmux"
   stow_package "bin"
   stow_package "launchd"
 }

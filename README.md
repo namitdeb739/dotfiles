@@ -83,6 +83,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `ssh/` | `config` — host defaults, Keychain, connection reuse | `~/.ssh/` |
 | `lazygit/` | `config.yml` — delta pager, Catppuccin, conventional-commit prompt | `~/Library/Application Support/lazygit/` |
 | `act/` | `.actrc` — Apple Silicon runner defaults | `~/` |
+| `tmux/` | `tmux.conf` — session persistence, Catppuccin, vi copy-mode | `~/.config/tmux/` |
 | `karabiner/` | `karabiner.json` — key remapping | `~/.config/karabiner/` |
 | `gh/` | `config.yml` — aliases and protocol (not `hosts.yml`) | `~/.config/gh/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
@@ -168,6 +169,24 @@ and connection multiplexing via `~/.ssh/sockets`.
 
 Machine-specific hosts go in `~/.ssh/config.local`, which is included first and
 never committed. **Keys are never in this repo** — only this config.
+
+### tmux
+
+Ghostty deliberately has no session persistence, so a crash or restart loses
+every running process. tmux fills that gap.
+
+Deliberately plugin-free — no TPM, nothing to bootstrap or update. Prefix is
+`C-a` (`C-b` collides with vim's page-up), splits are `|` and `-` opening in the
+current directory and matching nvim's `splitright`/`splitbelow`, and copy-mode is
+vi-style piping to `pbcopy`.
+
+Like lazygit, the theme is fixed to Catppuccin Mocha — tmux cannot follow the
+system appearance.
+
+```bash
+tmux new -A -s main    # attach or create
+# prefix r             # reload config
+```
 
 ### Git
 

@@ -13,6 +13,7 @@ brew "git"               # Version control
 brew "gh"                # GitHub CLI
 brew "lazygit"           # Git TUI — stage hunks, interactive rebase
 brew "act"               # Run GitHub Actions locally in Docker
+brew "tmux"              # Terminal multiplexer — Ghostty has no session persistence
 brew "git-delta"         # Better git diffs (used as core.pager)
 brew "fzf"               # Fuzzy finder
 brew "fd"                # Better find
