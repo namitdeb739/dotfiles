@@ -73,8 +73,11 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `github/` | `.github/` — Copilot agents, hooks, instructions, prompts | `~/.github/` |
 | `zsh/` | `.zshrc`, aliases, functions, PATH, plugin list | `~/` |
 | `atuin/` | `config.toml` — fuzzy search, noise filter, preview | `~/.config/atuin/` |
-| `starship/` | `starship.toml` — Dracula prompt config | `~/.config/starship/` |
+| `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
+| `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
+| `bin/` | `theme-toggle`, `dotfiles-update` — personal scripts | `~/bin/` |
+| `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
@@ -82,7 +85,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 ### Shell (zsh)
 
 - **Plugin manager**: [antidote](https://antidote.sh/) — bootstrap pre-compiles plugins to `~/.zsh_plugins.zsh` for fast static loading; falls back to dynamic load if the file is missing
-- **Prompt**: [Starship](https://starship.rs/) with Dracula theme — shows directory, git, python, node, docker, package version, command duration
+- **Prompt**: [Starship](https://starship.rs/) with the Catppuccin Mocha palette — shows directory, git, python, node, docker, package version, command duration
 - **Plugins**: zsh-autosuggestions, fast-syntax-highlighting, zsh-completions, fzf-tab
 - **Modular config**: `~/.zsh/aliases.zsh`, `functions.zsh`, `path.zsh`
 - **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
@@ -105,6 +108,89 @@ Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
 - **Theme**: `Mofiqul/dracula.nvim` with Dracula Soft background — matches VS Code + starship palette
 - **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
 - **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
+
+### Terminal (Ghostty)
+
+Config lives at `ghostty/.config/ghostty/config` and is stowed to `~/.config/ghostty/config`.
+
+- **Theme**: `theme = light:Catppuccin Latte,dark:Catppuccin Mocha` — follows the macOS
+  appearance setting, so `theme-toggle` switches the terminal in lockstep with VS Code's
+  `window.autoDetectColorScheme`. The bundled themes are byte-identical to
+  `iterm2/colors/catppuccin-{latte,mocha}.itermcolors`, so colours match iTerm2 exactly.
+- **Font**: `JetBrainsMono Nerd Font Mono` at 14pt — installed by the Brewfile, and the
+  source of the powerline separators and language glyphs in `starship.toml`.
+- **Shell integration**: auto-injected for zsh (no `.zshrc` changes). Enables OSC 133 prompt
+  marking, `cmd+↑`/`cmd+↓` prompt jumping, cwd inheritance for new tabs and splits, and
+  terminfo fixes for `sudo` and `ssh`.
+- **Matched to VS Code**: `copy-on-select`, blinking block cursor, and `minimum-contrast = 1`
+  mirror the `terminal.integrated.*` settings in `vscode/settings.json`.
+- **Splits**: `cmd+d` splits right and `cmd+shift+d` splits down, mirroring nvim's
+  `splitright` / `splitbelow`.
+- **Quick terminal**: `cmd+\`` drops down a Quake-style terminal. Needs Accessibility
+  permission (System Settings → Privacy & Security → Accessibility).
+- **Local overrides**: create `ghostty/.config/ghostty/local.conf` for per-machine tweaks —
+  it is gitignored and included automatically.
+
+Reload after editing with `cmd+shift+,`. Validate with `ghostty +validate-config`.
+Full option reference for the installed version: `ghostty +show-config --default --docs`.
+
+iTerm2 is kept installed as a fallback; its Catppuccin presets are still imported by the
+`iterm2` bootstrap phase.
+
+### Scheduled Maintenance
+
+`bin/dotfiles-update` upgrades installed software and re-converges the machine onto
+the repo. A launchd agent runs it **every Sunday at 10:00**; if the Mac is asleep,
+launchd runs it once at next wake.
+
+It deliberately **never touches git** — no pull, no commit, no push. The repo is the
+source of truth and only changes when you change it.
+
+What it does, in order:
+
+| Step | Command |
+| ---- | ------- |
+| Refresh formulae | `brew update` |
+| Upgrade | `brew upgrade` (not `--greedy`, so self-updating casks manage themselves) |
+| Re-converge | `brew bundle --no-upgrade` — installs anything declared but missing |
+| Reclaim disk | `brew cleanup --prune=30` |
+| Report drift | packages installed by hand but never declared, and vice versa |
+| Update plugins | `antidote update`, then regenerate `~/.zsh_plugins.zsh` |
+| Repair symlinks | `stow --restow` for every package |
+| Verify | `check-stow-integrity.sh` and `ghostty +validate-config` |
+
+**Brewfile drift** is report-only — it never uninstalls, so a deliberate one-off
+install survives an unattended run. It compares `brew leaves --installed-on-request`
+and `brew list --cask` against the Brewfile. `brew bundle cleanup` is deliberately
+not used: it lists every transitive dependency too, which buries the entries that
+actually matter (12 real items here versus ~60 of noise).
+
+Reporting:
+
+- **Silent on success.** A macOS notification fires only when a step fails, naming
+  the step that broke.
+- **Rotating log** at `~/.local/state/dotfiles-update/update.log` (8 archives kept).
+- **Summary on next shell start** — the first new terminal after a run prints what
+  upgraded, then deletes the summary so you see it exactly once.
+
+```bash
+dfu                  # run it now (alias for dotfiles-update)
+dotfiles-update --dry-run   # show what it would do, change nothing
+dfu-log              # page the log
+```
+
+Managing the schedule:
+
+```bash
+launchctl print gui/$(id -u)/com.namitdeb739.dotfiles-update   # status, next fire time
+launchctl kickstart -k gui/$(id -u)/com.namitdeb739.dotfiles-update   # run now via launchd
+launchctl bootout gui/$(id -u)/com.namitdeb739.dotfiles-update        # disable
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.namitdeb739.dotfiles-update.plist  # re-enable
+```
+
+To change the cadence, edit `StartCalendarInterval` in the plist, then re-run
+`./bootstrap.sh` (its Launch Agents phase reloads every `com.namitdeb739.*` agent)
+or bootout/bootstrap by hand — launchd caches the old schedule until you do.
 
 ### VSCode
 
@@ -272,7 +358,14 @@ dotfiles/
 ├── atuin/
 │   └── .config/atuin/config.toml    # atuin history config
 ├── starship/
-│   └── .config/starship.toml        # Dracula prompt config
+│   └── .config/starship.toml        # Catppuccin Mocha prompt config
+├── ghostty/
+│   └── .config/ghostty/config        # Catppuccin Latte/Mocha terminal config
+├── bin/bin/
+│   ├── theme-toggle                 # macOS light/dark switcher
+│   └── dotfiles-update              # weekly maintenance run
+├── launchd/Library/LaunchAgents/
+│   └── com.namitdeb739.dotfiles-update.plist
 ├── nvim/
 │   └── .config/nvim/
 │       ├── init.lua

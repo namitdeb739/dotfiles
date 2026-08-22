@@ -39,6 +39,7 @@ brew "pre-commit"        # Git hooks framework
 # --- Casks ---
 cask "visual-studio-code"
 # cask "docker"          # Install manually — requires GUI permissions
+cask "ghostty"           # Primary terminal — GPU-accelerated, config at ghostty/
 cask "iterm2"            # Terminal alternative
 cask "raycast"           # Spotlight replacement
 cask "nightfall"         # Menu bar dark/light mode toggle

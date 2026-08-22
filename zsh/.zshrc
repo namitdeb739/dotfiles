@@ -113,3 +113,10 @@ fi
 #   export GITHUB_TOKEN="ghp_..."
 # shellcheck source=/dev/null
 [[ -f ~/.secrets ]] && source ~/.secrets
+
+# notion-automations (na) CLI config
+export NOTION_CLASSES_DB_ID="33d9080d-a147-80e6-a934-c7f5cf7501f8"
+# NOTION_TOKEN lives in ~/.secrets (sourced above) — never inline it here.
+
+# Added by cua-driver-rs installer — see https://github.com/trycua/cua
+export PATH="/Users/namit/.local/bin:$PATH"
