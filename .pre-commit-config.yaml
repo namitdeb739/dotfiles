@@ -1,0 +1,66 @@
+# Pre-commit hooks — run: pre-commit install
+#
+# Deliberately validation-only: no formatters that would rewrite files. These
+# mirror what CI already checks, so breakage is caught at commit time rather
+# than after a push (or, worse, at the next bootstrap run).
+
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v6.0.0
+      hooks:
+          - id: check-yaml
+          - id: check-json
+            # VS Code configs are JSONC (comments + trailing commas); they have
+            # their own validator below.
+            exclude: ^vscode/
+          - id: check-merge-conflict
+          - id: check-added-large-files
+          - id: check-executables-have-shebangs
+          - id: check-symlinks
+          - id: destroyed-symlinks
+
+    # Secret scanning. Added after a live Notion token was found sitting in
+    # zsh/.zshrc — uncommitted, but one `git add` from a public repo.
+    - repo: https://github.com/gitleaks/gitleaks
+      rev: v8.30.0
+      hooks:
+          - id: gitleaks
+
+    - repo: local
+      hooks:
+          # The upstream shellcheck-precommit hook runs via Docker; use the
+          # binary the Brewfile already installs instead.
+          - id: shellcheck
+            name: shellcheck
+            entry: shellcheck
+            language: system
+            types: [shell]
+            # zsh startup files are not scripts shellcheck understands.
+            exclude: ^zsh/
+
+          - id: vscode-jsonc
+            name: validate VS Code JSONC
+            entry: python3 scripts/validate_vscode_jsonc.py
+            language: system
+            files: ^vscode/.*\.json$
+            pass_filenames: false
+
+          - id: plutil
+            name: validate plists
+            # macOS-only; no-op elsewhere so the hook does not fail on Linux.
+            entry: bash -c 'command -v plutil >/dev/null || exit 0; plutil -lint "$@"' --
+            language: system
+            files: \.plist$
+
+          - id: ghostty-config
+            name: validate ghostty config
+            entry: bash -c 'command -v ghostty >/dev/null || exit 0; ghostty +validate-config --config-file=ghostty/.config/ghostty/config'
+            language: system
+            files: ^ghostty/
+            pass_filenames: false
+
+          - id: bootstrap-syntax
+            name: bootstrap.sh syntax
+            entry: bash -n
+            language: system
+            files: ^(bootstrap|check-stow-integrity|check-github-managed)\.sh$

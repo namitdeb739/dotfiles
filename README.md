@@ -93,6 +93,28 @@ Each directory is an independent stow package that mirrors `~/` structure:
 - **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
 - **Secrets**: stored in the macOS login Keychain, not a plaintext file — see below
 
+### Pre-commit Hooks
+
+`pre-commit install` is run by bootstrap. The hooks are validation-only — nothing
+reformats your files — and mirror what CI checks, so breakage surfaces at commit
+time rather than after a push.
+
+| Hook | Catches |
+| ---- | ------- |
+| `gitleaks` | Hardcoded secrets. Verified to catch a Notion `ntn_` token and a `ghp_` PAT. |
+| `shellcheck` | Shell script bugs (uses the Brewfile binary, not Docker) |
+| `check-yaml` / `check-json` | Malformed workflow and config files |
+| `validate VS Code JSONC` | `vscode/*.json` (comments + trailing commas) |
+| `validate plists` | `launchd/**/*.plist` via `plutil -lint` |
+| `validate ghostty config` | `ghostty +validate-config` |
+| `bootstrap.sh syntax` | `bash -n` on the top-level scripts |
+| `check-symlinks` / `destroyed-symlinks` | Broken stow links |
+
+```bash
+pre-commit run --all-files    # run everything now
+pre-commit autoupdate         # bump hook versions
+```
+
 ### Secrets
 
 Secrets live in the **macOS login Keychain**, so they are encrypted at rest and
@@ -107,8 +129,9 @@ secret rm  NOTION_TOKEN
 ```
 
 `~/.zsh/secrets.zsh` exports them into every interactive shell (~30ms). A
-plaintext `~/.secrets` is still sourced afterwards if present, so an
-un-migrated machine keeps working — migrate it with:
+plaintext `~/.secrets` is **not** sourced — silently reading credentials from an
+unencrypted file is what this replaces, and a working fallback means it never
+gets migrated. If one exists, the shell warns on startup. Migrate it with:
 
 ```bash
 secret import ~/.secrets && secret list && rm -P ~/.secrets
@@ -129,6 +152,8 @@ Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
 
 - **Plugin manager**: [lazy.nvim](https://github.com/folke/lazy.nvim) — self-bootstraps on first launch, lazy-loads everything
 - **Theme**: `catppuccin/nvim` with `flavour = "auto"` — Latte in light, Mocha in dark, following the same system appearance signal as VS Code and Ghostty
+- **Treesitter**: pinned to the `main` branch (the only one supporting Neovim 0.11+); parsers are compiled by the `tree-sitter-cli` formula from the Brewfile
+- **LSP**: configured via `vim.lsp.config` / `vim.lsp.enable`, not the deprecated `require("lspconfig")` framework removed in nvim-lspconfig v3
 - **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
 - **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
 

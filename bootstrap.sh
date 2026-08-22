@@ -480,6 +480,17 @@ ensure_prerequisites() {
     brew install stow
   fi
 
+  # Install this repo's own git hooks. Cheap and idempotent; pre-commit itself
+  # comes from the Brewfile, so on a fresh machine this is a no-op on the first
+  # pass and takes effect once the Brew phase has run.
+  if command_exists pre-commit && [[ -f "$REPO_DIR/.pre-commit-config.yaml" ]]; then
+    if (cd "$REPO_DIR" && pre-commit install --install-hooks >/dev/null 2>&1); then
+      echo "pre-commit hooks installed"
+    else
+      log_warn "pre-commit install failed; run it manually in $REPO_DIR"
+    fi
+  fi
+
   return 0
 }
 
