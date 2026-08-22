@@ -21,7 +21,7 @@ home       = Path(sys.argv[2]).resolve()
 vscode_raw = sys.argv[3]
 
 # Packages that stow into $HOME
-HOME_PACKAGES = ["git", "github", "zsh", "atuin", "starship", "nvim", "ghostty", "launchd", "bin"]
+HOME_PACKAGES = ["git", "github", "zsh", "atuin", "starship", "nvim", "ghostty", "launchd", "bin", "karabiner", "gh"]
 
 # Build package → target mapping; skip vscode when its target dir is absent
 packages: dict[str, Path] = {pkg: home for pkg in HOME_PACKAGES}

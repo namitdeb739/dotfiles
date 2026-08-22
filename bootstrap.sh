@@ -502,6 +502,8 @@ stow_core_packages() {
   stow_package "starship"
   stow_package "nvim"
   stow_package "ghostty"
+  stow_package "karabiner"
+  stow_package "gh"
   stow_package "bin"
   stow_package "launchd"
 }

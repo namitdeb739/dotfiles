@@ -173,8 +173,75 @@ brewfile_drift() {
     DRIFT_REPORT+="$(printf '%s\n' "$body" | sed 's/^/  · /')"$'\n'
   }
 
+  # Apps installed by hand land in /Applications and never appear in
+  # `brew list --cask`, so a brew-only comparison reports "no drift" while the
+  # machine is unreproducible. Map each declared cask to the .app it ships and
+  # report anything in /Applications that no cask accounts for.
+  local unmanaged_apps=""
+  if [[ -d /Applications ]]; then
+    unmanaged_apps="$(
+      python3 - "$brewfile" <<'PYEOF'
+import json, pathlib, re, subprocess, sys
+
+brewfile = pathlib.Path(sys.argv[1]).read_text()
+declared = re.findall(r'^cask "([^"]+)"', brewfile, re.M)
+
+# Apple ships these; they are not installable and not drift.
+STOCK = {
+    "Safari", "Mail", "Messages", "FaceTime", "Photos", "Music", "TV",
+    "Podcasts", "News", "Stocks", "Home", "Maps", "Notes", "Reminders",
+    "Calendar", "Contacts", "Freeform", "Preview", "Numbers", "Pages",
+    "Keynote", "GarageBand", "iMovie", "App Store", "System Settings",
+    "Utilities", "Books", "Shortcuts", "Weather", "Clock", "Calculator",
+    "Dictionary", "Font Book", "Image Capture", "Mission Control",
+    "Photo Booth", "QuickTime Player", "Screenshot", "Siri", "TextEdit",
+    "Time Machine", "VoiceMemos", "Voice Memos", "Automator", "Chess",
+    "Launchpad", "Passwords", "Journal", "Tips", "Find My", "iPhone Mirroring",
+}
+
+owned = set()
+pkg_tokens = set()
+if declared:
+    out = subprocess.run(
+        ["brew", "info", "--cask", "--json=v2", *declared],
+        capture_output=True, text=True,
+    )
+    if out.returncode == 0:
+        try:
+            for cask in json.loads(out.stdout).get("casks", []):
+                for art in cask.get("artifacts", []):
+                    if not isinstance(art, dict):
+                        continue
+                    for name in art.get("app", []) or []:
+                        if isinstance(name, str) and name.endswith(".app"):
+                            owned.add(name[:-4])
+                    # pkg casks ship no .app name at all; remember the token
+                    # so the vendor-prefix fallback below can match the apps
+                    # the installer drops (e.g. microsoft-office -> Word).
+                    if "pkg" in art or "installer" in art:
+                        pkg_tokens.add(cask.get("token", ""))
+        except json.JSONDecodeError:
+            pass
+
+for app in sorted(p.name[:-4] for p in pathlib.Path("/Applications").glob("*.app")):
+    if app in STOCK or app in owned or app.startswith("."):
+        continue
+    slug = app.lower().replace(" ", "-")
+    if any(slug.startswith(o.lower()) or o.lower().startswith(slug) for o in owned if o):
+        continue
+    # A pkg cask installs several differently-named apps; credit it with any
+    # app sharing its leading vendor word (microsoft-office -> Microsoft Word).
+    vendors = {t.split("-")[0] for t in pkg_tokens if t}
+    if slug.split("-")[0] in vendors:
+        continue
+    print(app)
+PYEOF
+    )"
+  fi
+
   _drift_block "Installed but not in the Brewfile (formulae):" "$undeclared_f"
   _drift_block "Installed but not in the Brewfile (casks):" "$undeclared_c"
+  _drift_block "Apps in /Applications not accounted for by any declared cask:" "$unmanaged_apps"
   _drift_block "In the Brewfile but not installed (formulae):" "$missing_f"
   _drift_block "In the Brewfile but not installed (casks):" "$missing_c"
 
