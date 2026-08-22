@@ -202,10 +202,14 @@ What it does, in order:
 | Upgrade | `brew upgrade` (not `--greedy`, so self-updating casks manage themselves) |
 | Re-converge | `brew bundle --no-upgrade` — installs anything declared but missing |
 | Reclaim disk | `brew cleanup --prune=30` |
-| Report drift | packages installed by hand but never declared, and vice versa |
+| Report drift | packages installed by hand but never declared, and vice versa, plus apps in `/Applications` with no declared cask |
 | Update plugins | `antidote update`, then regenerate `~/.zsh_plugins.zsh` |
 | Repair symlinks | `stow --restow` for every package |
 | Verify | `check-stow-integrity.sh` and `ghostty +validate-config` |
+
+Mac App Store apps are skipped automatically (detected via `_MASReceipt`) since
+Homebrew cannot manage them. Anything else with no cask can be silenced by adding
+it to `brew/drift-ignore`, one app name per line.
 
 **Brewfile drift** is report-only — it never uninstalls, so a deliberate one-off
 install survives an unattended run. It compares `brew leaves --installed-on-request`

@@ -180,11 +180,20 @@ brewfile_drift() {
   local unmanaged_apps=""
   if [[ -d /Applications ]]; then
     unmanaged_apps="$(
-      python3 - "$brewfile" <<'PYEOF'
+      python3 - "$brewfile" "$REPO_DIR/brew/drift-ignore" <<'PYEOF'
 import json, pathlib, re, subprocess, sys
 
 brewfile = pathlib.Path(sys.argv[1]).read_text()
 declared = re.findall(r'^cask "([^"]+)"', brewfile, re.M)
+
+# Explicit opt-outs: apps with no cask that are expected to be here.
+ignore = set()
+ignore_file = pathlib.Path(sys.argv[2])
+if ignore_file.exists():
+    for line in ignore_file.read_text().splitlines():
+        name = line.split("#", 1)[0].strip()
+        if name:
+            ignore.add(name)
 
 # Apple ships these; they are not installable and not drift.
 STOCK = {
@@ -223,8 +232,13 @@ if declared:
         except json.JSONDecodeError:
             pass
 
-for app in sorted(p.name[:-4] for p in pathlib.Path("/Applications").glob("*.app")):
-    if app in STOCK or app in owned or app.startswith("."):
+apps_dir = pathlib.Path("/Applications")
+for app in sorted(p.name[:-4] for p in apps_dir.glob("*.app")):
+    if app in STOCK or app in owned or app in ignore or app.startswith("."):
+        continue
+    # Mac App Store apps carry a receipt and cannot be installed by Homebrew,
+    # so they are never actionable drift.
+    if (apps_dir / f"{app}.app" / "Contents" / "_MASReceipt" / "receipt").exists():
         continue
     slug = app.lower().replace(" ", "-")
     if any(slug.startswith(o.lower()) or o.lower().startswith(slug) for o in owned if o):

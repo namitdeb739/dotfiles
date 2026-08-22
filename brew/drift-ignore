@@ -1,0 +1,10 @@
+# Apps in /Applications that dotfiles-update should not report as drift.
+#
+# One app name per line, without the .app suffix. Blank lines and lines
+# starting with # are ignored. Matching is exact.
+#
+# Mac App Store apps are skipped automatically (detected via _MASReceipt) and
+# do not need listing here — Homebrew cannot manage them anyway.
+
+CuaDriver        # installed by the cua-driver-rs installer; see zsh/.zshrc PATH entry
+Hermes           # bundled helper, no cask available
