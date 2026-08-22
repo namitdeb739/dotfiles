@@ -1,0 +1,4 @@
+{
+  "//": "Tables and CLI examples read worse hard-wrapped at 80.",
+  "MD013": { "line_length": 100, "tables": false, "code_blocks": false }
+}

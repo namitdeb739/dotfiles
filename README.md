@@ -1,13 +1,15 @@
 # Dotfiles
 
-Personal development environment configuration, managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal development environment configuration, managed with [GNU
+Stow](https://www.gnu.org/software/stow/).
 
 One command sets up a new machine: shell, git, editor, AI tooling, CLI tools, and prompt theme.
 
 ## Prerequisites
 
 - macOS with [Homebrew](https://brew.sh/) installed
-- [Nerd Font](https://www.nerdfonts.com/) in your terminal (bootstrap installs JetBrains Mono and Fira Code Nerd Fonts via Brewfile)
+- [Nerd Font](https://www.nerdfonts.com/) in your terminal (bootstrap installs JetBrains Mono and
+  Fira Code Nerd Fonts via Brewfile)
 
 ## Setup on a New Machine
 
@@ -39,15 +41,18 @@ Common bootstrap modes:
 ./bootstrap.sh --ui=plain
 ```
 
-The bootstrap script runs these steps automatically and prints a phase-by-phase status summary at the end:
+The bootstrap script runs these steps automatically and prints a phase-by-phase status summary at
+the end:
 
 1. **Prerequisites** — installs GNU Stow via Homebrew
 2. **SSH Key** — interactive: generates `~/.ssh/id_ed25519` if missing, optionally uploads to GitHub
 3. **Cleanup** — removes superseded tooling (oh-my-zsh, p10k, nvm, sdkman)
 4. **Brew Packages** — installs all CLI tools, casks, and fonts (`brew bundle`)
-5. **Stow Packages** — symlinks git, github, zsh, atuin, starship, nvim, ghostty, bin, launchd into `~/`
+5. **Stow Packages** — symlinks git, github, zsh, atuin, starship, nvim, ghostty, bin, launchd into
+   `~/`
 6. **VS Code Linking** — stows settings, keybindings into the platform-specific VSCode User dir
-7. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and `security-guidance.py` executable
+7. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and
+   `security-guidance.py` executable
 8. **iTerm2 Colors** — imports `iterm2/colors/*.itermcolors` as iTerm2 presets
 9. **VS Code Extensions** — installs any missing extensions from `extensions.json`
 10. **Zsh Plugins** — pre-compiles antidote plugins for fast first shell launch
@@ -61,7 +66,8 @@ cd ~/Developer/dotfiles
 git pull
 ```
 
-Stow symlinks point into the repo, so `git pull` applies changes immediately. Re-run `./bootstrap.sh` only if new Brew packages or VS Code extensions were added.
+Stow symlinks point into the repo, so `git pull` applies changes immediately. Re-run
+`./bootstrap.sh` only if new Brew packages or VS Code extensions were added.
 
 ## What's Included
 
@@ -92,11 +98,14 @@ Each directory is an independent stow package that mirrors `~/` structure:
 
 ### Shell (zsh)
 
-- **Plugin manager**: [antidote](https://antidote.sh/) — bootstrap pre-compiles plugins to `~/.zsh_plugins.zsh` for fast static loading; falls back to dynamic load if the file is missing
-- **Prompt**: [Starship](https://starship.rs/) with the Catppuccin Mocha palette — shows directory, git, python, node, docker, package version, command duration
+- **Plugin manager**: [antidote](https://antidote.sh/) — bootstrap pre-compiles plugins to
+  `~/.zsh_plugins.zsh` for fast static loading; falls back to dynamic load if the file is missing
+- **Prompt**: [Starship](https://starship.rs/) with the Catppuccin Mocha palette — shows directory,
+  git, python, node, docker, package version, command duration
 - **Plugins**: zsh-autosuggestions, fast-syntax-highlighting, zsh-completions, fzf-tab
 - **Modular config**: `~/.zsh/aliases.zsh`, `functions.zsh`, `path.zsh`
-- **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
+- **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv,
+  fzf
 - **Secrets**: stored in the macOS login Keychain, not a plaintext file — see below
 
 ### Pre-commit Hooks
@@ -191,8 +200,10 @@ tmux new -A -s main    # attach or create
 ### Git
 
 - Shell aliases: `gs`, `gco`, `glog`, `gd`, `gds` (in `aliases.zsh`)
-- Git config aliases: `cm`, `ca`, `cp`, `ll`, `undo`, `unstage`, `wip`, `cleanup` (unique shorthands only — no duplication of shell aliases)
-- Defaults: `push.default=current`, `pull.rebase=true`, `init.defaultBranch=main`, `autoSetupRemote=true`
+- Git config aliases: `cm`, `ca`, `cp`, `ll`, `undo`, `unstage`, `wip`, `cleanup` (unique shorthands
+  only — no duplication of shell aliases)
+- Defaults: `push.default=current`, `pull.rebase=true`, `init.defaultBranch=main`,
+  `autoSetupRemote=true`
 - Pager: [delta](https://github.com/dandavison/delta) for better diffs
 - Credential helper: GitHub CLI (`gh auth git-credential`)
 - Global `.gitignore_global` for OS/editor/Python/Node/secrets cruft
@@ -201,12 +212,19 @@ tmux new -A -s main    # attach or create
 
 Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
 
-- **Plugin manager**: [lazy.nvim](https://github.com/folke/lazy.nvim) — self-bootstraps on first launch, lazy-loads everything
-- **Theme**: `catppuccin/nvim` with `flavour = "auto"` — Latte in light, Mocha in dark, following the same system appearance signal as VS Code and Ghostty
-- **Treesitter**: pinned to the `main` branch (the only one supporting Neovim 0.11+); parsers are compiled by the `tree-sitter-cli` formula from the Brewfile
-- **LSP**: configured via `vim.lsp.config` / `vim.lsp.enable`, not the deprecated `require("lspconfig")` framework removed in nvim-lspconfig v3
-- **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
-- **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
+- **Plugin manager**: [lazy.nvim](https://github.com/folke/lazy.nvim) — self-bootstraps on first
+  launch, lazy-loads everything
+- **Theme**: `catppuccin/nvim` with `flavour = "auto"` — Latte in light, Mocha in dark, following
+  the same system appearance signal as VS Code and Ghostty
+- **Treesitter**: pinned to the `main` branch (the only one supporting Neovim 0.11+); parsers are
+  compiled by the `tree-sitter-cli` formula from the Brewfile
+- **LSP**: configured via `vim.lsp.config` / `vim.lsp.enable`, not the deprecated
+  `require("lspconfig")` framework removed in nvim-lspconfig v3
+- **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key,
+  gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip,
+  nvim-autopairs, Comment.nvim
+- **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment;
+  `<leader>e` for file tree
 
 ### Terminal (Ghostty)
 
@@ -297,14 +315,17 @@ or bootout/bootstrap by hand — launchd caches the old schedule until you do.
 
 ### VSCode
 
-- Catppuccin Latte/Mocha via `window.autoDetectColorScheme`, Material Icon Theme with extensive file/folder associations
+- Catppuccin Latte/Mocha via `window.autoDetectColorScheme`, Material Icon Theme with extensive
+  file/folder associations
 - Format on save with Ruff (Python) and Prettier (JSON)
-- Full Copilot/AI configuration: agent mode, MCP auto-start, terminal auto-approve lists, custom instructions/agents/prompts locations, commit message generation
+- Full Copilot/AI configuration: agent mode, MCP auto-start, terminal auto-approve lists, custom
+  instructions/agents/prompts locations, commit message generation
 - Extensions synced via `extensions.json`
 
 ### Copilot AI Configuration
 
-This repository manages Copilot customizations as code under `github/.github` (stowed to `~/.github`).
+This repository manages Copilot customizations as code under `github/.github` (stowed to
+`~/.github`).
 
 Use these docs as the canonical inventories:
 
@@ -319,7 +340,8 @@ Use these docs as the canonical inventories:
 
 ### Claude Code Configuration
 
-Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_claude()` which stows the package and sets executable permissions on the statusline and hook scripts.
+Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_claude()` which
+stows the package and sets executable permissions on the statusline and hook scripts.
 
 | File | Source | Purpose |
 | ---- | ------ | ------- |
@@ -343,7 +365,8 @@ Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_
 | `commands/tech-debt.md` | wshobson/commands | Debt inventory with ROI-scored remediation plan |
 | `commands/doc-write.md` | wshobson/commands | Generate API docs, architecture diagrams, user guides |
 
-MCP servers are registered at user scope via `setup_claude()` in bootstrap. They are stored in `~/.claude.json` (not stowed) and registered idempotently on each bootstrap run.
+MCP servers are registered at user scope via `setup_claude()` in bootstrap. They are stored in
+`~/.claude.json` (not stowed) and registered idempotently on each bootstrap run.
 
 | MCP | Package | Purpose |
 | --- | ------- | ------- |
@@ -379,9 +402,11 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 
 - **ShellCheck** — lints `bootstrap.sh` and `check-stow-integrity.sh`
 - **JSON validation** — validates all hook configs and MCP config
-- **VS Code JSONC validation** — validates `vscode/settings.json`, `vscode/keybindings.json`, and `vscode/extensions.json` via `scripts/validate_vscode_jsonc.py`
+- **VS Code JSONC validation** — validates `vscode/settings.json`, `vscode/keybindings.json`, and
+  `vscode/extensions.json` via `scripts/validate_vscode_jsonc.py`
 - **Bootstrap smoke test** — runs full bootstrap on macOS runner, verifies symlinks
-- **Bootstrap Linux sanity** — verifies bootstrap script syntax/help and argument guard behavior on Ubuntu
+- **Bootstrap Linux sanity** — verifies bootstrap script syntax/help and argument guard behavior on
+  Ubuntu
 
 ## Selective Install
 
@@ -412,17 +437,12 @@ starship preset tokyo-night -o ~/.config/starship.toml
 code ~/.config/starship.toml
 ```
 
-## Secrets
+## Managing Secrets
 
-Put API keys, tokens, and any credential that cannot be committed in `~/.secrets`:
-
-```bash
-# ~/.secrets — created manually on each machine, never committed
-export OPENAI_API_KEY="sk-..."
-export GITHUB_TOKEN="ghp_..."
-```
-
-The file is sourced silently by `.zshrc` on every shell start and is covered by `.gitignore_global`.
+See [Secrets](#secrets) above — credentials live in the macOS login Keychain
+and are managed with the `secret` command. A plaintext `~/.secrets` is **not**
+sourced; if one exists the shell warns on startup so it gets migrated rather
+than silently relied on.
 
 ## Verify Stow Integrity
 
@@ -434,7 +454,8 @@ Exits non-zero if any file under a stow target is not a symlink pointing into th
 
 ## VS Code Config Validation Policy
 
-VS Code user config files under `vscode/` are validated in CI using JSONC-aware parsing (comments and trailing commas allowed).
+VS Code user config files under `vscode/` are validated in CI using JSONC-aware parsing (comments
+and trailing commas allowed).
 
 ```bash
 # Run the same JSONC validation locally

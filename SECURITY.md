@@ -2,7 +2,8 @@
 
 ## Reporting a Vulnerability
 
-Please report suspected vulnerabilities privately via GitHub Security Advisories for this repository.
+Please report suspected vulnerabilities privately via GitHub Security Advisories for this
+repository.
 
 1. Open the repository Security tab.
 2. Select "Report a vulnerability".
@@ -18,4 +19,5 @@ Do not open public issues for unpatched vulnerabilities.
 
 ## Scope
 
-This policy applies to repository-managed automation, shell/bootstrap logic, and Copilot customization assets under github/.github.
+This policy applies to repository-managed automation, shell/bootstrap logic, and Copilot
+customization assets under github/.github.
