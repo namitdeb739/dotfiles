@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.namitdeb739.dotfiles-update</string>
+
+  <!-- Run through a login shell so brew, stow, ghostty and antidote are all on
+       PATH exactly as they are in an interactive session. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>exec "$HOME/bin/dotfiles-update"</string>
+  </array>
+
+  <!-- Weekly, Sunday at 10:00. Weekday 0 is Sunday. If the Mac is asleep or
+       powered off at the time, launchd runs the job once at next wake. -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key><integer>0</integer>
+    <key>Hour</key><integer>10</integer>
+    <key>Minute</key><integer>0</integer>
+  </dict>
+
+  <!-- Never run on login or on load; the calendar entry is the only trigger. -->
+  <key>RunAtLoad</key>
+  <false/>
+
+  <!-- Background priority: don't fight foreground work for CPU or disk. -->
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>LowPriorityIO</key>
+  <true/>
+  <key>Nice</key>
+  <integer>5</integer>
+
+  <!-- The script maintains its own rotating log; these capture anything that
+       escapes it (e.g. a zsh startup error before the script runs). -->
+  <key>StandardOutPath</key>
+  <string>/tmp/dotfiles-update.launchd.out</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/dotfiles-update.launchd.err</string>
+</dict>
+</plist>

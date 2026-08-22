@@ -32,6 +32,7 @@ RUN_VERIFICATION=1
 RUN_SSH_KEY=1
 RUN_CLAUDE=1
 RUN_ITERM2=1
+RUN_LAUNCHD=1
 
 # Summary tracking
 SUMMARY_PRINTED=0
@@ -241,6 +242,7 @@ enable_all_sections() {
   RUN_SSH_KEY=1
   RUN_CLAUDE=1
   RUN_ITERM2=1
+  RUN_LAUNCHD=1
 }
 
 disable_all_sections() {
@@ -254,6 +256,7 @@ disable_all_sections() {
   RUN_SSH_KEY=0
   RUN_CLAUDE=0
   RUN_ITERM2=0
+  RUN_LAUNCHD=0
 }
 
 enable_section() {
@@ -290,6 +293,9 @@ enable_section() {
     iterm2)
       RUN_ITERM2=1
       ;;
+    launchd)
+      RUN_LAUNCHD=1
+      ;;
     *)
       log_warn "Unknown section '$section' ignored"
       ;;
@@ -303,7 +309,7 @@ apply_section_defaults() {
 }
 
 prompt_section_selection() {
-  local sections=("cleanup" "brew" "stow" "vscode" "extensions" "zsh-plugins" "verification" "ssh-key" "claude" "iterm2")
+  local sections=("cleanup" "brew" "stow" "vscode" "extensions" "zsh-plugins" "verification" "ssh-key" "claude" "iterm2" "launchd")
 
   if [[ "$SELECT_SECTIONS" -ne 1 ]]; then
     return
@@ -367,6 +373,7 @@ prompt_section_selection() {
         8|ssh-key) enable_section "ssh-key" ;;
         9|claude) enable_section "claude" ;;
         10|iterm2) enable_section "iterm2" ;;
+        11|launchd) enable_section "launchd" ;;
         all) enable_all_sections ;;
         *) log_warn "Ignoring unknown selection: $item" ;;
       esac
@@ -380,7 +387,8 @@ prompt_section_selection() {
   local selected_total
   selected_total=$((
     RUN_CLEANUP + RUN_BREW + RUN_STOW + RUN_VSCODE +
-    RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE + RUN_ITERM2
+    RUN_EXTENSIONS + RUN_ZSH_PLUGINS + RUN_VERIFICATION + RUN_SSH_KEY + RUN_CLAUDE + RUN_ITERM2 +
+    RUN_LAUNCHD
   ))
 
   if [[ "$selected_total" -eq 0 ]]; then
@@ -484,6 +492,31 @@ stow_core_packages() {
   stow_package "nvim"
   stow_package "ghostty"
   stow_package "bin"
+  stow_package "launchd"
+}
+
+load_launch_agents() {
+  local agents_dir="$HOME/Library/LaunchAgents"
+  local uid; uid="$(id -u)"
+  local plist label
+
+  [[ "$(uname -s)" != "Darwin" ]] && return 0
+  [[ ! -d "$agents_dir" ]] && return 0
+
+  echo "--- Launch Agents ---"
+  for plist in "$agents_dir"/com.namitdeb739.*.plist; do
+    [[ -e "$plist" ]] || continue
+    label="$(basename "$plist" .plist)"
+    # bootout first so an edited plist is reloaded rather than ignored.
+    launchctl bootout "gui/$uid/$label" 2>/dev/null || true
+    if launchctl bootstrap "gui/$uid" "$plist" 2>/dev/null; then
+      echo "Loaded: $label"
+    else
+      log_warn "Could not load launch agent: $label"
+    fi
+  done
+
+  return 0
 }
 
 run_verification() {
@@ -940,6 +973,11 @@ main() {
   }
 
   run_or_skip_phase "Zsh Plugins" "$RUN_ZSH_PLUGINS" init_zsh_plugins || {
+    print_summary
+    return 1
+  }
+
+  run_or_skip_phase "Launch Agents" "$RUN_LAUNCHD" load_launch_agents || {
     print_summary
     return 1
   }

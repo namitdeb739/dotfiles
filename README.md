@@ -76,6 +76,8 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
 | `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
+| `bin/` | `theme-toggle`, `dotfiles-update` — personal scripts | `~/bin/` |
+| `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
 | `brew/` | `Brewfile` | Not stowed — used by `brew bundle` directly |
@@ -134,6 +136,54 @@ Full option reference for the installed version: `ghostty +show-config --default
 
 iTerm2 is kept installed as a fallback; its Catppuccin presets are still imported by the
 `iterm2` bootstrap phase.
+
+### Scheduled Maintenance
+
+`bin/dotfiles-update` upgrades installed software and re-converges the machine onto
+the repo. A launchd agent runs it **every Sunday at 10:00**; if the Mac is asleep,
+launchd runs it once at next wake.
+
+It deliberately **never touches git** — no pull, no commit, no push. The repo is the
+source of truth and only changes when you change it.
+
+What it does, in order:
+
+| Step | Command |
+| ---- | ------- |
+| Refresh formulae | `brew update` |
+| Upgrade | `brew upgrade` (not `--greedy`, so self-updating casks manage themselves) |
+| Re-converge | `brew bundle --no-upgrade` — installs anything declared but missing |
+| Reclaim disk | `brew cleanup --prune=30` |
+| Update plugins | `antidote update`, then regenerate `~/.zsh_plugins.zsh` |
+| Repair symlinks | `stow --restow` for every package |
+| Verify | `check-stow-integrity.sh` and `ghostty +validate-config` |
+
+Reporting:
+
+- **Silent on success.** A macOS notification fires only when a step fails, naming
+  the step that broke.
+- **Rotating log** at `~/.local/state/dotfiles-update/update.log` (8 archives kept).
+- **Summary on next shell start** — the first new terminal after a run prints what
+  upgraded, then deletes the summary so you see it exactly once.
+
+```bash
+dfu                  # run it now (alias for dotfiles-update)
+dotfiles-update --dry-run   # show what it would do, change nothing
+dfu-log              # page the log
+```
+
+Managing the schedule:
+
+```bash
+launchctl print gui/$(id -u)/com.namitdeb739.dotfiles-update   # status, next fire time
+launchctl kickstart -k gui/$(id -u)/com.namitdeb739.dotfiles-update   # run now via launchd
+launchctl bootout gui/$(id -u)/com.namitdeb739.dotfiles-update        # disable
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.namitdeb739.dotfiles-update.plist  # re-enable
+```
+
+To change the cadence, edit `StartCalendarInterval` in the plist, then re-run
+`./bootstrap.sh` (its Launch Agents phase reloads every `com.namitdeb739.*` agent)
+or bootout/bootstrap by hand — launchd caches the old schedule until you do.
 
 ### VSCode
 
@@ -304,6 +354,11 @@ dotfiles/
 │   └── .config/starship.toml        # Catppuccin Mocha prompt config
 ├── ghostty/
 │   └── .config/ghostty/config        # Catppuccin Latte/Mocha terminal config
+├── bin/bin/
+│   ├── theme-toggle                 # macOS light/dark switcher
+│   └── dotfiles-update              # weekly maintenance run
+├── launchd/Library/LaunchAgents/
+│   └── com.namitdeb739.dotfiles-update.plist
 ├── nvim/
 │   └── .config/nvim/
 │       ├── init.lua

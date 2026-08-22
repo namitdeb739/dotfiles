@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+# dotfiles-update — scheduled maintenance for the dotfiles-managed machine.
+#
+# Upgrades installed software and re-converges the machine onto the repo's
+# declared state. It deliberately never touches git: no pull, no commit, no
+# push. The repo is the source of truth and only changes when you change it.
+#
+# Run manually any time. Scheduled weekly by
+# ~/Library/LaunchAgents/com.namitdeb739.dotfiles-update.plist
+#
+# Usage: dotfiles-update [--dry-run] [--quiet]
+
+set -Eeuo pipefail
+
+REPO_DIR="${DOTFILES_DIR:-$HOME/Developer/dotfiles}"
+STATE_DIR="$HOME/.local/state/dotfiles-update"
+LOG_FILE="$STATE_DIR/update.log"
+SUMMARY_FILE="$STATE_DIR/last-summary"
+LOG_KEEP=8
+
+DRY_RUN=0
+QUIET=0
+
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run) DRY_RUN=1 ;;
+    --quiet)   QUIET=1 ;;
+    -h|--help)
+      sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//'
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $arg" >&2
+      exit 1
+      ;;
+  esac
+done
+
+mkdir -p "$STATE_DIR"
+
+# --- Logging ---------------------------------------------------------------
+
+log() {
+  printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"
+}
+
+section() {
+  log ""
+  log "=== $* ==="
+}
+
+# Rotate before writing so the current run is always the newest file.
+rotate_logs() {
+  [[ -f "$LOG_FILE" ]] || return 0
+  mv "$LOG_FILE" "$LOG_FILE.$(date -r "$LOG_FILE" '+%Y%m%d-%H%M%S')"
+  # Keep only the newest $LOG_KEEP archives.
+  local old
+  # shellcheck disable=SC2012
+  old="$(ls -1t "$LOG_FILE".* 2>/dev/null | tail -n "+$((LOG_KEEP + 1))" || true)"
+  [[ -n "$old" ]] && printf '%s\n' "$old" | while IFS= read -r f; do rm -f "$f"; done
+  return 0
+}
+
+run() {
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    log "[dry-run] $*"
+    return 0
+  fi
+  "$@"
+}
+
+# --- Failure reporting -----------------------------------------------------
+
+FAILED_STEP=""
+
+notify_failure() {
+  local step="$1"
+  [[ "$QUIET" -eq 1 ]] && return 0
+  osascript -e "display notification \"Step: ${step}. See ${LOG_FILE}\" with title \"dotfiles-update failed\"" 2>/dev/null || true
+}
+
+on_error() {
+  local rc=$?
+  log "FAILED (exit $rc) during: ${FAILED_STEP:-unknown step}"
+  printf 'dotfiles-update FAILED during: %s\nLog: %s\n' "${FAILED_STEP:-unknown}" "$LOG_FILE" > "$SUMMARY_FILE"
+  notify_failure "${FAILED_STEP:-unknown}"
+  exit "$rc"
+}
+trap on_error ERR
+
+step() { FAILED_STEP="$1"; section "$1"; }
+
+# --- Steps -----------------------------------------------------------------
+
+UPGRADED_COUNT=0
+OUTDATED_BEFORE=""
+
+brew_maintenance() {
+  command -v brew >/dev/null || { log "Homebrew not installed; skipping"; return 0; }
+
+  step "brew update"
+  run brew update
+
+  step "brew outdated"
+  OUTDATED_BEFORE="$(brew outdated --quiet || true)"
+  if [[ -n "$OUTDATED_BEFORE" ]]; then
+    UPGRADED_COUNT="$(printf '%s\n' "$OUTDATED_BEFORE" | grep -c . || true)"
+    log "$UPGRADED_COUNT package(s) outdated:"
+    printf '%s\n' "$OUTDATED_BEFORE" | sed 's/^/    /'
+  else
+    log "Everything up to date."
+  fi
+
+  step "brew upgrade"
+  # Casks that manage their own updates (Ghostty via Sparkle, VS Code, Raycast)
+  # are upgraded too; --greedy is deliberately NOT used so self-updating apps
+  # are left alone unless the Brewfile version genuinely moved.
+  run brew upgrade
+
+  step "brew bundle"
+  # Re-converge on the Brewfile: installs anything declared but missing.
+  run brew bundle --file="$REPO_DIR/brew/Brewfile" --no-upgrade
+
+  step "brew cleanup"
+  run brew cleanup --prune=30
+
+  step "brew doctor"
+  # Advisory only; brew doctor exits non-zero for harmless warnings.
+  brew doctor 2>&1 | sed 's/^/    /' || log "(brew doctor reported warnings; not treated as failure)"
+}
+
+zsh_plugins() {
+  local antidote_path
+  antidote_path="$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh"
+  [[ -f "$antidote_path" && -f "$HOME/.zsh_plugins.txt" ]] || {
+    log "antidote or ~/.zsh_plugins.txt missing; skipping"
+    return 0
+  }
+
+  step "antidote plugin update"
+  run zsh -c "source '$antidote_path' && antidote update" || log "(antidote update reported an issue; continuing)"
+
+  step "regenerate static plugin file"
+  # Mirrors init_zsh_plugins() in bootstrap.sh.
+  run zsh -c "source '$antidote_path' && antidote bundle < ~/.zsh_plugins.txt > ~/.zsh_plugins.zsh"
+}
+
+restow_packages() {
+  command -v stow >/dev/null || { log "stow not installed; skipping"; return 0; }
+
+  step "restow packages"
+  # Same list and flags as stow_core_packages() in bootstrap.sh. Restowing is
+  # idempotent and repairs symlinks broken by an app rewriting its own config.
+  local pkg
+  for pkg in git github zsh atuin starship nvim ghostty bin launchd; do
+    [[ -d "$REPO_DIR/$pkg" ]] || continue
+    run stow --dir="$REPO_DIR" --target="$HOME" --restow --no-folding "$pkg"
+    log "restowed: $pkg"
+  done
+}
+
+verify() {
+  step "stow integrity check"
+  run bash "$REPO_DIR/check-stow-integrity.sh"
+
+  if command -v ghostty >/dev/null; then
+    step "ghostty config validation"
+    run ghostty +validate-config
+    log "ghostty config OK"
+  fi
+}
+
+write_summary() {
+  {
+    printf 'dotfiles-update — %s\n' "$(date '+%a %d %b %Y, %H:%M')"
+    if [[ "$UPGRADED_COUNT" -gt 0 ]]; then
+      printf '%s package(s) upgraded:\n' "$UPGRADED_COUNT"
+      printf '%s\n' "$OUTDATED_BEFORE" | sed 's/^/  · /'
+    else
+      printf 'No upgrades needed. Machine matches the Brewfile.\n'
+    fi
+    printf 'Log: %s\n' "$LOG_FILE"
+  } > "$SUMMARY_FILE"
+}
+
+# --- Main ------------------------------------------------------------------
+
+main() {
+  rotate_logs
+  exec > >(tee -a "$LOG_FILE") 2>&1
+
+  log "dotfiles-update starting (repo: $REPO_DIR)"
+  [[ "$DRY_RUN" -eq 1 ]] && log "DRY RUN — no changes will be made"
+
+  brew_maintenance
+  zsh_plugins
+  restow_packages
+  verify
+
+  FAILED_STEP=""
+  write_summary
+
+  section "done"
+  log "Completed successfully."
+}
+
+main "$@"
