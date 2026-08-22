@@ -5,8 +5,6 @@
       "Bash(git *)",
       "Bash(gh *)",
       "Bash(uv *)",
-      "Bash(python *)",
-      "Bash(python3 *)",
       "Bash(pytest *)",
       "Bash(ruff *)",
       "Bash(mypy *)",
@@ -29,7 +27,6 @@
       "Bash(echo *)",
       "Bash(pwd)",
       "Bash(which *)",
-      "Bash(env)",
       "Bash(grep *)",
       "Bash(find *)",
       "Bash(awk *)",
@@ -41,9 +38,7 @@
       "Bash(jq *)",
       "Bash(yq *)",
       "Bash(fnm *)",
-      "Bash(node *)",
       "Bash(npm *)",
-      "Bash(npx *)",
       "Bash(brew *)",
       "Bash(docker *)",
       "Bash(docker compose *)",
@@ -51,8 +46,6 @@
       "Bash(cp *)",
       "Bash(mv *)",
       "Bash(touch *)",
-      "Bash(chmod *)",
-      "Bash(chown *)",
       "Bash(curl *)",
       "Bash(wget *)",
       "Bash(stow *)",
@@ -61,8 +54,7 @@
       "Edit(*)",
       "MultiEdit(*)",
       "WebFetch(*)",
-      "WebSearch",
-      "Task(*)"
+      "WebSearch"
     ],
     "deny": [],
     "ask": [
@@ -103,6 +95,7 @@
       }
     }
   },
+  "effortLevel": "medium",
   "autoUpdatesChannel": "stable",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
