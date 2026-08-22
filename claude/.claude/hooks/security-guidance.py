@@ -7,7 +7,6 @@ exits 0 on subsequent encounters for the same file.
 """
 
 import json
-import os
 import re
 import sys
 import tempfile
@@ -36,22 +35,27 @@ GITHUB_ACTIONS_WARNING = (
     "directly into shell commands. Use intermediate env vars instead."
 )
 
-# Session state file — tracks which files have already been warned about
-_SESSION_FILE = Path(tempfile.gettempdir()) / f"claude_security_hook_{os.getpid()}.json"
+# Session state file — tracks which files have already been warned about.
+# Keyed on Claude Code's session_id, NOT os.getpid(): the hook runs as a fresh
+# process on every tool call, so a PID-keyed file is always empty and the
+# "warn once" logic never suppresses anything — it blocks every edit forever.
+def session_file(session_id: str) -> Path:
+    safe = re.sub(r"[^A-Za-z0-9_-]", "", session_id) or "default"
+    return Path(tempfile.gettempdir()) / f"claude_security_hook_{safe}.json"
 
 
-def load_warned_files() -> set[str]:
-    if _SESSION_FILE.exists():
+def load_warned_files(state_path: Path) -> set[str]:
+    if state_path.exists():
         try:
-            return set(json.loads(_SESSION_FILE.read_text()))
+            return set(json.loads(state_path.read_text()))
         except (json.JSONDecodeError, OSError):
             pass
     return set()
 
 
-def save_warned_files(warned: set[str]) -> None:
+def save_warned_files(state_path: Path, warned: set[str]) -> None:
     try:
-        _SESSION_FILE.write_text(json.dumps(list(warned)))
+        state_path.write_text(json.dumps(list(warned)))
     except OSError:
         pass
 
@@ -87,7 +91,8 @@ def main() -> int:
     if not file_path:
         return 0
 
-    warned_files = load_warned_files()
+    state_path = session_file(payload.get("session_id", ""))
+    warned_files = load_warned_files(state_path)
 
     if file_path in warned_files:
         return 0  # Already warned this session — let it through
@@ -109,7 +114,7 @@ def main() -> int:
 
     # Record that we've warned about this file
     warned_files.add(file_path)
-    save_warned_files(warned_files)
+    save_warned_files(state_path, warned_files)
 
     # Output warning to stderr (visible to user)
     print(

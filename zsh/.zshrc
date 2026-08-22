@@ -110,10 +110,14 @@ fi
 # Manage them with the `secret` command:
 #   secret set NOTION_TOKEN      # prompts without echoing
 #   secret list                  # names only
-# A plaintext ~/.secrets is still honoured as a fallback for machines that have
-# not been migrated; run `secret import` there, then `rm -P ~/.secrets`.
-# shellcheck source=/dev/null
-[[ -f ~/.secrets ]] && source ~/.secrets
+#
+# A plaintext ~/.secrets is deliberately NOT sourced: silently reading
+# credentials from an unencrypted file is the thing this setup exists to stop,
+# and a working fallback means it never gets migrated. Warn loudly instead.
+if [[ -f ~/.secrets ]]; then
+  print -u2 -P "%F{yellow}warning:%f ~/.secrets exists but is no longer sourced."
+  print -u2 -P "  Migrate it:  %F{cyan}secret import ~/.secrets && secret list && rm -P ~/.secrets%f"
+fi
 
 # notion-automations (na) CLI config
 export NOTION_CLASSES_DB_ID="33d9080d-a147-80e6-a934-c7f5cf7501f8"
