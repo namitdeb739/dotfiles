@@ -106,11 +106,12 @@ if command -v direnv &>/dev/null; then
 fi
 
 # --- Secrets ---
-# Source ~/.secrets for API keys and tokens that can't be committed.
-# Create this file on each machine; it is gitignored globally.
-# Example contents:
-#   export OPENAI_API_KEY="sk-..."
-#   export GITHUB_TOKEN="ghp_..."
+# Secrets live in the macOS login Keychain, loaded by ~/.zsh/secrets.zsh above.
+# Manage them with the `secret` command:
+#   secret set NOTION_TOKEN      # prompts without echoing
+#   secret list                  # names only
+# A plaintext ~/.secrets is still honoured as a fallback for machines that have
+# not been migrated; run `secret import` there, then `rm -P ~/.secrets`.
 # shellcheck source=/dev/null
 [[ -f ~/.secrets ]] && source ~/.secrets
 

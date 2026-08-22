@@ -78,7 +78,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Catppuccin, LSP, telescope | `~/.config/nvim/` |
 | `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
-| `bin/` | `theme-toggle`, `dotfiles-update` — personal scripts | `~/bin/` |
+| `bin/` | `theme-toggle`, `dotfiles-update`, `secret` — personal scripts | `~/bin/` |
 | `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
@@ -91,7 +91,28 @@ Each directory is an independent stow package that mirrors `~/` structure:
 - **Plugins**: zsh-autosuggestions, fast-syntax-highlighting, zsh-completions, fzf-tab
 - **Modular config**: `~/.zsh/aliases.zsh`, `functions.zsh`, `path.zsh`
 - **Tool integrations**: zoxide (smart cd), atuin (shell history), fnm (node), uv (python), direnv, fzf
-- **Secrets**: `~/.secrets` is sourced silently if it exists — put API keys and tokens there; it is gitignored globally
+- **Secrets**: stored in the macOS login Keychain, not a plaintext file — see below
+
+### Secrets
+
+Secrets live in the **macOS login Keychain**, so they are encrypted at rest and
+backed up by iCloud Keychain sync. Nothing sensitive touches the repo or the
+filesystem in plaintext.
+
+```bash
+secret set NOTION_TOKEN     # prompts, does not echo, does not hit shell history
+secret list                 # names only, never values
+secret get NOTION_TOKEN
+secret rm  NOTION_TOKEN
+```
+
+`~/.zsh/secrets.zsh` exports them into every interactive shell (~30ms). A
+plaintext `~/.secrets` is still sourced afterwards if present, so an
+un-migrated machine keeps working — migrate it with:
+
+```bash
+secret import ~/.secrets && secret list && rm -P ~/.secrets
+```
 
 ### Git
 
@@ -362,7 +383,8 @@ dotfiles/
 │   └── .config/ghostty/config        # Catppuccin Latte/Mocha terminal config
 ├── bin/bin/
 │   ├── theme-toggle                 # macOS light/dark switcher
-│   └── dotfiles-update              # weekly maintenance run
+│   ├── dotfiles-update              # weekly maintenance run
+│   └── secret                       # Keychain-backed secret manager
 ├── launchd/Library/LaunchAgents/
 │   └── com.namitdeb739.dotfiles-update.plist
 ├── nvim/
