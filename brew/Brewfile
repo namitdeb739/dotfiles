@@ -11,6 +11,8 @@ brew "gum"               # Interactive terminal UI (used by bootstrap)
 # --- Core CLI ---
 brew "git"               # Version control
 brew "gh"                # GitHub CLI
+brew "lazygit"           # Git TUI — stage hunks, interactive rebase
+brew "act"               # Run GitHub Actions locally in Docker
 brew "git-delta"         # Better git diffs (used as core.pager)
 brew "fzf"               # Fuzzy finder
 brew "fd"                # Better find
