@@ -43,14 +43,16 @@ The bootstrap script runs these steps automatically and prints a phase-by-phase 
 
 1. **Prerequisites** — installs GNU Stow via Homebrew
 2. **SSH Key** — interactive: generates `~/.ssh/id_ed25519` if missing, optionally uploads to GitHub
-3. **Brewfile** — installs all CLI tools, casks, and fonts (`brew bundle`)
-4. **Stow packages** — symlinks git, github, zsh, atuin, starship, nvim configs into `~/`
-5. **VS Code** — stows settings, keybindings into the platform-specific VSCode User dir
-6. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and `security-guidance.py` executable
-7. **Starship prompt** — interactive preset chooser (Dracula default, or pick from 9 presets); non-interactive runs keep the existing config
-8. **VS Code extensions** — installs any missing extensions from `extensions.json`
-9. **Zsh plugins** — pre-compiles antidote plugins for fast first shell launch
-10. **Verification** — confirms all stow symlinks are intact
+3. **Cleanup** — removes superseded tooling (oh-my-zsh, p10k, nvm, sdkman)
+4. **Brew Packages** — installs all CLI tools, casks, and fonts (`brew bundle`)
+5. **Stow Packages** — symlinks git, github, zsh, atuin, starship, nvim, ghostty, bin, launchd into `~/`
+6. **VS Code Linking** — stows settings, keybindings into the platform-specific VSCode User dir
+7. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and `security-guidance.py` executable
+8. **iTerm2 Colors** — imports `iterm2/colors/*.itermcolors` as iTerm2 presets
+9. **VS Code Extensions** — installs any missing extensions from `extensions.json`
+10. **Zsh Plugins** — pre-compiles antidote plugins for fast first shell launch
+11. **Launch Agents** — loads every `com.namitdeb739.*` agent from `~/Library/LaunchAgents`
+12. **Verification** — confirms all stow symlinks are intact
 
 ## Syncing Updates
 
@@ -74,7 +76,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `zsh/` | `.zshrc`, aliases, functions, PATH, plugin list | `~/` |
 | `atuin/` | `config.toml` — fuzzy search, noise filter, preview | `~/.config/atuin/` |
 | `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
-| `nvim/` | Full neovim config — lazy.nvim, Dracula, LSP, telescope | `~/.config/nvim/` |
+| `nvim/` | Full neovim config — lazy.nvim, Catppuccin, LSP, telescope | `~/.config/nvim/` |
 | `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
 | `bin/` | `theme-toggle`, `dotfiles-update` — personal scripts | `~/bin/` |
 | `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
@@ -105,7 +107,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 Config lives at `nvim/.config/nvim/` and is stowed to `~/.config/nvim/`.
 
 - **Plugin manager**: [lazy.nvim](https://github.com/folke/lazy.nvim) — self-bootstraps on first launch, lazy-loads everything
-- **Theme**: `Mofiqul/dracula.nvim` with Dracula Soft background — matches VS Code + starship palette
+- **Theme**: `catppuccin/nvim` with `flavour = "auto"` — Latte in light, Mocha in dark, following the same system appearance signal as VS Code and Ghostty
 - **Plugins**: treesitter, telescope + fzf-native, lualine, nvim-tree, indent-blankline, which-key, gitsigns, mason + lspconfig (lua, bash, python LSP auto-installed), nvim-cmp + luasnip, nvim-autopairs, Comment.nvim
 - **Key mappings**: `<leader>` is `<Space>`; `<leader>ff/fg/fb` for telescope; `gcc` to comment; `<leader>e` for file tree
 
@@ -194,7 +196,7 @@ or bootout/bootstrap by hand — launchd caches the old schedule until you do.
 
 ### VSCode
 
-- Dracula Theme Soft, Material Icon Theme with extensive file/folder associations
+- Catppuccin Latte/Mocha via `window.autoDetectColorScheme`, Material Icon Theme with extensive file/folder associations
 - Format on save with Ruff (Python) and Prettier (JSON)
 - Full Copilot/AI configuration: agent mode, MCP auto-start, terminal auto-approve lists, custom instructions/agents/prompts locations, commit message generation
 - Extensions synced via `extensions.json`
@@ -301,11 +303,8 @@ stow -t ~ -D zsh     # removes all zsh symlinks from ~/
 ## Reconfigure Starship Prompt
 
 ```bash
-# Re-run the preset chooser
-./bootstrap.sh  # select a new preset at the Starship step
-
-# Or manually apply any preset
-starship preset dracula -o ~/.config/starship.toml
+# Apply any upstream preset (overwrites the Catppuccin config in this repo)
+starship preset catppuccin-powerline -o ~/.config/starship.toml
 starship preset tokyo-night -o ~/.config/starship.toml
 
 # Or edit directly

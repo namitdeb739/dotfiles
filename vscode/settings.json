@@ -55,6 +55,7 @@
   "search.searchView.semanticSearchBehavior": "runOnEmpty",
   "editor.gotoLocation.multipleDefinitions": "goto",
   "breadcrumbs.enabled": true,
+  "todo-tree.ripgrep.ripgrep": "/opt/homebrew/bin/rg",
 
   // --- Git Integration ---
   "git.autofetch": true,
@@ -63,7 +64,7 @@
   "scm.defaultViewMode": "tree",
 
   // --- Terminal ---
-  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font",
+  "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font Mono",
   "terminal.integrated.minimumContrastRatio": 1,
   "terminal.integrated.gpuAcceleration": "canvas",
   "terminal.integrated.scrollback": 10000,
@@ -161,10 +162,6 @@
       "text": "Use Conventional Commits format: type(scope): description. Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert. Keep subject line under 72 chars. Use imperative mood. Add body for non-trivial changes explaining what and why.",
     },
   ],
-
-  // --- GitLens ---
-  "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
 
   // --- Material Icon Theme ---
   "material-icon-theme.activeIconPack": "react_redux",
@@ -304,7 +301,7 @@
     "https://www.schemastore.org/": true,
   },
   "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
   },
   "[github-actions-workflow]": {
     "editor.defaultFormatter": "redhat.vscode-yaml",
@@ -321,4 +318,14 @@
   "github.copilot.chat.claudeAgent.allowDangerouslySkipPermissions": true,
   "workbench.colorTheme": "Catppuccin Latte",
   "task.allowAutomaticTasks": "on",
+  "yaml.disableSchemaDetection": [
+    "**/.github/workflows/*.yml",
+    "**/.github/workflows/*.yaml",
+    "**/.gitea/workflows/*.yml",
+    "**/.gitea/workflows/*.yaml",
+    "**/.forgejo/workflows/*.yml",
+    "**/.forgejo/workflows/*.yaml",
+  ],
+  "redhat.telemetry.enabled": true,
+  "chat.titleBar.openInAgentsWindow.enabled": false,
 }

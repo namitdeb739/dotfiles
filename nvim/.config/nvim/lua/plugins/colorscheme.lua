@@ -1,27 +1,36 @@
--- plugins/colorscheme.lua — Dracula, matching VS Code + starship palette
+-- plugins/colorscheme.lua — Catppuccin, matching VS Code, starship and Ghostty
 
 return {
-  "Mofiqul/dracula.nvim",
+  "catppuccin/nvim",
+  name = "catppuccin",
   lazy = false,    -- load immediately so colours are set before other plugins
   priority = 1000, -- load before everything else
   config = function()
-    require("dracula").setup({
-      -- Use italic for comments and keywords
-      italic_comment = true,
-      -- Transparent background — set false to keep the dark bg
-      transparent_bg = false,
-      -- Override specific highlight groups to match the Dracula Soft variant
-      -- used in VS Code ("Dracula Theme Soft")
-      overrides = function(colors)
-        return {
-          -- Soften the background slightly (Dracula Soft is #22212c vs Dracula's #282a36)
-          Normal = { bg = "#22212c" },
-          NormalNC = { bg = "#22212c" },
-          SignColumn = { bg = "#22212c" },
-          NvimTreeNormal = { bg = "#1e1d29" },
-        }
-      end,
+    require("catppuccin").setup({
+      -- Follow the terminal/system appearance: Latte in light, Mocha in dark.
+      -- Ghostty and VS Code switch on the same signal, so `theme-toggle`
+      -- flips all three together.
+      flavour = "auto",
+      background = { light = "latte", dark = "mocha" },
+      transparent_background = false,
+      -- Match starship.toml, which italicises nothing but reads as a
+      -- comment-heavy palette; keep comments italic as before.
+      styles = {
+        comments = { "italic" },
+        conditionals = {},
+      },
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        telescope = true,
+        indent_blankline = { enabled = true },
+        mason = true,
+        native_lsp = { enabled = true },
+        which_key = true,
+      },
     })
-    vim.cmd.colorscheme("dracula")
+    vim.cmd.colorscheme("catppuccin")
   end,
 }
