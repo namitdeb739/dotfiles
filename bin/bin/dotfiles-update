@@ -94,6 +94,7 @@ step() { FAILED_STEP="$1"; section "$1"; }
 
 UPGRADED_COUNT=0
 OUTDATED_BEFORE=""
+DRIFT_REPORT=""
 
 brew_maintenance() {
   command -v brew >/dev/null || { log "Homebrew not installed; skipping"; return 0; }
@@ -127,6 +128,63 @@ brew_maintenance() {
   step "brew doctor"
   # Advisory only; brew doctor exits non-zero for harmless warnings.
   brew doctor 2>&1 | sed 's/^/    /' || log "(brew doctor reported warnings; not treated as failure)"
+}
+
+# Report packages installed by hand but never declared in the Brewfile, and
+# declared packages that are no longer installed. Report only — this never
+# uninstalls anything, so a deliberate one-off install is not destroyed by an
+# unattended job. `brew bundle cleanup` is deliberately NOT used: it lists every
+# transitive dependency too, which buries the handful of entries that matter.
+brewfile_drift() {
+  command -v brew >/dev/null || return 0
+
+  step "Brewfile drift"
+
+  local brewfile="$REPO_DIR/brew/Brewfile"
+  [[ -f "$brewfile" ]] || { log "no Brewfile; skipping"; return 0; }
+
+  local tmp; tmp="$(mktemp -d)"
+  # shellcheck disable=SC2064
+  trap "rm -rf '$tmp'" RETURN
+
+  # Declared, as plain names.
+  sed -n 's/^brew "\([^"]*\)".*/\1/p' "$brewfile" | sed 's|.*/||' | sort -u > "$tmp/declared-formulae"
+  sed -n 's/^cask "\([^"]*\)".*/\1/p' "$brewfile" | sort -u > "$tmp/declared-casks"
+
+  # Installed. `--installed-on-request` excludes packages pulled in only as
+  # dependencies, which is what makes this signal readable.
+  brew leaves --installed-on-request | sort -u > "$tmp/installed-formulae"
+  brew list --cask 2>/dev/null | sort -u > "$tmp/installed-casks"
+
+  local undeclared_f undeclared_c missing_f missing_c
+  undeclared_f="$(comm -23 "$tmp/installed-formulae" "$tmp/declared-formulae")"
+  undeclared_c="$(comm -23 "$tmp/installed-casks" "$tmp/declared-casks")"
+  missing_f="$(comm -13 "$tmp/installed-formulae" "$tmp/declared-formulae")"
+  missing_c="$(comm -13 "$tmp/installed-casks" "$tmp/declared-casks")"
+
+  DRIFT_REPORT=""
+
+  _drift_block() {
+    local title="$1" body="$2"
+    [[ -z "$body" ]] && return 0
+    log "$title"
+    printf '%s\n' "$body" | sed 's/^/    /'
+    DRIFT_REPORT+="$title"$'\n'
+    DRIFT_REPORT+="$(printf '%s\n' "$body" | sed 's/^/  · /')"$'\n'
+  }
+
+  _drift_block "Installed but not in the Brewfile (formulae):" "$undeclared_f"
+  _drift_block "Installed but not in the Brewfile (casks):" "$undeclared_c"
+  _drift_block "In the Brewfile but not installed (formulae):" "$missing_f"
+  _drift_block "In the Brewfile but not installed (casks):" "$missing_c"
+
+  if [[ -z "$DRIFT_REPORT" ]]; then
+    log "No drift: installed packages match the Brewfile."
+  else
+    log "Add what you want to keep to brew/Brewfile, or uninstall it by hand."
+  fi
+
+  return 0
 }
 
 zsh_plugins() {
@@ -177,7 +235,10 @@ write_summary() {
       printf '%s package(s) upgraded:\n' "$UPGRADED_COUNT"
       printf '%s\n' "$OUTDATED_BEFORE" | sed 's/^/  · /'
     else
-      printf 'No upgrades needed. Machine matches the Brewfile.\n'
+      printf 'No upgrades needed.\n'
+    fi
+    if [[ -n "$DRIFT_REPORT" ]]; then
+      printf '%s' "$DRIFT_REPORT"
     fi
     printf 'Log: %s\n' "$LOG_FILE"
   } > "$SUMMARY_FILE"
@@ -193,6 +254,7 @@ main() {
   [[ "$DRY_RUN" -eq 1 ]] && log "DRY RUN — no changes will be made"
 
   brew_maintenance
+  brewfile_drift
   zsh_plugins
   restow_packages
   verify

@@ -154,9 +154,16 @@ What it does, in order:
 | Upgrade | `brew upgrade` (not `--greedy`, so self-updating casks manage themselves) |
 | Re-converge | `brew bundle --no-upgrade` — installs anything declared but missing |
 | Reclaim disk | `brew cleanup --prune=30` |
+| Report drift | packages installed by hand but never declared, and vice versa |
 | Update plugins | `antidote update`, then regenerate `~/.zsh_plugins.zsh` |
 | Repair symlinks | `stow --restow` for every package |
 | Verify | `check-stow-integrity.sh` and `ghostty +validate-config` |
+
+**Brewfile drift** is report-only — it never uninstalls, so a deliberate one-off
+install survives an unattended run. It compares `brew leaves --installed-on-request`
+and `brew list --cask` against the Brewfile. `brew bundle cleanup` is deliberately
+not used: it lists every transitive dependency too, which buries the entries that
+actually matter (12 real items here versus ~60 of noise).
 
 Reporting:
 
