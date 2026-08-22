@@ -77,6 +77,8 @@ cask "telegram"          # Messaging
 cask "whatsapp"          # Messaging
 cask "iina"              # Video player
 cask "adguard"           # Ad/tracker blocking
+# Installed copy (1.0.19) is newer than the cask (1.0), so it is declared for
+# a fresh machine but deliberately not adopted here — adopting would downgrade.
 cask "hush"              # Safari cookie-notice blocker
 cask "cleanmymac"        # Disk cleanup
 
