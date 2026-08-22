@@ -835,29 +835,60 @@ import_iterm2_colors() {
   local colors_dir="$REPO_DIR/iterm2/colors"
   [[ ! -d "$colors_dir" ]] && return 0
 
-  local imported=0
-  local has_files=0
-  for f in "$colors_dir"/*.itermcolors; do
-    [[ -f "$f" ]] || continue
-    has_files=1
-    local raw_name preset_name
-    raw_name="$(basename "$f" .itermcolors)"
-    preset_name="$(echo "$raw_name" | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); print}')"
-    if defaults read com.googlecode.iterm2 'Custom Color Presets' 2>/dev/null | grep -qF "\"$preset_name\""; then
-      echo "Already imported: $preset_name"
-      continue
-    fi
-    open "$f"
-    echo "Imported: $preset_name"
-    imported=$((imported + 1))
-  done
-
-  if [[ "$has_files" -eq 0 ]]; then
+  if ! compgen -G "$colors_dir/*.itermcolors" > /dev/null; then
     log_warn "No .itermcolors files found in $colors_dir"
     return 0
   fi
 
-  [[ "$imported" -gt 0 ]] && echo "iTerm2 color presets imported ($imported files)."
+  # Write presets straight into iTerm2's preferences domain. The obvious
+  # `open file.itermcolors` does not work unless iTerm2 is registered with
+  # LaunchServices as the handler for that extension, which it frequently is
+  # not — it fails with kLSApplicationNotFoundErr and imports nothing, while
+  # still looking like it succeeded.
+  if command_exists python3; then
+    python3 - "$colors_dir" << 'PYEOF'
+import plistlib
+import subprocess
+import sys
+from pathlib import Path
+
+DOMAIN = "com.googlecode.iterm2"
+KEY = "Custom Color Presets"
+
+colors_dir = Path(sys.argv[1])
+
+existing = subprocess.run(
+    ["defaults", "read", DOMAIN, KEY],
+    capture_output=True, text=True,
+).stdout
+
+imported = 0
+for f in sorted(colors_dir.glob("*.itermcolors")):
+    name = " ".join(w.capitalize() for w in f.stem.split("-"))
+    if f'"{name}"' in existing or f"{name} =" in existing:
+        print(f"Already imported: {name}")
+        continue
+    try:
+        preset = plistlib.load(f.open("rb"))
+    except Exception as exc:
+        print(f"Skipping {f.name}: {exc}", file=sys.stderr)
+        continue
+    result = subprocess.run(
+        ["defaults", "write", DOMAIN, KEY, "-dict-add", name,
+         plistlib.dumps(preset).decode()],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        print(f"Failed to import {name}: {result.stderr.strip()}", file=sys.stderr)
+        continue
+    print(f"Imported: {name}")
+    imported += 1
+
+if imported:
+    print(f"iTerm2 color presets imported ({imported} files).")
+    print("Quit iTerm2 first if it is running, or it will overwrite these on exit.")
+PYEOF
+  fi
 
   # Write a DynamicProfile with the correct font. iTerm2 watches this directory
   # and applies the change live — no restart needed, safe whether running or not.
