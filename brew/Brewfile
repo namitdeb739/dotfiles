@@ -64,7 +64,6 @@ brew "pre-commit"        # Git hooks framework
 # any window manager, Loop included, because it only reads the focus state.
 tap "FelixKratz/formulae"
 brew "borders", restart_service: :changed
-brew "sketchybar", restart_service: :changed  # Scriptable menu bar replacement
 
 # --- Casks ---
 cask "visual-studio-code"
