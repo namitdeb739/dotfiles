@@ -502,21 +502,17 @@ ensure_prerequisites() {
 }
 
 stow_core_packages() {
-  stow_package "git"
-  stow_package "github"
-  stow_package "zsh"
-  stow_package "atuin"
-  stow_package "starship"
-  stow_package "nvim"
-  stow_package "ghostty"
-  stow_package "karabiner"
-  stow_package "gh"
-  stow_package "lazygit"
-  stow_package "act"
-  stow_package "ssh"
-  stow_package "tmux"
-  stow_package "bin"
-  stow_package "launchd"
+  local manifest="$REPO_DIR/stow-packages.txt"
+  if [[ ! -f "$manifest" ]]; then
+    log_warn "stow-packages.txt not found; skipping stow"
+    return 1
+  fi
+
+  local pkg
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" || "$pkg" == \#* ]] && continue
+    stow_package "$pkg"
+  done < "$manifest"
 }
 
 apply_macos_defaults() {

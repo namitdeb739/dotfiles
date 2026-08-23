@@ -288,14 +288,21 @@ restow_packages() {
   command -v stow >/dev/null || { log "stow not installed; skipping"; return 0; }
 
   step "restow packages"
-  # Same list and flags as stow_core_packages() in bootstrap.sh. Restowing is
-  # idempotent and repairs symlinks broken by an app rewriting its own config.
+  # Package list comes from stow-packages.txt, the same file bootstrap.sh
+  # reads. These were previously two hardcoded lists that drifted: the weekly
+  # restow had silently stopped repairing act, gh, karabiner, lazygit, ssh
+  # and tmux. Restowing is idempotent and repairs symlinks broken by an app
+  # rewriting its own config.
+  local manifest="$REPO_DIR/stow-packages.txt"
+  [[ -f "$manifest" ]] || { log "stow-packages.txt missing; skipping"; return 0; }
+
   local pkg
-  for pkg in git github zsh atuin starship nvim ghostty bin launchd; do
+  while IFS= read -r pkg; do
+    [[ -z "$pkg" || "$pkg" == \#* ]] && continue
     [[ -d "$REPO_DIR/$pkg" ]] || continue
     run stow --dir="$REPO_DIR" --target="$HOME" --restow --no-folding "$pkg"
     log "restowed: $pkg"
-  done
+  done < "$manifest"
 }
 
 verify() {

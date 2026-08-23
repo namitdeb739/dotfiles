@@ -99,6 +99,14 @@ quit-after-last-window-closed = false
 notify-on-command-finish = unfocused
 notify-on-command-finish-after = 45s
 
+# --- Updates ---
+# Ghostty ships Sparkle auto-update. Left unset it follows Sparkle's own
+# default, which means the app can update itself behind Homebrew's back — and
+# the Brewfile drift check in bin/dotfiles-update would never see it. `check`
+# keeps the notification but leaves Homebrew as the single upgrade path, so
+# `dotfiles-update` stays the one thing that changes versions.
+auto-update = check
+
 # --- macOS keyboard ---
 # Both Option keys send Alt / ESC-prefix so nvim and readline meta-bindings
 # work. Use `left` or `right` instead if you need to type accented characters.
