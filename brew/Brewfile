@@ -21,8 +21,9 @@ brew "ripgrep"           # Better grep
 brew "bat"               # Better cat
 brew "eza"               # Better ls (maintained exa fork)
 brew "jq"                # JSON processor
+brew "yq"                # YAML/TOML processor — the jq counterpart CLAUDE.md assumes
 brew "tree"              # Directory tree viewer
-brew "htop"              # Process viewer
+brew "btop"              # Resource monitor — supersedes htop, themed to Catppuccin
 brew "tlrc"              # Simplified man pages (official tldr client; replaces disabled tldr)
 brew "direnv"            # Per-directory env vars
 brew "shellcheck"        # Shell script static analysis
@@ -57,6 +58,12 @@ brew "fnm"               # Fast Node Manager (replaces nvm)
 # --- Build ---
 brew "just"              # Command runner (better make)
 brew "pre-commit"        # Git hooks framework
+
+# --- Window chrome ---
+# JankyBorders draws a coloured border around the focused window. Works with
+# any window manager, Loop included, because it only reads the focus state.
+tap "FelixKratz/formulae"
+brew "borders", restart_service: :changed
 
 # --- Casks ---
 cask "visual-studio-code"

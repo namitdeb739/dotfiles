@@ -1,0 +1,27 @@
+# Stow packages, in the order they are applied.
+#
+# Read by both bootstrap.sh (first run) and bin/dotfiles-update (weekly
+# restow). Keeping it in one file is deliberate: the two used to hold separate
+# hardcoded lists that drifted, and the weekly restow silently stopped
+# repairing act, gh, karabiner, lazygit, ssh and tmux.
+#
+# Blank lines and # comments are ignored.
+
+git
+github
+zsh
+atuin
+starship
+nvim
+ghostty
+karabiner
+gh
+lazygit
+act
+ssh
+tmux
+btop
+borders
+homebrew
+bin
+launchd
