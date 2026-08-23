@@ -59,6 +59,8 @@ source "$CONFIG_DIR/items/memory.sh"
 # shellcheck source=/dev/null
 source "$CONFIG_DIR/items/wifi.sh"
 # shellcheck source=/dev/null
+source "$CONFIG_DIR/items/bluetooth.sh"
+# shellcheck source=/dev/null
 source "$CONFIG_DIR/items/volume.sh"
 # shellcheck source=/dev/null
 source "$CONFIG_DIR/items/battery.sh"

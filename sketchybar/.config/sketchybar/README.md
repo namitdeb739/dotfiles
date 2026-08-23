@@ -16,23 +16,43 @@ running — Loop today, AeroSpace later, or none.
 
 ## Items
 
-| Item | Source | Refresh |
-|---|---|---|
-| `front_app` | `front_app_switched` event | event-driven |
-| `cpu` | `ps -A -o %cpu` ÷ core count | 5s |
-| `memory` | `memory_pressure` | 15s |
-| `wifi` | `ipconfig getsummary` | 30s |
-| `volume` | `volume_change` event | event-driven |
-| `battery` | `pmset -g batt` | 120s + on plug/unplug |
-| `clock` | `date` | 10s |
+| Item | Source | Refresh | Native counterpart |
+|---|---|---|---|
+| `front_app` | `front_app_switched` event | event-driven | — |
+| `cpu` | `ps -A -o %cpu` ÷ core count | 5s | — |
+| `memory` | `memory_pressure` | 15s | — |
+| `wifi` | `ipconfig getsummary` | 30s | Wi-Fi |
+| `bluetooth` | `system_profiler SPBluetoothDataType` | 60s | Bluetooth |
+| `volume` | `volume_change` event + `osascript` | event + 30s | — |
+| `battery` | `pmset -g batt` | 120s + on plug/unplug | Battery |
+| `clock` | `date` | 1s | Clock |
 
-Two deliberate choices:
+## Parity with the native bar
+
+`defaults read com.apple.controlcenter` lists what is actually visible up
+there: **Battery, Bluetooth, Wi-Fi, Clock** (plus Control Center itself). All
+four have counterparts above.
+
+The clock matches `com.apple.menuextra.clock` exactly — `ShowDayOfWeek`,
+`ShowDate`, `ShowAMPM` and `ShowSeconds` are all on, so the format is
+`Sun 23 Aug 11:52:07 PM` and it ticks every second.
+
+**What cannot be replicated:** the Control Center button itself, and
+third-party menu bar icons — Loop, AdGuard, Raycast, OneDrive, Nightfall,
+SaneSideButtons, Notion. SketchyBar cannot draw another app's status item.
+This is why `_HIHideMenuBar` auto-hides rather than removes: move the pointer
+to the top edge and the native bar slides down with all of them intact.
+
+Three deliberate choices:
 
 - **CPU does not use `top -l 1`.** That samples for a full second, so a bar
   refreshing every 5s would spend a fifth of its life inside `top`. Reading the
   accounting `ps` already keeps returns instantly.
 - **Wi-Fi does not use `airport -I`.** That was removed in recent macOS
   versions; `ipconfig getsummary` still exposes the SSID.
+- **Bluetooth anchors both section headings.** The obvious `/Connected:/`
+  match also matches `Not Connected:`, which reports every *paired* device as
+  connected.
 
 ## The native menu bar
 
