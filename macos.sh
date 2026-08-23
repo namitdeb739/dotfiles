@@ -28,16 +28,6 @@ d() {
   fi
 }
 
-echo "--- Menu bar ---"
-# SketchyBar draws its own bar at the top of the screen. Without this the
-# native menu bar sits behind it and you get two stacked bars.
-#
-# Auto-hide rather than remove: the native bar still slides down when the
-# pointer reaches the top edge, so the Apple menu and per-app menus remain
-# reachable. Revert with:
-#   defaults delete NSGlobalDomain _HIHideMenuBar && killall SystemUIServer
-d write NSGlobalDomain _HIHideMenuBar -bool true
-
 echo "--- Keyboard ---"
 # Fast key repeat. KeyRepeat=1 is the fastest the UI exposes; 15 is ~225ms
 # before repeating starts. Both matter constantly in vim-style editing.

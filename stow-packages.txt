@@ -31,7 +31,6 @@ tmux
 claude
 btop
 borders
-sketchybar
 homebrew
 bin
 launchd
