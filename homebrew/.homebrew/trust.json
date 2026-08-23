@@ -1,5 +1,6 @@
 {
   "trustedformulae": [
-    "felixkratz/formulae/borders"
+    "felixkratz/formulae/borders",
+    "felixkratz/formulae/sketchybar"
   ]
 }

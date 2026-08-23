@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# SketchyBar — a scriptable replacement for the macOS menu bar.
+#
+# Deliberately has no window-manager dependency. The configs this was modelled
+# on (kienanana's, F1lmzy's) drive their workspace indicators from yabai, which
+# needs SIP partially disabled; this machine runs Loop with SIP intact, so
+# there is no spaces item here at all. Everything below reads only from
+# userland commands.
+#
+# Reload after editing:  brew services restart sketchybar
+# Or without restarting: sketchybar --reload
+
+CONFIG_DIR="$HOME/.config/sketchybar"
+# Sourced at runtime from an absolute path; shellcheck cannot follow it.
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/colors.sh"
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+export PLUGIN_DIR
+
+# --- Bar -------------------------------------------------------------------
+sketchybar --bar \
+  height=32 \
+  position=top \
+  sticky=on \
+  padding_left=6 \
+  padding_right=6 \
+  color="$BAR_COLOR" \
+  shadow=off \
+  blur_radius=30
+
+# --- Defaults inherited by every item --------------------------------------
+# JetBrainsMono Nerd Font is what supplies the glyphs below; it is installed by
+# brew/Brewfile as font-jetbrains-mono-nerd-font.
+sketchybar --default \
+  updates=when_shown \
+  icon.font="JetBrainsMono Nerd Font:Bold:14.0" \
+  icon.color="$TEXT" \
+  icon.padding_left=8 \
+  icon.padding_right=4 \
+  label.font="JetBrainsMono Nerd Font:Semibold:12.0" \
+  label.color="$TEXT" \
+  label.padding_left=0 \
+  label.padding_right=8 \
+  background.color="$ITEM_BG" \
+  background.corner_radius=6 \
+  background.height=22 \
+  padding_left=3 \
+  padding_right=3
+
+# --- Items -----------------------------------------------------------------
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/front_app.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/cpu.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/memory.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/wifi.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/volume.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/battery.sh"
+# shellcheck source=/dev/null
+source "$CONFIG_DIR/items/clock.sh"
+
+sketchybar --update

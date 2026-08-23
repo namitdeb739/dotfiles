@@ -20,8 +20,19 @@ repo       = Path(sys.argv[1]).resolve()
 home       = Path(sys.argv[2]).resolve()
 vscode_raw = sys.argv[3]
 
-# Packages that stow into $HOME
-HOME_PACKAGES = ["git", "github", "zsh", "atuin", "starship", "nvim", "ghostty", "launchd", "bin", "karabiner", "gh", "lazygit", "act", "ssh", "tmux"]
+# Packages that stow into $HOME, read from the same manifest bootstrap.sh and
+# bin/dotfiles-update use. This was a third hardcoded copy of the list and had
+# drifted out of step with both of them.
+manifest = repo / "stow-packages.txt"
+if not manifest.is_file():
+    print(f"FAIL: {manifest} not found", file=sys.stderr)
+    raise SystemExit(1)
+
+HOME_PACKAGES = [
+    line.strip()
+    for line in manifest.read_text().splitlines()
+    if line.strip() and not line.lstrip().startswith("#")
+]
 
 # Build package → target mapping; skip vscode when its target dir is absent
 packages: dict[str, Path] = {pkg: home for pkg in HOME_PACKAGES}
