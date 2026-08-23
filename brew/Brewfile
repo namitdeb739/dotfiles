@@ -63,7 +63,7 @@ brew "pre-commit"        # Git hooks framework
 # JankyBorders draws a coloured border around the focused window. Works with
 # any window manager, Loop included, because it only reads the focus state.
 tap "FelixKratz/formulae"
-brew "borders", restart_service: :changed
+brew "felixkratz/formulae/borders", restart_service: :changed
 
 # --- Casks ---
 cask "visual-studio-code"

@@ -73,6 +73,43 @@ run() {
 
 FAILED_STEP=""
 
+# Set when `brew bundle` reports failures. Not fatal: see brew_maintenance().
+BUNDLE_FAILED=0
+
+# Casks whose installers are .pkg files, so Homebrew shells out to
+# `sudo installer`. A launchd job has no terminal and no way to answer a
+# password prompt, so these can never install unattended — the run would fail
+# at the same point every week, and every step after it would never run.
+#
+# They stay declared in brew/Brewfile: a fresh interactive bootstrap still
+# installs them, and the drift check still accounts for them. Only the
+# unattended path skips them.
+#
+# Detected from cask metadata rather than hardcoded. A hand-maintained list has
+# exactly the drift problem stow-packages.txt exists to solve — the first
+# version of this list was already missing karabiner-elements. One batched
+# `brew info` call, about a second.
+sudo_casks() {
+  local casks
+  casks=$(grep -oE '^cask "[^"]+"' "$REPO_DIR/brew/Brewfile" | sed 's/cask "//;s/"$//')
+  [[ -z "$casks" ]] && return 0
+
+  # shellcheck disable=SC2086
+  brew info --cask --json=v2 $casks 2>/dev/null | python3 -c '
+import json, sys
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    sys.exit(0)
+tokens = [
+    c["token"]
+    for c in data.get("casks", [])
+    if any(isinstance(a, dict) and "pkg" in a for a in c.get("artifacts", []))
+]
+print(" ".join(sorted(tokens)))
+' || true
+}
+
 notify_failure() {
   local step="$1"
   [[ "$QUIET" -eq 1 ]] && return 0
@@ -120,7 +157,22 @@ brew_maintenance() {
 
   step "brew bundle"
   # Re-converge on the Brewfile: installs anything declared but missing.
-  run brew bundle --file="$REPO_DIR/brew/Brewfile" --no-upgrade
+  #
+  # Deliberately NOT fatal. A cask that cannot install must not cost us the
+  # restow and integrity checks that follow — those are the whole point of the
+  # weekly run. The failure is recorded and surfaced in the summary and the
+  # exit code instead.
+  local skip
+  skip="$(sudo_casks)"
+
+  if ! HOMEBREW_BUNDLE_CASK_SKIP="$skip" \
+       run brew bundle --file="$REPO_DIR/brew/Brewfile" --no-upgrade; then
+    BUNDLE_FAILED=1
+    log "brew bundle reported failures; continuing so the later steps still run"
+  fi
+  if [[ -n "$skip" ]]; then
+    log "skipped (.pkg installers need sudo; install by hand): $skip"
+  fi
 
   step "brew cleanup"
   run brew cleanup --prune=30
@@ -319,6 +371,9 @@ verify() {
 write_summary() {
   {
     printf 'dotfiles-update — %s\n' "$(date '+%a %d %b %Y, %H:%M')"
+    if [[ "$BUNDLE_FAILED" -eq 1 ]]; then
+      printf 'brew bundle had failures; later steps still ran.\n'
+    fi
     if [[ "$UPGRADED_COUNT" -gt 0 ]]; then
       printf '%s package(s) upgraded:\n' "$UPGRADED_COUNT"
       printf '%s\n' "$OUTDATED_BEFORE" | sed 's/^/  · /'
@@ -351,6 +406,11 @@ main() {
   write_summary
 
   section "done"
+  if [[ "$BUNDLE_FAILED" -eq 1 ]]; then
+    log "Completed, but brew bundle reported failures — see above."
+    log "Everything after it (drift, restow, integrity, ghostty) still ran."
+    exit 1
+  fi
   log "Completed successfully."
 }
 
