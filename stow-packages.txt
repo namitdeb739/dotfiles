@@ -6,6 +6,14 @@
 # repairing act, gh, karabiner, lazygit, ssh and tmux.
 #
 # Blank lines and # comments are ignored.
+#
+# Only packages whose target is $HOME belong here. vscode and iterm2 have
+# targets elsewhere and are handled by their own functions in bootstrap.sh.
+#
+# bootstrap.sh also calls stow_package "claude" directly from setup_claude(),
+# because that function chmod +x's the hooks straight afterwards and cannot
+# wait for the stow phase. stow is idempotent, so listing it here as well is
+# harmless and is what gets it repaired weekly.
 
 git
 github
@@ -20,8 +28,10 @@ lazygit
 act
 ssh
 tmux
+claude
 btop
 borders
+sketchybar
 homebrew
 bin
 launchd
