@@ -314,7 +314,69 @@ PYEOF
   _drift_block "Installed but not in the Brewfile (casks):" "$undeclared_c"
   _drift_block "Apps in /Applications not accounted for by any declared cask:" "$unmanaged_apps"
   _drift_block "In the Brewfile but not installed (formulae):" "$missing_f"
-  _drift_block "In the Brewfile but not installed (casks):" "$missing_c"
+  # A declared cask can be "not installed" in two very different ways:
+  # genuinely absent, or present in /Applications but installed by hand so
+  # Homebrew never recorded it. Only the first is actionable by `brew bundle`;
+  # the second needs `--adopt` or a decision to leave it hand-managed.
+  # Reporting them together made every run look like five broken dependencies.
+  local absent_c="" untracked_c=""
+  if [[ -n "$missing_c" ]]; then
+    local classified
+    # shellcheck disable=SC2086
+    classified="$(python3 - $missing_c <<'PYEOF'
+import json, pathlib, subprocess, sys
+
+tokens = [t for t in sys.argv[1:] if t]
+if not tokens:
+    raise SystemExit(0)
+
+info = {}
+out = subprocess.run(
+    ["brew", "info", "--cask", "--json=v2", *tokens],
+    capture_output=True, text=True,
+)
+if out.returncode == 0:
+    try:
+        for cask in json.loads(out.stdout).get("casks", []):
+            info[cask["token"]] = cask
+    except json.JSONDecodeError:
+        pass
+
+present = {p.name[:-4] for p in pathlib.Path("/Applications").glob("*.app")}
+vendors = {a.lower().replace(" ", "-").split("-")[0] for a in present}
+
+absent, untracked = [], []
+for token in tokens:
+    cask = info.get(token)
+    found = False
+    if cask:
+        names, is_pkg = set(), False
+        for art in cask.get("artifacts", []):
+            if not isinstance(art, dict):
+                continue
+            for name in art.get("app", []) or []:
+                if isinstance(name, str) and name.endswith(".app"):
+                    names.add(name[:-4])
+            if "pkg" in art or "installer" in art:
+                is_pkg = True
+        if names & present:
+            found = True
+        elif is_pkg and token.split("-")[0].lower() in vendors:
+            # A pkg cask installs differently-named apps; credit it with any
+            # app sharing its leading vendor word (microsoft-office -> Word).
+            found = True
+    (untracked if found else absent).append(token)
+
+print("ABSENT " + " ".join(absent))
+print("UNTRACKED " + " ".join(untracked))
+PYEOF
+    )" || true
+    absent_c="$(printf '%s\n' "$classified" | sed -n 's/^ABSENT //p' | tr ' ' '\n' | sed '/^$/d')"
+    untracked_c="$(printf '%s\n' "$classified" | sed -n 's/^UNTRACKED //p' | tr ' ' '\n' | sed '/^$/d')"
+  fi
+
+  _drift_block "In the Brewfile but not installed (casks):" "$absent_c"
+  _drift_block "Declared, but installed by hand and not tracked by Homebrew:" "$untracked_c"
 
   if [[ -z "$DRIFT_REPORT" ]]; then
     log "No drift: installed packages match the Brewfile."

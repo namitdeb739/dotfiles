@@ -72,6 +72,12 @@ cask "sanesidebuttons"   # System-wide navigation with mouse side buttons
 cask "warp"              # Terminal alternative
 cask "uniflash"          # TI microcontroller flash tool
 
+# NOT declared here, deliberately: Hush and AdGuard Mini are Mac App Store
+# apps. Homebrew cannot manage a MAS install — adopting one would replace the
+# App Store copy and break its receipt and Safari extension registration. The
+# `adguard` cask is a different product anyway (the standalone blocker, not
+# AdGuard Mini). Reinstall either from the App Store.
+
 # --- Apps (previously installed by hand, undeclared) ---
 cask "loop"              # Window manager (radial snap menu)
 cask "obsidian"          # Notes / knowledge base
@@ -80,10 +86,8 @@ cask "google-chrome"     # Browser
 cask "telegram"          # Messaging
 cask "whatsapp"          # Messaging
 cask "iina"              # Video player
-cask "adguard"           # Ad/tracker blocking
 # Installed copy (1.0.19) is newer than the cask (1.0), so it is declared for
 # a fresh machine but deliberately not adopted here — adopting would downgrade.
-cask "hush"              # Safari cookie-notice blocker
 cask "cleanmymac"        # Disk cleanup
 
 # Microsoft AutoUpdate owns these once installed; declared for reproducibility
