@@ -57,8 +57,8 @@
   WebSearch.
 - Ghostty config → `ghostty +show-config --default --docs`, `+list-actions`,
   `+list-keybinds`, `+validate-config`. Authoritative and offline.
-- MSP430/TI device docs → the vendored PDFs in `earth-computers/docs/`, not
-  ti.com.
+- MSP430/TI device docs → download once into `earth-computers/docs/`, then read
+  locally. Don't re-fetch the same datasheet from ti.com.
 
 ## Git
 
