@@ -52,7 +52,7 @@ the end:
    `~/`
 6. **VS Code Linking** — stows settings, keybindings into the platform-specific VSCode User dir
 7. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and
-   `security-guidance.py` executable
+   every `hooks/*.py` executable; registers MCP servers
 8. **iTerm2 Colors** — imports `iterm2/colors/*.itermcolors` as iTerm2 presets
 9. **VS Code Extensions** — installs any missing extensions from `extensions.json`
 10. **Zsh Plugins** — pre-compiles antidote plugins for fast first shell launch
@@ -341,46 +341,52 @@ Use these docs as the canonical inventories:
 ### Claude Code Configuration
 
 Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_claude()` which
-stows the package and sets executable permissions on the statusline and hook scripts.
+stows the package, makes `statusline.sh` and every `hooks/*.py` executable, and registers MCP servers.
 
-| File | Source | Purpose |
-| ---- | ------ | ------- |
-| `CLAUDE.md` | Authored | Global behavioral rules: communication, code style, Python stack, shell, git, security |
-| `settings.json` | Authored | Permissions (allow/deny), PreToolUse security hook, status line command |
-| `statusline.sh` | Authored | Status bar: `folder \| branch \| model \| ctx%` with color-coded context usage |
-| `hooks/security-guidance.py` | Anthropic security-guidance plugin (adapted) | Warns once per file on dangerous patterns: `eval()`, `shell=True`, `innerHTML`, GitHub Actions injection |
-| `agents/python-pro.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Python specialist: uv, ruff, mypy strict, FastAPI, pytest, bandit |
-| `agents/code-reviewer.md` | VoltAgent/awesome-claude-code-subagents | Multi-language code review: security, performance, correctness, maintainability |
-| `agents/github-ops.md` | Ported from `github-ops-executor.agent.md` | GitHub PR/issue/branch lifecycle with safety gates |
-| `agents/researcher.md` | VoltAgent/awesome-claude-code-subagents (adapted) | Deep research: web search, source synthesis, clarifying questions via AskUserQuestion |
-| `commands/implement.md` | Authored | Implement a task: read context, plan, execute, verify |
-| `commands/research.md` | Authored | Deep research and discussion with web-sourced, synthesised answers |
-| `commands/commit-push.md` | Authored | Conventional Commits + push to remote |
-| `commands/commit-push-pr.md` | Authored | Commit + push + open PR via `gh` |
-| `commands/tdd-cycle.md` | wshobson/commands | Full TDD: spec → red → green → refactor → integration |
-| `commands/full-review.md` | wshobson/commands | Multi-agent review: quality, security, architecture, performance, coverage |
-| `commands/security-scan.md` | wshobson/commands | bandit + semgrep + pip-audit with OWASP Top 10 coverage |
-| `commands/feature-build.md` | wshobson/commands | End-to-end feature: design → backend → frontend → tests → deploy |
-| `commands/smart-fix.md` | wshobson/commands | Auto-routes to debugger, perf engineer, DB optimizer, or modernizer |
-| `commands/tech-debt.md` | wshobson/commands | Debt inventory with ROI-scored remediation plan |
-| `commands/doc-write.md` | wshobson/commands | Generate API docs, architecture diagrams, user guides |
+| File | Purpose |
+| ---- | ------- |
+| `CLAUDE.md` | Global rules: communication, code style, shell, lookup routing, git, compaction |
+| `settings.json` | Permissions, hook wiring, enabled plugins, sandbox, autoMode, tool search |
+| `settings.local.json` | Machine-local permission and autoMode overrides |
+| `statusline.sh` | Status bar: `folder \| branch \| model \| ctx%` with colour-coded context usage |
+| `rules/python.md` | Path-scoped Python stack rules (`paths:` frontmatter) |
+| `rules/shell.md` | Path-scoped shell rules |
+| `hooks/security-guidance.py` | PreToolUse on edits — warns once per file on `eval()`, `shell=True`, `innerHTML`, GHA injection |
+| `hooks/format-on-edit.py` | PostToolUse on edits — `ruff format` / `clang-format -i`, never blocks |
+| `hooks/verify-python.py` | Stop — refuses to end a turn on unverified Python (`pytest`, `mypy --strict`) |
+| `hooks/no-cd.py` | PreToolUse on Bash — warns once per session against `cd`; never blocks |
+| `hooks/prefer-native-tools.py` | PreToolUse on Bash — routes `cat`/`grep`/`find`/`sed -i` to Read/Grep/Glob/Edit; never blocks |
+| `skills/uv-python-quality/` | The uv quality gate, run proactively before `verify-python.py` fires |
+| `agents/discuss.md` | Research subagent: web search, source synthesis, opinionated verdicts |
+| `commands/implement.md` | Implement a task: read context, plan, execute, verify |
+| `commands/spec.md` | Interview on hard decisions, write `SPEC.md`, stop without implementing |
+| `commands/discuss.md` | Delegates to the `discuss` agent |
+| `commands/commit-push.md` | Conventional Commits + push |
+| `commands/commit-push-pr.md` | Commit + push + open PR via `gh` |
+| `commands/merge-pr.md` | Merge only when green; investigates `BLOCKED` merge state |
+| `commands/fix-ci.md` | Triage a failing GH Actions run, ruling out infra first |
+| `commands/latex-suite.md` | Edit Obsidian LaTeX Suite snippets and keep the cheat sheet in sync |
 
-MCP servers are registered at user scope via `setup_claude()` in bootstrap. They are stored in
-`~/.claude.json` (not stowed) and registered idempotently on each bootstrap run.
+Plugins are enabled in `settings.json` under `enabledPlugins`: `code-review`,
+`pr-review-toolkit` and `hookify` from `claude-plugins-official`, the three LSP
+plugins (`clangd-lsp`, `pyright-lsp`, `typescript-lsp`), `claude-md-management`,
+and `warp`.
+
+MCP servers are registered at user scope via `setup_claude()`. They live in
+`~/.claude.json` (not stowed) and are registered idempotently on each run.
 
 | MCP | Package | Purpose |
 | --- | ------- | ------- |
-| `github` | `@modelcontextprotocol/server-github` | GitHub API: search code, read issues/PRs, manage repos |
-| `context7` | `@upstash/context7-mcp` | Resolves current library docs at query time — prevents stale API usage |
-| `sequential-thinking` | `@modelcontextprotocol/server-sequential-thinking` | Structured multi-step reasoning scratchpad |
-| `filesystem` | `@modelcontextprotocol/server-filesystem` | Explicit file access rooted at `~/` |
-| `docker` | `@modelcontextprotocol/server-docker` | Container and image management |
+| `chrome-devtools` | `chrome-devtools-mcp` | Browser automation and page inspection |
 
-`GITHUB_TOKEN` is sourced from `gh auth token` at bootstrap time. If unavailable, register manually:
+Notion is **not** registered here — it arrives as the claude.ai connector
+(OAuth, synced from the account), so a `claude mcp add` entry would duplicate
+every tool. Reconnect it at claude.ai/settings/connectors.
 
-```bash
-claude mcp add -s user -e GITHUB_TOKEN=$(gh auth token) github -- npx -y @modelcontextprotocol/server-github
-```
+The rule is **if there is a good CLI, use the CLI**. MCP earns a slot only for
+services with no local CLI and real auth complexity. `github`, `filesystem`,
+`sequential-thinking`, `docker` and `context7` were deliberately removed; see the
+comment in `setup_claude()` for the measured reasoning behind each.
 
 ### Brewfile (CLI Tools)
 
@@ -513,26 +519,30 @@ dotfiles/
 ├── claude/.claude/
 │   ├── CLAUDE.md
 │   ├── settings.json
+│   ├── settings.local.json
 │   ├── statusline.sh
+│   ├── rules/
+│   │   ├── python.md
+│   │   └── shell.md
 │   ├── hooks/
-│   │   └── security-guidance.py
+│   │   ├── security-guidance.py
+│   │   ├── format-on-edit.py
+│   │   ├── verify-python.py
+│   │   ├── no-cd.py
+│   │   └── prefer-native-tools.py
+│   ├── skills/
+│   │   └── uv-python-quality/SKILL.md
 │   ├── agents/
-│   │   ├── python-pro.md
-│   │   ├── code-reviewer.md
-│   │   ├── github-ops.md
-│   │   └── researcher.md
+│   │   └── discuss.md
 │   └── commands/
 │       ├── implement.md
-│       ├── research.md
+│       ├── spec.md
+│       ├── discuss.md
 │       ├── commit-push.md
 │       ├── commit-push-pr.md
-│       ├── tdd-cycle.md
-│       ├── full-review.md
-│       ├── security-scan.md
-│       ├── feature-build.md
-│       ├── smart-fix.md
-│       ├── tech-debt.md
-│       └── doc-write.md
+│       ├── merge-pr.md
+│       ├── fix-ci.md
+│       └── latex-suite.md
 └── zsh/
     ├── .zshrc
     ├── .zsh_plugins.txt
