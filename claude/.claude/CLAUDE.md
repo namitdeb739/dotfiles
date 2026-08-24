@@ -20,6 +20,12 @@
     pattern Anthropic removed.
   - OWASP Top 10 awareness, parameterised queries, SSRF validation — default
     behaviour, not steering.
+
+  The Python and Shell sections moved to ~/.claude/rules/ with `paths:`
+  frontmatter, so they load only when a matching file is read rather than in
+  every session — including the embedded C and Astro work, where they were
+  pure noise. Note this only works because file reads now go through Read;
+  path-scoped rules never trigger on `cat`.
 -->
 
 ## Communication
@@ -34,19 +40,6 @@
 - No speculative abstractions. Three similar lines beat a premature helper.
 - No error handling for impossible states. Trust framework guarantees.
 - No feature flags or compatibility shims when you can just change the code.
-
-## Python
-
-Always `uv run`, `uv add`, `uv sync`. Never `pip install` in a uv project.
-`ruff format` / `ruff check`, `mypy --strict`, `pytest`. FastAPI over Flask and
-Typer over argparse for new code.
-
-## Shell
-
-- Open with `set -Eeuo pipefail`. The `-E` matters: without errtrace, an ERR
-  trap does not fire inside functions, so failures in a helper pass silently.
-- Double-quote every expansion: `"$var"`, `"${arr[@]}"`.
-- `jq`/`yq` for JSON and YAML. Never `awk`/`sed` on structured data.
 
 ## Git
 
