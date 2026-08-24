@@ -115,7 +115,9 @@ macos-option-as-alt = true
 # --- Quick terminal (Quake-style dropdown) ---
 # No default binding exists. `global:` requires Accessibility permission in
 # System Settings > Privacy & Security > Accessibility.
-keybind = global:cmd+grave_accent=toggle_quick_terminal
+# Not cmd+grave_accent: that is macOS's "move focus to next window", and a
+# global: bind would swallow it everywhere.
+keybind = global:cmd+alt+t=toggle_quick_terminal
 quick-terminal-position = top
 quick-terminal-screen = mouse
 quick-terminal-autohide = true
