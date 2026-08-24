@@ -48,8 +48,6 @@
       "Read(./**/.env.*)",
       "Edit(./.env)",
       "Edit(./.env.*)",
-      "Write(./.env)",
-      "Write(./.env.*)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.gnupg/**)",
@@ -57,7 +55,9 @@
       "Read(./**/id_rsa*)",
       "Read(./**/id_ed25519*)",
       "Bash(rm -rf /*)",
-      "Bash(sudo *)"
+      "Bash(sudo *)",
+      "Edit(./**/.env)",
+      "Edit(./**/.env.*)"
     ],
     "ask": [
       "Bash(rm *)",
@@ -110,7 +110,10 @@
     "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "warp@claude-code-warp": true
+    "warp@claude-code-warp": true,
+    "clangd-lsp@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
@@ -127,6 +130,17 @@
   "theme": "auto",
   "agentPushNotifEnabled": true,
   "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(just:*)",
+      "Bash(brew list:*)",
+      "Bash(brew info:*)",
+      "Bash(uv sync:*)"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(brew uninstall:*)"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: None configured",
@@ -152,17 +166,7 @@
       "**Trusted repo**: The git repository the agent started in (/Users/namit, no configured remotes) and its configured remote(s). When the repo's public/private visibility is given \u2014 by the Repository visibility entry or the user's own message \u2014 use it to scope what is OK to commit or push there: confidential material is fine in a private repo; in a public one, only that repo's own work is \u2014 and content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port. Visibility scopes confidential material only: secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions).",
       "**Org-specific CLIs**: None configured \u2014 routine local tooling seen in usage: just, uv, brew, gh, ghostty",
       "**Routine under /Users/namit prefix**: local dotfiles/toolchain work (just, uv, brew, stow-style bootstrap tasks) is routine in this working directory"
-    ],
-    "allow": [
-      "$defaults",
-      "Bash(just:*)",
-      "Bash(brew list:*)",
-      "Bash(brew info:*)",
-      "Bash(uv sync:*)"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(brew uninstall:*)"
     ]
-  }
+  },
+  "autoCompactWindow": 500000
 }
