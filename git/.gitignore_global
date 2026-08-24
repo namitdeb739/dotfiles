@@ -40,3 +40,10 @@ node_modules/
 *.log
 
 **/.claude/settings.local.json
+
+**/.claude/.cc-writes/
+
+# Tooling artefacts with machine-absolute paths — belong to the checkout, not
+# the repo, and this way they stay ignored inside submodules too.
+compile_commands.json
+.clangd
