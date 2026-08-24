@@ -706,11 +706,13 @@ install_claude_cli() {
 setup_claude() {
   stow_package "claude"
   local statusline="$HOME/.claude/statusline.sh"
-  local hook="$HOME/.claude/hooks/security-guidance.py"
   [[ -f "$statusline" ]] && chmod +x "$statusline" \
     && echo "Made statusline.sh executable"
-  [[ -f "$hook" ]] && chmod +x "$hook" \
-    && echo "Made security-guidance.py executable"
+  local hook
+  for hook in "$HOME"/.claude/hooks/*.py; do
+    [[ -f "$hook" ]] && chmod +x "$hook" \
+      && echo "Made $(basename "$hook") executable"
+  done
 
   install_claude_cli || true
 
@@ -734,33 +736,26 @@ setup_claude() {
     fi
   }
 
-  local github_token
-  github_token="$(gh auth token 2>/dev/null || echo "")"
+  # Only servers with no local CLI and real auth earn a slot. Measured over 48
+  # transcripts, these were removed and must stay removed:
+  #   github    — 7 MCP calls vs 32 `gh` calls in Bash. MCP costs 1.3x-80x more
+  #               tokens than the CLI (44k vs 1.4k on a trivial repo query,
+  #               nearly all tool schema), and `gh ... --json | jq` composes
+  #               where MCP tools cannot.
+  #   filesystem— strictly worse than Read/Write/Edit/Glob: no LSP diagnostics
+  #               feedback, no Edit string-replace semantics, no permission
+  #               integration.
+  #   sequential-thinking — a no-op wrapper under Opus extended thinking.
+  #   docker    — `Bash(docker *)` is already in permissions.allow.
+  #   context7  — only ~3% of web lookups were library API docs; the rest were
+  #               ghostty config, Anthropic docs, and TI datasheets. Routed via
+  #               CLAUDE.md instead.
+  _mcp_add chrome-devtools -- npx -y chrome-devtools-mcp@latest
 
-  if [[ -n "$github_token" ]]; then
-    _mcp_add github -e "GITHUB_TOKEN=${github_token}" -- \
-      npx -y @modelcontextprotocol/server-github
-  else
-    _mcp_add github -- npx -y @modelcontextprotocol/server-github
-    log_warn "GITHUB_TOKEN not set — add token later: claude mcp add -s user -e GITHUB_TOKEN=\$(gh auth token) github -- npx -y @modelcontextprotocol/server-github"
-  fi
-
-  _mcp_add context7 -- npx -y @upstash/context7-mcp
-  _mcp_add sequential-thinking -- npx -y @modelcontextprotocol/server-sequential-thinking
-  _mcp_add filesystem -- npx -y @modelcontextprotocol/server-filesystem "${HOME}"
-  _mcp_add docker -- npx -y @modelcontextprotocol/server-docker
-
-  local notion_token
-  notion_token="${NOTION_TOKEN:-}"
-  if [[ -n "$notion_token" ]]; then
-    local notion_headers
-    notion_headers="{\"Authorization\": \"Bearer ${notion_token}\", \"Notion-Version\": \"2022-06-28\"}"
-    _mcp_add notion -e "OPENAPI_MCP_HEADERS=${notion_headers}" -- \
-      npx -y @notionhq/notion-mcp-server
-  else
-    _mcp_add notion -- npx -y @notionhq/notion-mcp-server
-    log_warn "NOTION_TOKEN not set — add token later: NOTION_TOKEN=<token> bash bootstrap.sh"
-  fi
+  # Notion is deliberately not registered here. It arrives as the claude.ai
+  # connector ("claude.ai Notion", OAuth) and is synced from the account, so a
+  # `claude mcp add` entry would duplicate every tool. Reconnect it at
+  # claude.ai/settings/connectors, not from this script.
 }
 
 install_vscode_extensions() {
