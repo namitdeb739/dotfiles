@@ -30,7 +30,5 @@ ssh
 tmux
 claude
 btop
-borders
-homebrew
 bin
 launchd

@@ -206,9 +206,10 @@ brewfile_drift() {
   # Installed. `--installed-on-request` excludes packages pulled in only as
   # dependencies, which is what makes this signal readable.
   # `brew leaves` prints tap-qualified names for third-party formulae
-  # (felixkratz/formulae/borders), while the declared list above strips the tap
-  # prefix. Normalise both sides the same way or every tapped formula is
-  # reported as simultaneously missing and unexpected.
+  # (owner/tap/formula), while the declared list above strips the tap prefix.
+  # Normalise both sides the same way or every tapped formula is reported as
+  # simultaneously missing and unexpected — permanently, since editing the
+  # Brewfile cannot fix it either way.
   brew leaves --installed-on-request | sed 's|.*/||' | sort -u > "$tmp/installed-formulae"
   brew list --cask 2>/dev/null | sort -u > "$tmp/installed-casks"
 
