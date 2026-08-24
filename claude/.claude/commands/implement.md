@@ -1,5 +1,6 @@
 ---
 description: Implement a task: read context, plan, execute, verify
+disable-model-invocation: true
 ---
 
 Implement the following task: $ARGUMENTS

@@ -1,68 +1,53 @@
 # Global Claude Instructions
 
+<!--
+  Kept deliberately short. Anthropic's guidance is that files over ~200 lines
+  reduce adherence, and in July 2026 they deleted >80% of Claude Code's own
+  system prompt with no measurable eval loss. Every line below has to earn its
+  place by describing something the model would NOT do by default.
+
+  Removed, and why:
+  - "Tool Preferences" table (fd/rg/bat/eza over find/grep/cat/ls). It read as
+    "prefer shell for file inspection" and drove 70% of all tool calls to Bash
+    against 222 Reads. Read output is line-numbered and prompt-cached, and
+    path-scoped rules and nested CLAUDE.md files only load when Claude uses
+    Read — `cat` bypassed all of that silently. Those CLIs are for humans.
+  - "Read files before editing" — the Edit tool enforces it and errors if not.
+  - "No hardcoded secrets" — now permissions.deny in settings.json, which is
+    enforced rather than requested.
+  - eval()/pickle/shell=True flagging — hooks/security-guidance.py already does
+    this deterministically. Saying it twice is the contradictory-instruction
+    pattern Anthropic removed.
+  - OWASP Top 10 awareness, parameterised queries, SSRF validation — default
+    behaviour, not steering.
+
+  The Python and Shell sections moved to ~/.claude/rules/ with `paths:`
+  frontmatter, so they load only when a matching file is read rather than in
+  every session — including the embedded C and Astro work, where they were
+  pure noise. Note this only works because file reads now go through Read;
+  path-scoped rules never trigger on `cat`.
+-->
+
 ## Communication
 
-- Be direct. No preamble, no filler phrases ("Certainly!", "Of course!").
-- No trailing summaries — the diff speaks for itself.
-- Ask before assuming on ambiguous requirements. One focused question beats a wrong implementation.
-- Prefer terse responses; expand only when explanation adds real value.
+- No trailing summaries. The diff speaks for itself.
+- Ask before assuming on ambiguous requirements. One focused question beats a
+  wrong implementation.
 
 ## Code
 
-- Read files before editing them. Never guess at structure.
-- Minimal diffs — change only what the task requires. No opportunistic cleanup.
+- Minimal diffs. Change only what the task requires; no opportunistic cleanup.
 - No speculative abstractions. Three similar lines beat a premature helper.
-- No hardcoded secrets, tokens, or credentials — ever.
-- No added error handling for impossible states. Trust framework guarantees.
+- No error handling for impossible states. Trust framework guarantees.
 - No feature flags or compatibility shims when you can just change the code.
-
-## Python Stack
-
-| Concern | Use | Avoid |
-| ----------- | ----------- | ----------- |
-| Package mgr | `uv` | pip, poetry, pipenv |
-| Formatting | `ruff format` | black, autopep8 |
-| Linting | `ruff check` | flake8, pylint |
-| Type check | `mypy --strict` | pyright (unless repo uses it) |
-| Testing | `pytest` | unittest |
-| Security | `bandit`, `pip-audit` | — |
-| Web API | FastAPI | Flask (unless existing) |
-| CLI | Typer | argparse (unless existing) |
-
-Always use `uv run`, `uv add`, `uv sync`. Never `pip install` in a uv project.
-
-## Shell
-
-- Always open with `set -euo pipefail`.
-- Double-quote all variable expansions: `"$var"`, `"${arr[@]}"`.
-- Use `jq` / `yq` for structured data — never parse with `awk`/`sed` on JSON/YAML.
-- Prefer `command -v` over `which` for existence checks.
 
 ## Git
 
-- Commit messages follow Conventional Commits: `type(scope): description`
-  - Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
-  - Subject ≤ 72 characters, imperative mood
-  - Add body for non-trivial changes (what + why)
-- Default merge: squash + delete branch.
-- Branch from `main`, PR to `main`.
+- Conventional Commits: `type(scope): description`, subject ≤ 72 chars,
+  imperative mood. Body for anything non-trivial (what + why).
+- Branch from `main`, PR to `main`, squash merge, delete the branch.
 
-## Tool Preferences
+## Compaction
 
-| Prefer | Over |
-| ------ | ---- |
-| `fd` | `find` |
-| `rg` | `grep -r` |
-| `bat` | `cat` |
-| `eza` | `ls` |
-| `uv` | `pip` / `poetry` |
-| `fnm` | `nvm` |
-| `gh` | GitHub web UI |
-
-## Security
-
-- No secrets in output, logs, or commit messages.
-- Parameterized queries only — no string interpolation in SQL.
-- Validate URLs before outbound requests (SSRF prevention).
-- Be aware of OWASP Top 10: injection, broken auth, XSS, insecure deserialization, etc.
-- Flag any `eval()`, `shell=True`, `pickle`, `innerHTML =` patterns for review.
+When compacting, always preserve: the list of files modified so far, the
+current branch, and the exact build/test commands in use.
