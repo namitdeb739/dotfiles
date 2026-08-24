@@ -19,22 +19,9 @@
       "Bash(fd *)",
       "Bash(bat *)",
       "Bash(eza *)",
-      "Bash(ls *)",
-      "Bash(cat *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(wc *)",
       "Bash(echo *)",
       "Bash(pwd)",
       "Bash(which *)",
-      "Bash(grep *)",
-      "Bash(find *)",
-      "Bash(awk *)",
-      "Bash(sed *)",
-      "Bash(sort *)",
-      "Bash(uniq *)",
-      "Bash(cut *)",
-      "Bash(tr *)",
       "Bash(jq *)",
       "Bash(yq *)",
       "Bash(fnm *)",
@@ -46,8 +33,6 @@
       "Bash(cp *)",
       "Bash(mv *)",
       "Bash(touch *)",
-      "Bash(curl *)",
-      "Bash(wget *)",
       "Bash(stow *)",
       "Read(*)",
       "Write(*)",
@@ -56,17 +41,36 @@
       "WebFetch(*)",
       "WebSearch"
     ],
-    "deny": [],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Write(./.env)",
+      "Write(./.env.*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Read(~/.gnupg/**)",
+      "Read(./**/*.pem)",
+      "Read(./**/id_rsa*)",
+      "Read(./**/id_ed25519*)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo *)"
+    ],
     "ask": [
       "Bash(rm *)",
       "Bash(rm)",
       "Bash(rmdir *)",
       "Bash(rmdir)",
-      "Bash(sudo rm *)"
+      "Bash(sudo rm *)",
+      "Bash(curl *)",
+      "Bash(wget *)"
     ]
   },
   "model": "opus",
-  "enableAllProjectMcpServers": true,
+  "enableAllProjectMcpServers": false,
   "hooks": {
     "PreToolUse": [
       {
@@ -75,6 +79,27 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/security-guidance.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/format-on-edit.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/verify-python.py"
           }
         ]
       }
@@ -107,25 +132,25 @@
       "**Organization**: None configured",
       "**Cloud provider(s)**: None configured",
       "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public",
-      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Internal sharing / snippet hosting**: None configured \u2014 treat public paste/gist services as outside the trust boundary",
       "**Secrets management**: None configured",
       "**Default / protected branches**: not queryable here (no origin remote, default branch unknown); global docs state branch from `main` and PR to `main`",
       "**CI/CD deploy targets**: None configured",
       "**Network posture**: None configured",
-      "**Source control**: The trusted repo and its remote(s) only (no additional orgs configured) — as scoped by the Trusted repo and Repository visibility entries above; personal GitHub account github.com/namitdeb739 is the only host seen in usage",
+      "**Source control**: The trusted repo and its remote(s) only (no additional orgs configured) \u2014 as scoped by the Trusted repo and Repository visibility entries above; personal GitHub account github.com/namitdeb739 is the only host seen in usage",
       "**Trusted internal domains**: None configured",
       "**Trusted cloud buckets**: None configured",
       "**Key internal services**: None configured",
       "**Internal package registry**: None configured",
       "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
       "**Data retention / declassification**: None configured",
-      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
-      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited \u2014 e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured \u2014 fall back to the Sensitive remote targets heuristic",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
-      "**Primary use of Claude Code**: software development — personal/hobby projects and dotfiles maintenance under /Users/namit",
-      "**Trusted repo**: The git repository the agent started in (/Users/namit, no configured remotes) and its configured remote(s). When the repo's public/private visibility is given — by the Repository visibility entry or the user's own message — use it to scope what is OK to commit or push there: confidential material is fine in a private repo; in a public one, only that repo's own work is — and content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port. Visibility scopes confidential material only: secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions).",
-      "**Org-specific CLIs**: None configured — routine local tooling seen in usage: just, uv, brew, gh, ghostty",
+      "**Primary use of Claude Code**: software development \u2014 personal/hobby projects and dotfiles maintenance under /Users/namit",
+      "**Trusted repo**: The git repository the agent started in (/Users/namit, no configured remotes) and its configured remote(s). When the repo's public/private visibility is given \u2014 by the Repository visibility entry or the user's own message \u2014 use it to scope what is OK to commit or push there: confidential material is fine in a private repo; in a public one, only that repo's own work is \u2014 and content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port. Visibility scopes confidential material only: secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions).",
+      "**Org-specific CLIs**: None configured \u2014 routine local tooling seen in usage: just, uv, brew, gh, ghostty",
       "**Routine under /Users/namit prefix**: local dotfiles/toolchain work (just, uv, brew, stow-style bootstrap tasks) is routine in this working directory"
     ],
     "allow": [

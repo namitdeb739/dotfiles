@@ -43,6 +43,7 @@ brew "ollama"            # Run LLMs locally
 
 # --- Embedded ---
 brew "picocom"           # Minimal serial terminal emulator
+brew "clang-format"       # C/C++ formatter — used by the PostToolUse hook
 brew "mspdebug"          # Debugger for TI MSP430 microcontrollers
 
 # --- Python ---

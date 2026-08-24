@@ -1,6 +1,7 @@
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git diff:*), Bash(git commit:*), Bash(git push:*), Bash(git log:*)
 description: Commit and push to remote
+disable-model-invocation: true
 ---
 
 # Commit and Push

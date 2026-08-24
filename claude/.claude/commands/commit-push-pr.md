@@ -1,6 +1,7 @@
 ---
 allowed-tools: Bash(git checkout:*), Bash(git add:*), Bash(git status:*), Bash(git diff:*), Bash(git push:*), Bash(git commit:*), Bash(gh pr create:*), Bash(gh pr view:*), Bash(git log:*), Bash(git branch:*)
 description: Commit, push, and open a pull request
+disable-model-invocation: true
 ---
 
 # Commit, Push, and Open a Pull Request

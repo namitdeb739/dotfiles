@@ -19,3 +19,7 @@ credentials*
 
 # Machine-local Ghostty overrides
 ghostty/.config/ghostty/local.conf
+
+# Formatter caches, created wherever a hook runs ruff
+.ruff_cache/
+__pycache__/
