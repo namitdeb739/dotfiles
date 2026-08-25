@@ -31,6 +31,9 @@ brew "tlrc"              # Simplified man pages (official tldr client; replaces 
 brew "direnv"            # Per-directory env vars
 brew "shellcheck"        # Shell script static analysis
 brew "gitleaks"          # Secret scanning (also a pre-commit hook; this makes it usable ad-hoc)
+brew "osv-scanner"       # Dependency CVEs across every lockfile format (pip-audit is Python-only)
+brew "lizard-analyzer"   # Cyclomatic complexity per function, ~15 languages — `lizard -C 15`
+brew "scc"               # LOC, per-file complexity, language mix — repo shape at a glance
 brew "neovim"            # Terminal editor
 brew "tree-sitter-cli"   # Parser compiler required by nvim-treesitter (main branch)
 
@@ -53,9 +56,9 @@ brew "mspdebug"          # Debugger for TI MSP430 microcontrollers
 # --- Python ---
 brew "uv"                # Fast Python package manager
 brew "ruff"              # Python linter/formatter
-brew "bandit"            # Python security linter — required by /security-scan
-brew "pip-audit"         # Dependency CVE audit — required by /security-scan
-brew "semgrep"           # Multi-language static analysis — required by /security-scan
+brew "bandit"            # Python security linter — required by the uv-python-quality skill
+brew "pip-audit"         # Python dependency CVE audit — required by the uv-python-quality skill
+brew "semgrep"           # Multi-language static analysis — required by the uv-python-quality skill
 brew "pyright"           # Python language server — required by the pyright-lsp plugin
 
 # --- Node ---
@@ -97,12 +100,9 @@ cask "iina"              # Video player
 # a fresh machine but deliberately not adopted here — adopting would downgrade.
 cask "cleanmymac"        # Disk cleanup
 
-# Microsoft AutoUpdate owns these once installed; declared for reproducibility
-# on a new machine, not for upgrades. `brew upgrade` without --greedy leaves
-# self-updating casks alone, which is what dotfiles-update does.
-cask "microsoft-office"  # Word, Excel, PowerPoint, Outlook, OneNote
-cask "microsoft-teams"   # Meetings
-cask "onedrive"          # File sync
+# The Microsoft apps live in brew/Brewfile.fresh-machine, not here. Homebrew
+# cannot install over an existing Microsoft AutoUpdate install, so declaring
+# them in this file made `brew bundle` exit 1 on every bootstrap run.
 
 # --- Fonts ---
 cask "font-jetbrains-mono-nerd-font"

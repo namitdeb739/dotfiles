@@ -195,13 +195,21 @@ brewfile_drift() {
   local brewfile="$REPO_DIR/brew/Brewfile"
   [[ -f "$brewfile" ]] || { log "no Brewfile; skipping"; return 0; }
 
+  # Brewfile.fresh-machine is not installed by bootstrap, but its casks are
+  # still installed on this machine. Drift is about what is declared anywhere,
+  # not about what the default bundle installs — omitting it would report the
+  # Microsoft apps as unmanaged every week.
+  local -a brewfiles=("$brewfile")
+  [[ -f "$REPO_DIR/brew/Brewfile.fresh-machine" ]] \
+    && brewfiles+=("$REPO_DIR/brew/Brewfile.fresh-machine")
+
   local tmp; tmp="$(mktemp -d)"
   # shellcheck disable=SC2064
   trap "rm -rf '$tmp'" RETURN
 
   # Declared, as plain names.
-  sed -n 's/^brew "\([^"]*\)".*/\1/p' "$brewfile" | sed 's|.*/||' | sort -u > "$tmp/declared-formulae"
-  sed -n 's/^cask "\([^"]*\)".*/\1/p' "$brewfile" | sort -u > "$tmp/declared-casks"
+  sed -n 's/^brew "\([^"]*\)".*/\1/p' "${brewfiles[@]}" | sed 's|.*/||' | sort -u > "$tmp/declared-formulae"
+  sed -n 's/^cask "\([^"]*\)".*/\1/p' "${brewfiles[@]}" | sort -u > "$tmp/declared-casks"
 
   # Installed. `--installed-on-request` excludes packages pulled in only as
   # dependencies, which is what makes this signal readable.

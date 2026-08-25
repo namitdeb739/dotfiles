@@ -113,21 +113,26 @@ run_phase() {
   local start_epoch
   local end_epoch
   local elapsed
+  local rc=0
 
   phase_start "$name"
   start_epoch="$(date +%s)"
 
-  if "$@"; then
-    end_epoch="$(date +%s)"
-    elapsed=$((end_epoch - start_epoch))
+  # Capture the status here, not after an `if`: a bash `if` whose condition is
+  # false and which has no `else` returns 0, so `$?` past `fi` is always 0.
+  # That reported every failure as FAILED(0) and returned 0, which made the
+  # `|| { print_summary; return 1; }` guard on every caller dead code.
+  "$@" || rc=$?
+
+  end_epoch="$(date +%s)"
+  elapsed=$((end_epoch - start_epoch))
+
+  if [[ "$rc" -eq 0 ]]; then
     record_phase "$name" "OK" "$elapsed"
     phase_end "$name" "OK" "$elapsed"
     return 0
   fi
 
-  local rc=$?
-  end_epoch="$(date +%s)"
-  elapsed=$((end_epoch - start_epoch))
   record_phase "$name" "FAILED(${rc})" "$elapsed"
   phase_end "$name" "FAILED(${rc})" "$elapsed"
   return "$rc"
@@ -818,6 +823,15 @@ setup_ssh_key() {
 
   if [[ -f "$key" ]]; then
     echo "SSH key already exists: $key"
+    # An empty passphrase means the file on disk is a directly usable signing
+    # identity: this key signs every commit and tag (commit.gpgsign, gpg.format
+    # ssh), so anything that can read it can sign as you, with no cracking step.
+    # It also makes UseKeychain/AddKeysToAgent in ssh/.ssh/config no-ops, since
+    # what the Keychain stores is the passphrase.
+    if ssh-keygen -y -P "" -f "$key" >/dev/null 2>&1; then
+      log_warn "$key has no passphrase — it is a plaintext signing key."
+      log_warn "Fix with: ssh-keygen -p -f $key && ssh-add --apple-use-keychain $key"
+    fi
     return 0
   fi
 
@@ -838,8 +852,14 @@ setup_ssh_key() {
 
   mkdir -p "$HOME/.ssh"
   chmod 700 "$HOME/.ssh"
+  echo "Set a passphrase at the prompt. An empty one leaves the key usable by"
+  echo "anything that can read the file, and this key signs every commit."
   ssh-keygen -t ed25519 -C "namitdeb739@gmail.com" -f "$key"
   echo "SSH key generated: $key"
+
+  # Store the passphrase in the login Keychain and load the key into the agent,
+  # so it is entered once per machine rather than once per session.
+  ssh-add --apple-use-keychain "$key" || log_warn "Could not add $key to the ssh-agent"
 
   if ! command_exists gh; then
     echo "gh CLI not found — skipping GitHub upload. Add the key manually."

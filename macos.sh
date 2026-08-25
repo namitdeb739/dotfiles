@@ -52,8 +52,9 @@ echo "--- Finder ---"
 d write NSGlobalDomain AppleShowAllExtensions -bool true
 d write com.apple.finder ShowPathbar -bool true
 d write com.apple.finder ShowStatusBar -bool true
-# Keep hidden files visible; dotfiles are the whole point of this repo.
-d write com.apple.finder AppleShowAllFiles -bool true
+# Keep dotfiles hidden in Finder. They are edited in the terminal, where they
+# are already visible; showing them here only clutters every folder listing.
+d write com.apple.finder AppleShowAllFiles -bool false
 # Search the current folder by default, not the whole Mac.
 d write com.apple.finder FXDefaultSearchScope -string "SCcf"
 # List view everywhere.
