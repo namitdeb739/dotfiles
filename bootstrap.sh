@@ -113,21 +113,26 @@ run_phase() {
   local start_epoch
   local end_epoch
   local elapsed
+  local rc=0
 
   phase_start "$name"
   start_epoch="$(date +%s)"
 
-  if "$@"; then
-    end_epoch="$(date +%s)"
-    elapsed=$((end_epoch - start_epoch))
+  # Capture the status here, not after an `if`: a bash `if` whose condition is
+  # false and which has no `else` returns 0, so `$?` past `fi` is always 0.
+  # That reported every failure as FAILED(0) and returned 0, which made the
+  # `|| { print_summary; return 1; }` guard on every caller dead code.
+  "$@" || rc=$?
+
+  end_epoch="$(date +%s)"
+  elapsed=$((end_epoch - start_epoch))
+
+  if [[ "$rc" -eq 0 ]]; then
     record_phase "$name" "OK" "$elapsed"
     phase_end "$name" "OK" "$elapsed"
     return 0
   fi
 
-  local rc=$?
-  end_epoch="$(date +%s)"
-  elapsed=$((end_epoch - start_epoch))
   record_phase "$name" "FAILED(${rc})" "$elapsed"
   phase_end "$name" "FAILED(${rc})" "$elapsed"
   return "$rc"

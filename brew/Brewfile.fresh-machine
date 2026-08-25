@@ -1,0 +1,15 @@
+# Fresh-machine only — NOT run by bootstrap.sh.
+#
+# Run explicitly on a new machine, before the apps exist:
+#   brew bundle --file="$(git rev-parse --show-toplevel)/brew/Brewfile.fresh-machine"
+#
+# These are declared for reproducibility, but cannot be part of the default
+# bundle: once installed, Microsoft AutoUpdate owns them, and `brew bundle`
+# fails trying to install over a copy it does not manage — which made the
+# Brew phase exit 1 on every bootstrap run on an already-provisioned machine.
+# `brew upgrade` without --greedy leaves self-updating casks alone, which is
+# what dotfiles-update relies on.
+
+cask "microsoft-office"  # Word, Excel, PowerPoint, Outlook, OneNote
+cask "microsoft-teams"   # Meetings
+cask "onedrive"          # File sync
