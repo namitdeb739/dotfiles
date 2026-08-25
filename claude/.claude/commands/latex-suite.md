@@ -6,16 +6,16 @@ Edit the LaTeX Suite snippet configuration for: $ARGUMENTS
 
 ## Files
 
-- **Plugin config:** `/Users/namitdeb/Documents/Obsidian/.obsidian/plugins/obsidian-latex-suite/data.json`
+- **Plugin config:** `/Users/namit/Documents/Obsidian/.obsidian/plugins/obsidian-latex-suite/data.json`
   - The `"snippets"` key holds a **JavaScript string** (`export default [...]`), not raw JSON.
     Edit the JS inside this string value. Mind JSON string escaping: newlines → `\n`, backslashes → `\\`, quotes → `\"`.
   - The `"snippetVariables"` key holds regex group definitions used as `${GREEK}`, `${SYMBOL}`, etc.
   - Options flag reference: `m` = math mode, `t` = text mode, `A` = auto-fire, `r` = regex trigger, `w` = word boundary, `v` = visual selection, `M` = block math only, `n` = inline math only.
 
-- **Reference doc:** `/Users/namitdeb/Documents/Obsidian/_latex-snippets.md`
+- **Reference doc:** `/Users/namit/Documents/Obsidian/_latex-snippets.md`
   - Markdown cheat-sheet: `##` category headers, 3-column tables (`Trigger | Name | Renders as`).
 
-- **Trigger conflict index:** `/Users/namitdeb/Documents/Obsidian/latex-trigger-index.txt`
+- **Trigger conflict index:** `/Users/namit/Documents/Obsidian/latex-trigger-index.txt`
   - Sorted list of all auto-firing triggers (options containing `A`). Used for conflict detection.
   - Tab-only snippets (no `A` in options) are not listed — they can't fire unintentionally.
 

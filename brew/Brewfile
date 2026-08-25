@@ -19,6 +19,9 @@ brew "fzf"               # Fuzzy finder
 brew "fd"                # Better find
 brew "ripgrep"           # Better grep
 brew "bat"               # Better cat
+brew "ast-grep"          # Structural code search/rewrite — safer than sed for edits
+brew "difftastic"        # Structural diff — semantic review, ignores reformat noise
+brew "typos-cli"         # Low-false-positive spellcheck for prose and code
 brew "eza"               # Better ls (maintained exa fork)
 brew "jq"                # JSON processor
 brew "yq"                # YAML/TOML processor — the jq counterpart CLAUDE.md assumes
@@ -33,6 +36,7 @@ brew "tree-sitter-cli"   # Parser compiler required by nvim-treesitter (main bra
 
 # --- Documents ---
 brew "tectonic"          # Self-contained TeX/LaTeX engine
+brew "latexdiff"         # Marked-up thesis revisions for supervisor review
 brew "poppler"           # PDF rendering and CLI tools (pdftotext, pdfimages)
 
 # --- Media ---
@@ -52,9 +56,11 @@ brew "ruff"              # Python linter/formatter
 brew "bandit"            # Python security linter — required by /security-scan
 brew "pip-audit"         # Dependency CVE audit — required by /security-scan
 brew "semgrep"           # Multi-language static analysis — required by /security-scan
+brew "pyright"           # Python language server — required by the pyright-lsp plugin
 
 # --- Node ---
 brew "fnm"               # Fast Node Manager (replaces nvm)
+brew "typescript-language-server" # TS/JS language server — required by the typescript-lsp plugin
 
 # --- Build ---
 brew "just"              # Command runner (better make)

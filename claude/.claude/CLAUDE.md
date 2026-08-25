@@ -41,6 +41,25 @@
 - No error handling for impossible states. Trust framework guarantees.
 - No feature flags or compatibility shims when you can just change the code.
 
+## Shell
+
+- Absolute paths, not `cd`. Read/Grep/Glob/Edit need no cwd; `just -f
+  /abs/path/justfile <recipe>` and `git -C <dir>` cover the rest.
+- Use Read/Grep/Glob/Edit over `cat`/`grep`/`find`/`sed -i`. `sed -i` in
+  particular skips `format-on-edit.py` and the LSP diagnostics loop.
+- Installed and preferred: `rg fd bat eza just uv gh jq yq tectonic ast-grep
+  difft latexdiff typos`. Reach for `ast-grep` over `rg` for structural
+  code search or rewrites.
+
+## Looking things up
+
+- Claude Code / Anthropic API questions → the `claude-code-guide` agent, not
+  WebSearch.
+- Ghostty config → `ghostty +show-config --default --docs`, `+list-actions`,
+  `+list-keybinds`, `+validate-config`. Authoritative and offline.
+- MSP430/TI device docs → download once into `earth-computers/docs/`, then read
+  locally. Don't re-fetch the same datasheet from ti.com.
+
 ## Git
 
 - Conventional Commits: `type(scope): description`, subject ≤ 72 chars,

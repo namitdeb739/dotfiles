@@ -1,5 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ENABLE_TOOL_SEARCH": "auto:5"
+  },
   "permissions": {
     "allow": [
       "Bash(git *)",
@@ -82,6 +85,19 @@
             "command": "python3 ~/.claude/hooks/security-guidance.py"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/no-cd.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/prefer-native-tools.py"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -113,8 +129,12 @@
   "enabledPlugins": {
     "warp@claude-code-warp": true,
     "clangd-lsp@claude-plugins-official": true,
-    "claude-code-setup@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true
+    "claude-md-management@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
@@ -124,7 +144,36 @@
       }
     }
   },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [
+        "~/.cache",
+        "~/.local/state",
+        "~/.local/share",
+        "~/.npm",
+        "/opt/homebrew"
+      ]
+    },
+    "credentials": {
+      "files": [
+        {
+          "path": "~/.ssh",
+          "mode": "deny"
+        },
+        {
+          "path": "~/.aws",
+          "mode": "deny"
+        },
+        {
+          "path": "~/.gnupg",
+          "mode": "deny"
+        }
+      ]
+    }
+  },
   "effortLevel": "medium",
+  "autoCompactWindow": 500000,
   "autoUpdatesChannel": "stable",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
@@ -168,6 +217,5 @@
       "**Org-specific CLIs**: None configured — routine local tooling seen in usage: just, uv, brew, gh, ghostty",
       "**Routine under /Users/namit prefix**: local dotfiles/toolchain work (just, uv, brew, stow-style bootstrap tasks) is routine in this working directory"
     ]
-  },
-  "autoCompactWindow": 500000
+  }
 }
