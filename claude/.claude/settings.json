@@ -170,7 +170,11 @@
           "mode": "deny"
         }
       ]
-    }
+    },
+    "excludedCommands": [
+      "git commit",
+      "git tag"
+    ]
   },
   "effortLevel": "medium",
   "autoCompactWindow": 500000,
