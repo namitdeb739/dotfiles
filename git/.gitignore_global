@@ -43,6 +43,9 @@ node_modules/
 
 **/.claude/.cc-writes/
 
+# /spec scratchpads — planning notes for the checkout, not the repo.
+**/.claude/specs/
+
 # Tooling artefacts with machine-absolute paths — belong to the checkout, not
 # the repo, and this way they stay ignored inside submodules too.
 compile_commands.json

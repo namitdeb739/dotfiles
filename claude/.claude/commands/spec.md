@@ -1,5 +1,5 @@
 ---
-description: Interview me about a feature, then write a complete spec to SPEC.md
+description: Interview me about a feature, then write a complete spec to .claude/specs/
 disable-model-invocation: true
 ---
 
@@ -16,7 +16,10 @@ Read the relevant code first so your questions are grounded in what already
 exists, not in generalities.
 
 Keep interviewing until the hard parts are actually settled. When they are,
-write a complete spec to SPEC.md covering:
+write a complete spec to `.claude/specs/<slug>.md` at the repo root, where
+`<slug>` is a short kebab-case name for the feature. That directory is a
+git-ignored scratchpad, not a deliverable — never stage or commit the spec.
+The spec covers:
 
 - the problem and what "done" looks like
 - the approach, and which alternatives were rejected and why
