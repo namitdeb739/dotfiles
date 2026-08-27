@@ -714,7 +714,7 @@ setup_claude() {
   [[ -f "$statusline" ]] && chmod +x "$statusline" \
     && echo "Made statusline.sh executable"
   local hook
-  for hook in "$HOME"/.claude/hooks/*.py; do
+  for hook in "$HOME"/.claude/hooks/*.py "$HOME"/.claude/hooks/*.sh; do
     [[ -f "$hook" ]] && chmod +x "$hook" \
       && echo "Made $(basename "$hook") executable"
   done

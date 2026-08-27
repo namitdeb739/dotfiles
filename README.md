@@ -52,7 +52,7 @@ the end:
    `~/`
 6. **VS Code Linking** — stows settings, keybindings into the platform-specific VSCode User dir
 7. **Claude Config** — stows `claude/` to `~/.claude/`; makes `statusline.sh` and
-   every `hooks/*.py` executable; registers MCP servers
+   every `hooks/*.py` and `hooks/*.sh` executable; registers MCP servers
 8. **iTerm2 Colors** — imports `iterm2/colors/*.itermcolors` as iTerm2 presets
 9. **VS Code Extensions** — installs any missing extensions from `extensions.json`
 10. **Zsh Plugins** — pre-compiles antidote plugins for fast first shell launch
@@ -341,7 +341,8 @@ Use these docs as the canonical inventories:
 ### Claude Code Configuration
 
 Managed under `claude/.claude/` (stowed to `~/.claude/`). Bootstrap runs `setup_claude()` which
-stows the package, makes `statusline.sh` and every `hooks/*.py` executable, and registers MCP servers.
+stows the package, makes `statusline.sh` and every `hooks/*.py` and `hooks/*.sh` executable, and
+registers MCP servers.
 
 | File | Purpose |
 | ---- | ------- |
@@ -356,6 +357,9 @@ stows the package, makes `statusline.sh` and every `hooks/*.py` executable, and 
 | `hooks/verify-python.py` | Stop — refuses to end a turn on unverified Python (`pytest`, `mypy --strict`) |
 | `hooks/no-cd.py` | PreToolUse on Bash — warns once per session against `cd`; never blocks |
 | `hooks/prefer-native-tools.py` | PreToolUse on Bash — routes `cat`/`grep`/`find`/`sed -i` to Read/Grep/Glob/Edit; never blocks |
+| `hooks/notify-on-stop.sh` | Stop — macOS notification when a response completes |
+| `hooks/notify-on-question.sh` | PreToolUse on AskUserQuestion — macOS notification when Claude waits on an answer |
+| `hooks/notify.sh` | Shared notifier both use; attributes the banner to the terminal hosting the session |
 | `skills/uv-python-quality/` | The uv quality gate, run proactively before `verify-python.py` fires |
 | `agents/discuss.md` | Research subagent: web search, source synthesis, opinionated verdicts |
 | `commands/implement.md` | Implement a task: read context, plan, execute, verify |
@@ -366,6 +370,22 @@ stows the package, makes `statusline.sh` and every `hooks/*.py` executable, and 
 | `commands/merge-pr.md` | Merge only when green; investigates `BLOCKED` merge state |
 | `commands/fix-ci.md` | Triage a failing GH Actions run, ruling out infra first |
 | `commands/latex-suite.md` | Edit Obsidian LaTeX Suite snippets and keep the cheat sheet in sync |
+
+#### Notifications
+
+Claude Code's built-in notification channels are all terminal escape sequences
+(iTerm2, kitty, Ghostty), which the VS Code terminal does not implement — hence
+`notify-on-stop.sh`. `AskUserQuestion` additionally never fires the `Notification`
+hook at all ([#59908](https://github.com/anthropics/claude-code/issues/59908)), so
+`notify-on-question.sh` rides on `PreToolUse` instead.
+
+macOS attributes a notification to the bundle of the process that posts it, and
+the UserNotifications framework refuses bundle-id spoofing — this is why
+`terminal-notifier` dropped `-sender` in 3.0 and why bare `osascript` shows up as
+Script Editor. So `notify.sh` posts from a per-host app bundle wrapping a copy of
+`osascript`, generated on first use under `~/.claude/notifiers/` and carrying the
+host terminal's own icon. A VS Code session notifies as VS Code, a Ghostty session
+as Ghostty. The bundles are generated, not stowed; delete the directory to rebuild.
 
 Plugins are enabled in `settings.json` under `enabledPlugins`: `code-review`,
 `pr-review-toolkit` and `hookify` from `claude-plugins-official`, the three LSP
@@ -529,7 +549,10 @@ dotfiles/
 │   │   ├── format-on-edit.py
 │   │   ├── verify-python.py
 │   │   ├── no-cd.py
-│   │   └── prefer-native-tools.py
+│   │   ├── prefer-native-tools.py
+│   │   ├── notify.sh
+│   │   ├── notify-on-stop.sh
+│   │   └── notify-on-question.sh
 │   ├── skills/
 │   │   └── uv-python-quality/SKILL.md
 │   ├── agents/
