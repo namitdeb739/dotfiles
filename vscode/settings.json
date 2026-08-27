@@ -17,6 +17,11 @@
   "editor.linkedEditing": true,
 
   // --- Editor Visual Features ---
+  // The Claude Code panel's code blocks inherit these: its webview resolves
+  // --app-monospace-font-family from --vscode-editor-font-family.
+  "editor.fontFamily": "'JetBrainsMono Nerd Font', Menlo, monospace",
+  "editor.fontSize": 13,
+  "editor.fontLigatures": true,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.guides.bracketPairs": true,
   "editor.inlayHints.enabled": "onUnlessPressed",
