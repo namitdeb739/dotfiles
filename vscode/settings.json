@@ -21,7 +21,7 @@
   // --app-monospace-font-family from --vscode-editor-font-family.
   "editor.fontFamily": "'JetBrainsMono Nerd Font', Menlo, monospace",
   "editor.fontSize": 13,
-  "editor.fontLigatures": true,
+  "editor.fontLigatures": false,
   "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "editor.guides.bracketPairs": true,
   "editor.inlayHints.enabled": "onUnlessPressed",
