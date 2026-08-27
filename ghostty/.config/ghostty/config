@@ -40,6 +40,8 @@ font-shaping-break = cursor
 # tab bar. Incompatible with macos-non-native-fullscreen, hence that stays off.
 macos-titlebar-style = tabs
 macos-non-native-fullscreen = false
+# Dock/app-switcher icon variant (Finder still shows the bundle icon).
+macos-icon = glass
 # Breathing room; `balance` stops leftover pixels piling onto one edge.
 window-padding-x = 12
 window-padding-y = 10
