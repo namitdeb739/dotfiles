@@ -76,10 +76,32 @@ FAILED_STEP=""
 # Set when `brew bundle` reports failures. Not fatal: see brew_maintenance().
 BUNDLE_FAILED=0
 
-# Casks whose installers are .pkg files, so Homebrew shells out to
-# `sudo installer`. A launchd job has no terminal and no way to answer a
-# password prompt, so these can never install unattended — the run would fail
-# at the same point every week, and every step after it would never run.
+# Set when the cask upgrade reports failures. Not fatal, same reasoning.
+UPGRADE_FAILED=0
+
+# Casks skipped by the unattended path because they need root. Reported in the
+# summary so they do not silently stay out of date forever.
+SKIPPED_CASKS=""
+
+# Casks that cannot be installed *or upgraded* without root. A launchd job has
+# no terminal and no way to answer a password prompt, so these can never run
+# unattended — the run would fail at the same point every week, and every step
+# after it would never run.
+#
+# Two ways a cask needs root:
+#
+#   1. Its installer is a .pkg, so Homebrew shells out to `sudo installer`.
+#   2. Its *uninstall* stanza needs root — it removes a privileged helper from
+#      /Library, forgets a pkgutil receipt, unloads a kext, or runs a
+#      `sudo: true` script. This bites on upgrade too, because upgrading a cask
+#      uninstalls the old version first. docker-desktop failing to delete
+#      /Library/PrivilegedHelperTools/com.docker.socket is what took the whole
+#      30 Aug run down, and detecting only .pkg missed it entirely.
+#
+# Deliberately narrow. `quit`, `signal` and a bare `launchctl` do not need root
+# and must not be matched, or self-updating casks like visual-studio-code get
+# excluded from every unattended upgrade for no reason. Likewise `zap`, which
+# only runs under `brew zap`, never on upgrade.
 #
 # They stay declared in brew/Brewfile: a fresh interactive bootstrap still
 # installs them, and the drift check still accounts for them. Only the
@@ -97,15 +119,40 @@ sudo_casks() {
   # shellcheck disable=SC2086
   brew info --cask --json=v2 $casks 2>/dev/null | python3 -c '
 import json, sys
+
+ROOT_PREFIXES = ("/Library", "/System", "/private/var/db")
+
+
+def needs_root(cask):
+    for art in cask.get("artifacts", []):
+        if not isinstance(art, dict):
+            continue
+        if "pkg" in art or "installer" in art:
+            return True
+        for stanza in art.get("uninstall", []) or []:
+            if not isinstance(stanza, dict):
+                continue
+            if "pkgutil" in stanza or "kext" in stanza:
+                return True
+            for key in ("script", "early_script"):
+                value = stanza.get(key)
+                if isinstance(value, dict) and value.get("sudo"):
+                    return True
+            for key in ("delete", "rmdir", "trash"):
+                value = stanza.get(key)
+                paths = [value] if isinstance(value, str) else (value or [])
+                if any(
+                    isinstance(p, str) and p.startswith(ROOT_PREFIXES) for p in paths
+                ):
+                    return True
+    return False
+
+
 try:
     data = json.load(sys.stdin)
 except Exception:
     sys.exit(0)
-tokens = [
-    c["token"]
-    for c in data.get("casks", [])
-    if any(isinstance(a, dict) and "pkg" in a for a in c.get("artifacts", []))
-]
+tokens = [c["token"] for c in data.get("casks", []) if needs_root(c)]
 print(" ".join(sorted(tokens)))
 ' || true
 }
@@ -149,11 +196,40 @@ brew_maintenance() {
     log "Everything up to date."
   fi
 
-  step "brew upgrade"
-  # Casks that manage their own updates (Ghostty via Sparkle, VS Code, Raycast)
-  # are upgraded too; --greedy is deliberately NOT used so self-updating apps
-  # are left alone unless the Brewfile version genuinely moved.
-  run brew upgrade
+  local skip
+  skip="$(sudo_casks)"
+  SKIPPED_CASKS="$skip"
+
+  step "brew upgrade (formulae)"
+  # Formulae never need root, so a failure here is a real problem: stay fatal.
+  run brew upgrade --formula
+
+  step "brew upgrade (casks)"
+  # Casks are upgraded by name, minus the root-requiring set, because
+  # `brew upgrade --cask` has no equivalent of HOMEBREW_BUNDLE_CASK_SKIP.
+  #
+  # Deliberately NOT fatal, for the same reason as brew bundle below: one cask
+  # that cannot upgrade must not cost us the restow and integrity checks that
+  # follow. A bare fatal `brew upgrade` is exactly how docker-desktop killed
+  # the 30 Aug run six minutes in, and every step after it never ran.
+  #
+  # --greedy is deliberately NOT used, so casks that manage their own updates
+  # (Ghostty via Sparkle, VS Code, Raycast) are left alone unless the Brewfile
+  # version genuinely moved.
+  local -a cask_upgrades=()
+  local cask
+  while IFS= read -r cask; do
+    [[ -z "$cask" ]] && continue
+    [[ " $skip " == *" $cask "* ]] && continue
+    cask_upgrades+=("$cask")
+  done < <(brew outdated --cask --quiet 2>/dev/null || true)
+
+  if [[ ${#cask_upgrades[@]} -eq 0 ]]; then
+    log "No casks to upgrade."
+  elif ! run brew upgrade --cask "${cask_upgrades[@]}"; then
+    UPGRADE_FAILED=1
+    log "cask upgrade reported failures; continuing so the later steps still run"
+  fi
 
   step "brew bundle"
   # Re-converge on the Brewfile: installs anything declared but missing.
@@ -162,16 +238,13 @@ brew_maintenance() {
   # restow and integrity checks that follow — those are the whole point of the
   # weekly run. The failure is recorded and surfaced in the summary and the
   # exit code instead.
-  local skip
-  skip="$(sudo_casks)"
-
   if ! HOMEBREW_BUNDLE_CASK_SKIP="$skip" \
        run brew bundle --file="$REPO_DIR/brew/Brewfile" --no-upgrade; then
     BUNDLE_FAILED=1
     log "brew bundle reported failures; continuing so the later steps still run"
   fi
   if [[ -n "$skip" ]]; then
-    log "skipped (.pkg installers need sudo; install by hand): $skip"
+    log "skipped (need sudo; install/upgrade by hand): $skip"
   fi
 
   step "brew cleanup"
@@ -446,12 +519,28 @@ verify() {
 write_summary() {
   {
     printf 'dotfiles-update — %s\n' "$(date '+%a %d %b %Y, %H:%M')"
+    if [[ "$UPGRADE_FAILED" -eq 1 ]]; then
+      printf 'Cask upgrade had failures; later steps still ran.\n'
+    fi
     if [[ "$BUNDLE_FAILED" -eq 1 ]]; then
       printf 'brew bundle had failures; later steps still ran.\n'
     fi
-    if [[ "$UPGRADED_COUNT" -gt 0 ]]; then
-      printf '%s package(s) upgraded:\n' "$UPGRADED_COUNT"
-      printf '%s\n' "$OUTDATED_BEFORE" | sed 's/^/  · /'
+    if [[ -n "$SKIPPED_CASKS" ]]; then
+      printf 'Skipped (need sudo; install/upgrade by hand):\n'
+      printf '%s\n' "$SKIPPED_CASKS" | tr ' ' '\n' | sed '/^$/d;s/^/  · /'
+    fi
+    # OUTDATED_BEFORE is everything that *was* outdated, sampled before the
+    # skip set is known. Reporting it verbatim listed the root-requiring casks
+    # as upgraded and skipped in the same summary. Report what actually moved.
+    local upgraded upgraded_count
+    upgraded="$(
+      printf '%s\n' "$OUTDATED_BEFORE" \
+        | grep -vxF -f <(printf '%s\n' "$SKIPPED_CASKS" | tr ' ' '\n') || true
+    )"
+    upgraded_count="$(printf '%s\n' "$upgraded" | grep -c . || true)"
+    if [[ "$upgraded_count" -gt 0 ]]; then
+      printf '%s package(s) upgraded:\n' "$upgraded_count"
+      printf '%s\n' "$upgraded" | sed 's/^/  · /'
     else
       printf 'No upgrades needed.\n'
     fi
@@ -481,8 +570,8 @@ main() {
   write_summary
 
   section "done"
-  if [[ "$BUNDLE_FAILED" -eq 1 ]]; then
-    log "Completed, but brew bundle reported failures — see above."
+  if [[ "$UPGRADE_FAILED" -eq 1 || "$BUNDLE_FAILED" -eq 1 ]]; then
+    log "Completed, but brew reported failures — see above."
     log "Everything after it (drift, restow, integrity, ghostty) still ran."
     exit 1
   fi
