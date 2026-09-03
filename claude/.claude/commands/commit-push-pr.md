@@ -15,7 +15,14 @@ Commit all staged changes, push to a remote branch, and open a pull request:
    - Format: `type(scope): description`
    - Subject ≤ 72 characters, imperative mood
    - Add body for non-trivial changes
-5. Commit and push: `git push -u origin HEAD`
+5. Commit, then push: `git commit` as its own call, then `git push -u origin HEAD` as
+   another. **Issue `git commit` bare and alone** — no `git -C <dir>` prefix, and never
+   chained behind `git add ... &&`. Commits are SSH-signed, and the sandbox denies both
+   `~/.ssh` and the ssh-agent socket, so signing works only because `git commit *` is in
+   `sandbox.excludedCommands`. That pattern is a *prefix* match with a trailing wildcard:
+   `git -C <dir> commit ...` and `git add x && git commit ...` both miss it, run
+   sandboxed, and fail with `Couldn't load public key` then `failed to write commit
+   object`.
 6. Open a PR with `gh pr create`:
    - Title: mirrors the commit subject
    - Body (use `--body-file`):

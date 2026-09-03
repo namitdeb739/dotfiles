@@ -45,6 +45,16 @@
 
 - Absolute paths, not `cd`. Read/Grep/Glob/Edit need no cwd; `just -f
   /abs/path/justfile <recipe>` and `git -C <dir>` cover the rest.
+- **`git commit` is the exception: issue it bare and alone.** No `-C <dir>`, and
+  never chained behind `git add ... &&`. Commits are SSH-signed and the sandbox
+  denies `~/.ssh` and the ssh-agent socket, so signing works only via the
+  `git commit *` entry in `sandbox.excludedCommands` — a prefix match with a
+  trailing wildcard, which `git -C <dir> commit` and `git add x && git commit`
+  both miss. They then run sandboxed and fail with `Couldn't load public key`
+  then `failed to write commit object`. Stage in one call, commit in the next,
+  from the repo's own cwd. To commit in a *different* repo, either add
+  `git -C * commit *` to `excludedCommands` or use `dangerouslyDisableSandbox`
+  for that one call.
 - Use Read/Grep/Glob/Edit over `cat`/`grep`/`find`/`sed -i`. `sed -i` in
   particular skips `format-on-edit.py` and the LSP diagnostics loop.
 - Installed and preferred: `rg fd bat eza just uv gh jq yq tectonic ast-grep
