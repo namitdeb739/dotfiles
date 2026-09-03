@@ -20,11 +20,19 @@
 	# Sign with the SSH key bootstrap.sh generates.
 	signingkey = ~/.ssh/id_ed25519.pub
 
+# Signing is configured but off by default. Nothing enforces it: no repo sets
+# required_signatures, and at this scale essentially nobody signs locally —
+# sampling 30 commits each from tikuOS, eza, just, uv and simonw/llm, every
+# "Verified" badge came from GitHub's own key on a web merge, not a maintainer.
+# Signing also cost real friction: SSH signing needs the ssh-agent socket, which
+# the Bash sandbox denies, so `git commit` had to be exempted from the sandbox
+# entirely — taking every pre-commit hook outside it too.
+# To sign a specific repo anyway: `git config --local commit.gpgsign true`.
 [commit]
-	gpgsign = true
+	gpgsign = false
 
 [tag]
-	gpgsign = true
+	gpgsign = false
 
 [init]
 	defaultBranch = main
