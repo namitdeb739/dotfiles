@@ -166,10 +166,6 @@
       "git commit *"
     ],
     "filesystem": {
-      "allowRead": [
-        "./.env.example",
-        "./**/.env.example"
-      ],
       "allowWrite": [
         "~/.cache",
         "~/.local/state",
