@@ -153,8 +153,7 @@
     "typescript-lsp@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "pr-review-toolkit@claude-plugins-official": true,
-    "hookify@claude-plugins-official": true,
-    "research-assistant@research-assistant": true
+    "hookify@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
