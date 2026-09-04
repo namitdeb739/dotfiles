@@ -125,9 +125,3 @@ export NOTION_CLASSES_DB_ID="33d9080d-a147-80e6-a934-c7f5cf7501f8"
 
 # Added by cua-driver-rs installer — see https://github.com/trycua/cua
 export PATH="/Users/namit/.local/bin:$PATH"
-
-# research-assistant CLI config (CP4101 dissertation vault)
-# The tool ships with no path of its own, so without these it refuses to run
-# outside `just` in earth-computers, which exports the same two values.
-export VAULT_PAPERS_DIR="$HOME/Obsidian/School/Y4S1/CP4101 B.Comp. Dissertation/papers"
-export RESEARCH_ASSISTANT_USER_AGENT="earth-computers/0.1 (mailto:namitdeb739@gmail.com)"
