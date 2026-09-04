@@ -24,14 +24,14 @@ Edit the LaTeX Suite snippet configuration for: $ARGUMENTS
 1. **Read all three files** before making any changes.
 
 2. **Conflict check (for add or modify operations only):**
-   - Read `trigger-index.txt`.
+   - Read `latex-trigger-index.txt`.
    - Check if the new trigger is a substring of any existing entry, or if any existing entry is a substring of the new trigger.
    - If a conflict exists, report it and ask before proceeding. Do not silently insert a conflicting trigger.
    - Regex triggers (those with `r` in options) need only be checked against other regex triggers with overlapping match domains — use judgment.
 
 3. **Apply the change:**
-   - **Add snippet:** insert into the correct category block in the JS string in `data.json`; add a row to the matching table in `_latex-snippets.md`; insert the trigger into `trigger-index.txt` in sorted position (if auto-firing).
-   - **Modify snippet:** update `data.json` and the corresponding row in `_latex-snippets.md`; update `trigger-index.txt` if the trigger changed.
+   - **Add snippet:** insert into the correct category block in the JS string in `data.json`; add a row to the matching table in `_latex-snippets.md`; insert the trigger into `latex-trigger-index.txt` in sorted position (if auto-firing).
+   - **Modify snippet:** update `data.json` and the corresponding row in `_latex-snippets.md`; update `latex-trigger-index.txt` if the trigger changed.
    - **Remove snippet:** delete from all three files.
    - **Settings change** (`tabout`, `autofractions`, etc.): edit the relevant top-level key in `data.json` only — no changes to the other two files.
 
