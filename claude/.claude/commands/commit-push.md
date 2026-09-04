@@ -16,13 +16,9 @@ Commit all relevant changes and push to the remote branch:
    - Subject line: ≤ 72 characters, imperative mood ("add" not "added")
    - Add a body for non-trivial changes explaining **what** changed and **why**
 4. Commit with `git commit -m "..."` (use a HEREDOC for multi-line messages).
-   **Issue `git commit` bare and alone** — no `git -C <dir>` prefix, and never chained
-   behind `git add ... &&`. Commits are SSH-signed, and the sandbox denies both
-   `~/.ssh` and the ssh-agent socket, so signing works only because `git commit *` is
-   in `sandbox.excludedCommands`. That pattern is a *prefix* match with a trailing
-   wildcard: `git -C <dir> commit ...` and `git add x && git commit ...` both miss it,
-   run sandboxed, and fail with `Couldn't load public key` then `failed to write
-   commit object`. Stage in one call, commit in the next.
+   Commits are **not signed** and `sandbox.excludedCommands` is empty, so `git commit`
+   runs fully inside the sandbox — pre-commit hooks included. `git -C <dir> commit` and
+   `git add x && git commit ...` are both fine.
 5. Determine the push command intelligently:
    - If the branch has no upstream yet, use `git push -u origin HEAD`.
    - Otherwise, use `git push`.
