@@ -1,8 +1,7 @@
 ---
 description: "Deep research and discussion: web search, source synthesis, and intelligent answers with clarifying questions where needed"
+disable-model-invocation: true
 ---
-
-# Discuss
 
 Research and discuss the following topic: $ARGUMENTS
 
