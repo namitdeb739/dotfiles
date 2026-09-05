@@ -115,6 +115,10 @@
   "sandbox": {
     "enabled": true,
     "network": {
+      "allowedDomains": [
+        "github.com",
+        "*.github.com"
+      ],
       "allowMachLookup": [
         "com.apple.trustd.agent"
       ]
