@@ -7,7 +7,17 @@
   "permissions": {
     "allow": [
       "Bash(git *)",
-      "Bash(gh *)",
+      "Bash(gh run:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh workflow view:*)",
+      "Bash(gh workflow list:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh auth status)",
       "Bash(uv *)",
       "Bash(pytest *)",
       "Bash(ruff *)",
@@ -61,7 +71,9 @@
       "Bash(rm -rf /*)",
       "Bash(sudo *)",
       "Edit(./**/.env)",
-      "Edit(./**/.env.*)"
+      "Edit(./**/.env.*)",
+      "Bash(gh repo delete:*)",
+      "Bash(gh secret:*)"
     ],
     "ask": [
       "Bash(rm *)",
@@ -196,7 +208,12 @@
         }
       ]
     },
-    "excludedCommands": []
+    "excludedCommands": [],
+    "network": {
+      "allowMachLookup": [
+        "com.apple.trustd.agent"
+      ]
+    }
   },
   "effortLevel": "medium",
   "autoCompactWindow": 500000,
