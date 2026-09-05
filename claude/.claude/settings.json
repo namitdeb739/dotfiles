@@ -4,56 +4,32 @@
     "ENABLE_TOOL_SEARCH": "auto:5",
     "BASH_DEFAULT_TIMEOUT_MS": "300000"
   },
+  "model": "opus",
+  "effortLevel": "medium",
+  "theme": "auto",
+  "tui": "fullscreen",
+  "autoCompactWindow": 500000,
+  "autoUpdatesChannel": "stable",
+  "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": true,
+  "enableAllProjectMcpServers": false,
+
   "permissions": {
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "/Users/namit/Developer/dotfiles"
+    ],
     "allow": [
-      "Bash(git *)",
-      "Bash(gh run:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh pr checks:*)",
-      "Bash(gh issue view:*)",
-      "Bash(gh issue list:*)",
-      "Bash(gh workflow view:*)",
-      "Bash(gh workflow list:*)",
-      "Bash(gh repo view:*)",
-      "Bash(gh auth status)",
-      "Bash(uv *)",
-      "Bash(pytest *)",
-      "Bash(ruff *)",
-      "Bash(mypy *)",
-      "Bash(bandit *)",
-      "Bash(pip-audit *)",
-      "Bash(safety *)",
-      "Bash(semgrep *)",
-      "Bash(just *)",
-      "Bash(make *)",
-      "Bash(pre-commit *)",
-      "Bash(rg *)",
-      "Bash(fd *)",
-      "Bash(bat *)",
-      "Bash(eza *)",
-      "Bash(echo *)",
-      "Bash(pwd)",
-      "Bash(which *)",
-      "Bash(jq *)",
-      "Bash(yq *)",
-      "Bash(fnm *)",
-      "Bash(npm *)",
-      "Bash(brew *)",
-      "Bash(docker *)",
-      "Bash(docker compose *)",
-      "Bash(mkdir *)",
-      "Bash(cp *)",
-      "Bash(mv *)",
-      "Bash(touch *)",
-      "Bash(stow *)",
       "Read(*)",
-      "Write(*)",
       "Edit(*)",
-      "MultiEdit(*)",
+      "Write(*)",
+      "WebSearch",
       "WebFetch(*)",
-      "WebSearch"
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(just *)",
+      "Bash(uv *)",
+      "Bash(brew *)"
     ],
     "deny": [
       "Read(./.env)",
@@ -62,46 +38,27 @@
       "Read(./**/.env.*)",
       "Edit(./.env)",
       "Edit(./.env.*)",
+      "Edit(./**/.env)",
+      "Edit(./**/.env.*)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.gnupg/**)",
       "Read(./**/*.pem)",
       "Read(./**/id_rsa*)",
       "Read(./**/id_ed25519*)",
-      "Bash(rm -rf /*)",
       "Bash(sudo *)",
-      "Edit(./**/.env)",
-      "Edit(./**/.env.*)",
+      "Bash(rm -rf /*)",
       "Bash(gh repo delete:*)",
       "Bash(gh secret:*)"
     ],
     "ask": [
       "Bash(rm *)",
-      "Bash(rm)",
-      "Bash(rmdir *)",
-      "Bash(rmdir)",
-      "Bash(sudo rm *)",
-      "Bash(curl *)",
-      "Bash(wget *)"
-    ],
-    "defaultMode": "auto",
-    "additionalDirectories": [
-      "/Users/namit/Developer/dotfiles"
+      "Bash(rmdir *)"
     ]
   },
-  "model": "opus",
-  "enableAllProjectMcpServers": false,
+
   "hooks": {
     "PreToolUse": [
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/hooks/security-guidance.py"
-          }
-        ]
-      },
       {
         "matcher": "AskUserQuestion",
         "hooks": [
@@ -109,19 +66,6 @@
             "type": "command",
             "command": "~/.claude/hooks/notify-on-question.sh",
             "async": true
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/hooks/no-cd.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 ~/.claude/hooks/prefer-native-tools.py"
           }
         ]
       }
@@ -133,6 +77,10 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/format-on-edit.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/lint-on-edit.py"
           }
         ]
       }
@@ -142,10 +90,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 ~/.claude/hooks/verify-python.py"
-          },
-          {
-            "type": "command",
             "command": "~/.claude/hooks/notify-on-stop.sh",
             "async": true
           }
@@ -153,39 +97,36 @@
       }
     ]
   },
+
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
+
   "enabledPlugins": {
     "warp@claude-code-warp": true,
     "clangd-lsp@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": false,
     "pyright-lsp@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false,
     "code-review@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": false,
-    "hookify@claude-plugins-official": true
+    "pr-review-toolkit@claude-plugins-official": false
   },
+
   "extraKnownMarketplaces": {
     "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
+      "source": { "source": "github", "repo": "warpdotdev/claude-code-warp" }
     },
     "research-assistant": {
-      "source": {
-        "source": "github",
-        "repo": "namitdeb739/research-assistant"
-      }
+      "source": { "source": "github", "repo": "namitdeb739/research-assistant" }
     }
   },
+
   "sandbox": {
     "enabled": true,
     "filesystem": {
       "allowRead": [
-        "/Users/namit/Developer/earth-computers/.env.example",
         "./.env.example",
         "./**/.env.example",
         "./.env.sample",
@@ -203,71 +144,14 @@
     },
     "credentials": {
       "files": [
-        {
-          "path": "~/.ssh",
-          "mode": "deny"
-        },
-        {
-          "path": "~/.aws",
-          "mode": "deny"
-        },
-        {
-          "path": "~/.gnupg",
-          "mode": "deny"
-        }
+        { "path": "~/.ssh", "mode": "deny" },
+        { "path": "~/.aws", "mode": "deny" },
+        { "path": "~/.gnupg", "mode": "deny" }
       ]
     },
     "excludedCommands": [],
     "network": {
-      "allowMachLookup": [
-        "com.apple.trustd.agent"
-      ]
+      "allowMachLookup": ["com.apple.trustd.agent"]
     }
-  },
-  "effortLevel": "medium",
-  "autoCompactWindow": 500000,
-  "autoUpdatesChannel": "stable",
-  "tui": "fullscreen",
-  "skipDangerousModePermissionPrompt": true,
-  "theme": "auto",
-  "agentPushNotifEnabled": true,
-  "autoMode": {
-    "allow": [
-      "$defaults",
-      "Bash(just:*)",
-      "Bash(brew list:*)",
-      "Bash(brew info:*)",
-      "Bash(uv sync:*)"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(brew uninstall:*)"
-    ],
-    "environment": [
-      "### Org-wide",
-      "**Organization**: None configured",
-      "**Cloud provider(s)**: None configured",
-      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public",
-      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
-      "**Secrets management**: None configured",
-      "**Default / protected branches**: not queryable here (no origin remote, default branch unknown); global docs state branch from `main` and PR to `main`",
-      "**CI/CD deploy targets**: None configured",
-      "**Network posture**: None configured",
-      "**Source control**: The trusted repo and its remote(s) only (no additional orgs configured) — as scoped by the Trusted repo and Repository visibility entries above; personal GitHub account github.com/namitdeb739 is the only host seen in usage",
-      "**Trusted internal domains**: None configured",
-      "**Trusted cloud buckets**: None configured",
-      "**Key internal services**: None configured",
-      "**Internal package registry**: None configured",
-      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
-      "**Data retention / declassification**: None configured",
-      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
-      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
-      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
-      "### User-specific",
-      "**Primary use of Claude Code**: software development — personal/hobby projects and dotfiles maintenance under /Users/namit",
-      "**Trusted repo**: The git repository the agent started in (/Users/namit, no configured remotes) and its configured remote(s). When the repo's public/private visibility is given — by the Repository visibility entry or the user's own message — use it to scope what is OK to commit or push there: confidential material is fine in a private repo; in a public one, only that repo's own work is — and content ported, repointed, or first read from outside this session's repo is not its own work, whoever directed the port. Visibility scopes confidential material only: secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions).",
-      "**Org-specific CLIs**: None configured — routine local tooling seen in usage: just, uv, brew, gh, ghostty",
-      "**Routine under /Users/namit prefix**: local dotfiles/toolchain work (just, uv, brew, stow-style bootstrap tasks) is routine in this working directory"
-    ]
   }
 }
