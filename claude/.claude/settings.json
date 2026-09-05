@@ -184,6 +184,15 @@
   "sandbox": {
     "enabled": true,
     "filesystem": {
+      "allowRead": [
+        "/Users/namit/Developer/earth-computers/.env.example",
+        "./.env.example",
+        "./**/.env.example",
+        "./.env.sample",
+        "./**/.env.sample",
+        "./.env.template",
+        "./**/.env.template"
+      ],
       "allowWrite": [
         "~/.cache",
         "~/.local/state",
