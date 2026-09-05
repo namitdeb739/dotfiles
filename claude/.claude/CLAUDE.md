@@ -25,10 +25,6 @@ Formatting is applied automatically by `format-on-edit.py`, and lint diagnostics
 for the edited file come back from `lint-on-edit.py`. Do not run `ruff format` by
 hand after an edit.
 
-Nothing blocks the end of a turn, so "done" is a claim you are making, not one
-the harness checked. Run the project's own check command before saying it. If
-you did not verify, say that plainly rather than implying you did.
-
 ## Shell
 
 - Absolute paths, not `cd`: `just -f /abs/path/justfile <recipe>`, `git -C <dir>`.

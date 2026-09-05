@@ -4,21 +4,7 @@
     "ENABLE_TOOL_SEARCH": "auto:5",
     "BASH_DEFAULT_TIMEOUT_MS": "300000"
   },
-  "model": "opus",
-  "effortLevel": "medium",
-  "theme": "auto",
-  "tui": "fullscreen",
-  "autoCompactWindow": 500000,
-  "autoUpdatesChannel": "stable",
-  "skipDangerousModePermissionPrompt": true,
-  "agentPushNotifEnabled": true,
-  "enableAllProjectMcpServers": false,
-
   "permissions": {
-    "defaultMode": "auto",
-    "additionalDirectories": [
-      "/Users/namit/Developer/dotfiles"
-    ],
     "allow": [
       "Read(*)",
       "Edit(*)",
@@ -54,9 +40,14 @@
     "ask": [
       "Bash(rm *)",
       "Bash(rmdir *)"
+    ],
+    "defaultMode": "auto",
+    "additionalDirectories": [
+      "/Users/namit/Developer/dotfiles"
     ]
   },
-
+  "model": "opus",
+  "enableAllProjectMcpServers": false,
   "hooks": {
     "PreToolUse": [
       {
@@ -97,35 +88,45 @@
       }
     ]
   },
-
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
   },
-
   "enabledPlugins": {
-    "warp@claude-code-warp": true,
     "clangd-lsp@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "hookify@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": false,
-    "code-review@claude-plugins-official": false,
-    "pr-review-toolkit@claude-plugins-official": false
+    "code-review@claude-plugins-official": true,
+    "pr-review-toolkit@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true,
+    "commit-commands@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true
   },
-
   "extraKnownMarketplaces": {
-    "claude-code-warp": {
-      "source": { "source": "github", "repo": "warpdotdev/claude-code-warp" }
-    },
     "research-assistant": {
-      "source": { "source": "github", "repo": "namitdeb739/research-assistant" }
+      "source": {
+        "source": "github",
+        "repo": "namitdeb739/research-assistant"
+      }
     }
   },
-
   "sandbox": {
     "enabled": true,
+    "network": {
+      "allowMachLookup": [
+        "com.apple.trustd.agent"
+      ]
+    },
     "filesystem": {
+      "allowWrite": [
+        "~/.cache",
+        "~/.local/state",
+        "~/.local/share",
+        "~/.npm",
+        "/opt/homebrew"
+      ],
       "allowRead": [
         "./.env.example",
         "./**/.env.example",
@@ -133,25 +134,59 @@
         "./**/.env.sample",
         "./.env.template",
         "./**/.env.template"
-      ],
-      "allowWrite": [
-        "~/.cache",
-        "~/.local/state",
-        "~/.local/share",
-        "~/.npm",
-        "/opt/homebrew"
       ]
     },
     "credentials": {
       "files": [
-        { "path": "~/.ssh", "mode": "deny" },
-        { "path": "~/.aws", "mode": "deny" },
-        { "path": "~/.gnupg", "mode": "deny" }
+        {
+          "path": "~/.ssh",
+          "mode": "deny"
+        },
+        {
+          "path": "~/.aws",
+          "mode": "deny"
+        },
+        {
+          "path": "~/.gnupg",
+          "mode": "deny"
+        }
       ]
     },
-    "excludedCommands": [],
-    "network": {
-      "allowMachLookup": ["com.apple.trustd.agent"]
-    }
+    "excludedCommands": []
+  },
+  "effortLevel": "medium",
+  "autoCompactWindow": 500000,
+  "autoUpdatesChannel": "stable",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto",
+  "agentPushNotifEnabled": true,
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — repo has no remotes configured, so this cannot be scoped further",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: unknown — origin/HEAD unset, no remotes configured, not queryable via gh (no origin remote to derive owner/repo from)",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo and its remote(s) only (no additional orgs configured) — this repo (/Users/namit/Developer) currently has no remotes",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar — note: sibling checkouts under ~/Developer (e.g. career-detective/.env, letterboxd-analysis/.env, dotfiles/bin/bin/secret, dotfiles/zsh/.zsh/secrets.zsh) hold likely secrets but are unverified-provenance sibling repos, not part of this project",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development",
+      "**Trusted repo**: The git repository the agent started in (/Users/namit/Developer) — currently has no tracked files and no configured remotes, so there is no remote destination to scope pushes/publication to",
+      "**Org-specific CLIs**: None configured — non-standard CLIs seen (uv, bat, brew, eza, uvx, fd) are personal tooling, not org-specific",
+      "routine under /Users/namit/Developer/ prefix: local file operations, uv/uvx package management, and standard read-only shell tooling (bat, eza, fd)"
+    ]
   }
 }
