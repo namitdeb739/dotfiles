@@ -334,4 +334,10 @@
   "redhat.telemetry.enabled": true,
   "chat.titleBar.openInAgentsWindow.enabled": false,
   "window.confirmSaveUntitledWorkspace": false,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false,
+  },
 }
