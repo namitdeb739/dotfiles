@@ -25,7 +25,6 @@ if [ -z "$host_id" ]; then
     ghostty) host_id=com.mitchellh.ghostty ;;
     iTerm.app) host_id=com.googlecode.iterm2 ;;
     Apple_Terminal) host_id=com.apple.Terminal ;;
-    WarpTerminal) host_id=dev.warp.Warp-Stable ;;
   esac
 fi
 

@@ -387,10 +387,11 @@ Script Editor. So `notify.sh` posts from a per-host app bundle wrapping a copy o
 host terminal's own icon. A VS Code session notifies as VS Code, a Ghostty session
 as Ghostty. The bundles are generated, not stowed; delete the directory to rebuild.
 
-Plugins are enabled in `settings.json` under `enabledPlugins`: `code-review`,
-`pr-review-toolkit` and `hookify` from `claude-plugins-official`, the three LSP
-plugins (`clangd-lsp`, `pyright-lsp`, `typescript-lsp`), `claude-md-management`,
-and `warp`.
+Plugins are enabled in `settings.json` under `enabledPlugins`, all from
+`claude-plugins-official`: `superpowers` (the skill backbone), `code-review`,
+`code-simplifier`, `commit-commands`, `hookify`, `claude-md-management`, and the
+LSP plugins `clangd-lsp` and `pyright-lsp`. `typescript-lsp` and
+`pr-review-toolkit` are present but disabled.
 
 MCP servers are registered at user scope via `setup_claude()`. They live in
 `~/.claude.json` (not stowed) and are registered idempotently on each run.
