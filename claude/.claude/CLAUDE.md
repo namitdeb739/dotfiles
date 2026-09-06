@@ -56,8 +56,11 @@ hand after an edit.
   keychain credential helper is blocked; the transfer itself succeeded.
 - Fetch before checking out a branch that may be behind its remote.
 - `gh pr merge --delete-branch` fails its local sync in dotfiles (it rewrites the
-  write-protected `settings.json`) and leaves an autostash. The merge lands; do
-  the cleanup by hand with `git fetch` + `git reset --hard origin/main`.
+  write-protected config files). The merge itself lands. Clean up with `git fetch`
+  then `git reset --mixed origin/main` — `--hard` tries to unlink those files and
+  fails, while `--mixed` moves HEAD and the index and leaves the tree alone, which
+  is all that is needed since the tree already matches. Squash merges also need
+  `git branch -D` for the local branch.
 
 ## Compaction
 
