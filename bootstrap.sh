@@ -578,17 +578,16 @@ backup_conflicts() {
     # Skip backup files entirely
     [[ "$(basename "$rel")" == *.backup-* ]] && continue
 
+    # Anything already resolving into the repo is ours — a correct symlink, or a
+    # plain path reached through a folded directory symlink. Leave it to stow.
+    # Resolving beats comparing readlink output, which is relative and so never
+    # matched the absolute "$pkg_dir"; and treating a folded path as a real file
+    # moved the repo's own copy into the backup directory.
+    [[ "$(readlink -f "$target" 2>/dev/null)" == "$REPO_DIR"/* ]] && continue
+
     # If symlink
     if [[ -L "$target" ]]; then
-      local link_target
-      link_target="$(readlink "$target")"
-
-      # Already correct → skip
-      if [[ "$link_target" == *"$pkg_dir"* ]]; then
-        continue
-      fi
-
-      echo "Removing stale symlink: $target -> $link_target"
+      echo "Removing stale symlink: $target -> $(readlink "$target")"
       rm -f "$target"
       continue
     fi
