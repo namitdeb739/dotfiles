@@ -79,7 +79,6 @@ cask "nightfall"         # Menu bar dark/light mode toggle
 cask "firefox"           # Web browser
 cask "karabiner-elements"  # Keyboard customiser
 cask "sanesidebuttons"   # System-wide navigation with mouse side buttons
-cask "warp"              # Terminal alternative
 cask "uniflash"          # TI microcontroller flash tool
 
 # NOT declared here, deliberately: Hush and AdGuard Mini are Mac App Store
