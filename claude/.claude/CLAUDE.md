@@ -51,9 +51,13 @@ hand after an edit.
   imperative mood. Body for anything non-trivial (what + why).
 - Branch from `main`, PR to `main`, squash merge, delete the branch — unless the
   repo's own `CLAUDE.md` says otherwise.
-- `git fetch`/`git pull` fail in the sandbox with `CONNECT tunnel failed,
-  response 403`. Retry with the sandbox disabled; `git push` works sandboxed.
+- `github.com` is on the sandbox network allowlist, so `git fetch`/`pull`/`push`
+  work sandboxed. Fetching still prints `fatal: failed to store: 100001` — the
+  keychain credential helper is blocked; the transfer itself succeeded.
 - Fetch before checking out a branch that may be behind its remote.
+- `gh pr merge --delete-branch` fails its local sync in dotfiles (it rewrites the
+  write-protected `settings.json`) and leaves an autostash. The merge lands; do
+  the cleanup by hand with `git fetch` + `git reset --hard origin/main`.
 
 ## Compaction
 
