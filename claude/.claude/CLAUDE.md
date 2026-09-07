@@ -52,8 +52,7 @@ hand after an edit.
 - Branch from `main`, PR to `main`, squash merge, delete the branch — unless the
   repo's own `CLAUDE.md` says otherwise.
 - `github.com` is on the sandbox network allowlist, so `git fetch`/`pull`/`push`
-  work sandboxed. Fetching still prints `fatal: failed to store: 100001` — the
-  keychain credential helper is blocked; the transfer itself succeeded.
+  work sandboxed.
 - Fetch before checking out a branch that may be behind its remote.
 - `gh pr merge --delete-branch` fails its local sync in dotfiles (it rewrites the
   write-protected config files). The merge itself lands. Clean up with `git fetch`

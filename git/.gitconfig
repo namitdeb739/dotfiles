@@ -67,6 +67,17 @@
 	wip = !git add -A && git commit -m 'chore: wip'
 	cleanup = !git branch --merged main | grep -v 'main' | xargs -r git branch -d
 
+# Homebrew's /opt/homebrew/etc/gitconfig sets credential.helper = osxkeychain
+# for every host. Inside Claude Code's sandbox all traffic goes through a
+# localhost HTTP proxy whose URL carries ephemeral credentials, so after each
+# successful transfer git tries to persist those into the keychain — a write the
+# sandbox denies, printing `fatal: failed to store: 100001` on every fetch/push.
+# Reset that list and re-add osxkeychain behind a guard that drops the proxy's
+# throwaway credentials instead of storing them.
+[credential]
+	helper =
+	helper = "!f() { data=$(cat); case \"$data\" in *host=localhost:*) exit 0;; esac; printf '%s\\n' \"$data\" | git credential-osxkeychain \"$1\"; }; f"
+
 [credential "https://github.com"]
 	helper =
 	helper = !gh auth git-credential
