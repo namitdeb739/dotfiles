@@ -34,6 +34,11 @@ hand after an edit.
   sandbox and the auto mode classifier block them, so `dangerouslyDisableSandbox`
   alone does not help, and `git rm` and `stow --restow` fail there too. The
   Edit/Write tools work fine. Use those; don't stage a script.
+- That deny covers *unlink*, so `git checkout -- .` fails on those paths — and
+  pre-commit stashes unstaged changes with exactly that command. A sandboxed
+  dotfiles commit therefore dies whenever one of them is dirty. Stage it first:
+  checkout skips index-matching entries, so staging is enough. Never reach for
+  `--no-verify`.
 - Slash commands run against the session cwd, not the Bash tool's. `cd` in Bash
   cannot fix a command that needs a different repo — relaunch Claude there.
 - Reach for `ast-grep` over `rg` for structural code search or rewrites.
