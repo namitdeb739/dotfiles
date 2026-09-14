@@ -46,7 +46,7 @@
       "/Users/namit/Developer/dotfiles"
     ]
   },
-  "model": "opus",
+  "model": "opus[1m]",
   "enableAllProjectMcpServers": false,
   "hooks": {
     "PreToolUse": [
@@ -82,6 +82,11 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/notify-on-stop.sh",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "sh ~/.claude/hooks/sweep-cc-writes.sh",
             "async": true
           }
         ]
