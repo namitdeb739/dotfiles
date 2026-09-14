@@ -51,7 +51,6 @@ brew "ollama"            # Run LLMs locally
 # --- Embedded ---
 brew "picocom"           # Minimal serial terminal emulator
 brew "clang-format"       # C/C++ formatter — used by the PostToolUse hook
-brew "mspdebug"          # Debugger for TI MSP430 microcontrollers
 
 # --- Python ---
 brew "uv"                # Fast Python package manager
@@ -79,7 +78,6 @@ cask "nightfall"         # Menu bar dark/light mode toggle
 cask "firefox"           # Web browser
 cask "karabiner-elements"  # Keyboard customiser
 cask "sanesidebuttons"   # System-wide navigation with mouse side buttons
-cask "uniflash"          # TI microcontroller flash tool
 
 # NOT declared here, deliberately: Hush and AdGuard Mini are Mac App Store
 # apps. Homebrew cannot manage a MAS install — adopting one would replace the
