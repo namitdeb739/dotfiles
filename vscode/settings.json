@@ -340,4 +340,5 @@
     "markdown": true,
     "scminput": false,
   },
+  "claudeCode.hideOnboarding": true,
 }
