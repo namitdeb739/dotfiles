@@ -32,3 +32,4 @@ claude
 btop
 bin
 launchd
+copier
