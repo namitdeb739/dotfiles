@@ -1,0 +1,14 @@
+# Copier user settings.
+#
+# `defaults` pre-fills questions of these names in every template, so a plain
+# `copier copy` no longer asks for identity details that never change. The
+# questions are still shown — Copier only skips them with `--defaults` — but
+# the offered answer is already correct, so Enter is enough.
+#
+# Path is fixed by Copier (platformdirs user_config_path, macOS flavour);
+# stowed here as the `copier` package.
+
+defaults:
+  author_name: Namit Deb
+  author_email: namitdeb739@gmail.com
+  github_user: namitdeb739
