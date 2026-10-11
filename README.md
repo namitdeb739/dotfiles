@@ -282,7 +282,8 @@ it to `brew/drift-ignore`, one app name per line.
 
 **Brewfile drift** is report-only — it never uninstalls, so a deliberate one-off
 install survives an unattended run. It compares `brew leaves --installed-on-request`
-and `brew list --cask` against the Brewfile. `brew bundle cleanup` is deliberately
+and `brew list --cask` against the Brewfile (and `Brewfile.fresh-machine`, whose
+hand-installed casks count as declared). `brew bundle cleanup` is deliberately
 not used: it lists every transitive dependency too, which buries the entries that
 actually matter (12 real items here versus ~60 of noise).
 

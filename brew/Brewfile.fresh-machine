@@ -13,3 +13,12 @@
 cask "microsoft-office"  # Word, Excel, PowerPoint, Outlook, OneNote
 cask "microsoft-teams"   # Meetings
 cask "onedrive"          # File sync
+
+# Same story, different updater: installed by hand here and self-updating.
+cask "zoom"              # Meetings
+cask "nrf-connect"       # nRF Connect for Desktop
+
+# Managed by Homebrew here, but kept out of the default bundle: SEGGER
+# replaces the .pkg in place, so the cask checksum goes stale and the
+# download fails, which would fail the whole Brew phase of bootstrap.
+cask "segger-jlink"      # J-Link debug probe tools
