@@ -105,12 +105,12 @@ cask "skim"              # PDF viewer — vimtex's SyncTeX target (nvim latex.lu
 cask "cleanmymac"        # Disk cleanup
 
 # --- Embedded (casks) ---
-# The first three need sudo to upgrade, so dotfiles-update skips them and
-# reports them as still outdated; upgrade those by hand.
+# Both need sudo to upgrade, so dotfiles-update skips them and reports them
+# as still outdated; upgrade those by hand. segger-jlink lives in
+# Brewfile.fresh-machine. nrfutil is NOT declared: the cask was disabled
+# upstream on 2026-09-01 (fails Gatekeeper), so it can no longer be installed.
 cask "gcc-arm-embedded"  # Arm GNU toolchain (arm-none-eabi-*)
-cask "segger-jlink"      # J-Link debug probe tools
 cask "uniflash"          # TI flash programmer
-cask "nrfutil"           # Nordic nRF command-line utility
 
 # The Microsoft apps live in brew/Brewfile.fresh-machine, not here. Homebrew
 # cannot install over an existing Microsoft AutoUpdate install, so declaring
