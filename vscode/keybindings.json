@@ -69,4 +69,12 @@
     "key": "alt+cmd+b",
     "command": "workbench.action.toggleAuxiliaryBar",
   },
+  {
+    "key": "ctrl+p ctrl+r",
+    "command": "markdown.reopenAsPreview",
+  },
+  {
+    "key": "ctrl+p ctrl+s",
+    "command": "markdown.reopenAsSource",
+  },
 ]
