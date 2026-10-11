@@ -13,6 +13,9 @@ brew "git"               # Version control
 brew "gh"                # GitHub CLI
 brew "lazygit"           # Git TUI — stage hunks, interactive rebase
 brew "act"               # Run GitHub Actions locally in Docker
+brew "actionlint"        # GitHub Actions workflow linter
+brew "git-filter-repo"   # Rewrite git history (filter-branch replacement)
+brew "watchexec"         # Re-run a command when watched files change
 brew "tmux"              # Terminal multiplexer — Ghostty has no session persistence
 brew "git-delta"         # Better git diffs (used as core.pager)
 brew "fzf"               # Fuzzy finder
@@ -40,6 +43,7 @@ brew "tree-sitter-cli"   # Parser compiler required by nvim-treesitter (main bra
 # --- Documents ---
 brew "tectonic"          # Self-contained TeX/LaTeX engine
 brew "latexdiff"         # Marked-up thesis revisions for supervisor review
+brew "tex-fmt"           # LaTeX formatter — VS Code's latex-workshop points at it
 brew "poppler"           # PDF rendering and CLI tools (pdftotext, pdfimages)
 
 # --- Media ---
@@ -50,6 +54,7 @@ brew "ollama"            # Run LLMs locally
 
 # --- Embedded ---
 brew "picocom"           # Minimal serial terminal emulator
+brew "mspdebug"          # MSP430 debugger/flasher
 brew "clang-format"       # C/C++ formatter — used by the PostToolUse hook
 
 # --- Python ---
@@ -93,9 +98,19 @@ cask "google-chrome"     # Browser
 cask "telegram"          # Messaging
 cask "whatsapp"          # Messaging
 cask "iina"              # Video player
+cask "anki"              # Spaced-repetition flashcards
+cask "skim"              # PDF viewer — vimtex's SyncTeX target (nvim latex.lua)
 # Installed copy (1.0.19) is newer than the cask (1.0), so it is declared for
 # a fresh machine but deliberately not adopted here — adopting would downgrade.
 cask "cleanmymac"        # Disk cleanup
+
+# --- Embedded (casks) ---
+# The first three need sudo to upgrade, so dotfiles-update skips them and
+# reports them as still outdated; upgrade those by hand.
+cask "gcc-arm-embedded"  # Arm GNU toolchain (arm-none-eabi-*)
+cask "segger-jlink"      # J-Link debug probe tools
+cask "uniflash"          # TI flash programmer
+cask "nrfutil"           # Nordic nRF command-line utility
 
 # The Microsoft apps live in brew/Brewfile.fresh-machine, not here. Homebrew
 # cannot install over an existing Microsoft AutoUpdate install, so declaring

@@ -79,9 +79,10 @@ BUNDLE_FAILED=0
 # Set when the cask upgrade reports failures. Not fatal, same reasoning.
 UPGRADE_FAILED=0
 
-# Casks skipped by the unattended path because they need root. Reported in the
-# summary so they do not silently stay out of date forever.
-SKIPPED_CASKS=""
+# Everything still outdated after the upgrade steps: root-requiring casks the
+# unattended path skipped, plus anything that failed. Reported in the summary
+# so they do not silently stay out of date forever.
+STILL_OUTDATED=""
 
 # Casks that cannot be installed *or upgraded* without root. A launchd job has
 # no terminal and no way to answer a password prompt, so these can never run
@@ -107,13 +108,23 @@ SKIPPED_CASKS=""
 # installs them, and the drift check still accounts for them. Only the
 # unattended path skips them.
 #
+# Checked across every *installed* cask as well as the declared ones, because
+# `brew upgrade` upgrades whatever is installed, declared or not. Looking only
+# at the Brewfile let gcc-arm-embedded, segger-jlink and uniflash through on
+# 11 Oct, and all three died at the sudo prompt.
+#
 # Detected from cask metadata rather than hardcoded. A hand-maintained list has
 # exactly the drift problem stow-packages.txt exists to solve — the first
 # version of this list was already missing karabiner-elements. One batched
 # `brew info` call, about a second.
 sudo_casks() {
   local casks
-  casks=$(grep -oE '^cask "[^"]+"' "$REPO_DIR/brew/Brewfile" | sed 's/cask "//;s/"$//')
+  casks=$(
+    {
+      grep -oE '^cask "[^"]+"' "$REPO_DIR/brew/Brewfile" | sed 's/cask "//;s/"$//'
+      brew list --cask 2>/dev/null || true
+    } | sort -u
+  )
   [[ -z "$casks" ]] && return 0
 
   # shellcheck disable=SC2086
@@ -198,7 +209,6 @@ brew_maintenance() {
 
   local skip
   skip="$(sudo_casks)"
-  SKIPPED_CASKS="$skip"
 
   step "brew upgrade (formulae)"
   # Formulae never need root, so a failure here is a real problem: stay fatal.
@@ -230,6 +240,7 @@ brew_maintenance() {
     UPGRADE_FAILED=1
     log "cask upgrade reported failures; continuing so the later steps still run"
   fi
+  STILL_OUTDATED="$(brew outdated --quiet || true)"
 
   step "brew bundle"
   # Re-converge on the Brewfile: installs anything declared but missing.
@@ -293,12 +304,19 @@ brewfile_drift() {
   # Brewfile cannot fix it either way.
   brew leaves --installed-on-request | sed 's|.*/||' | sort -u > "$tmp/installed-formulae"
   brew list --cask 2>/dev/null | sort -u > "$tmp/installed-casks"
+  # "Declared but missing" needs the opposite view of each side. A declared
+  # formula that another installed formula depends on is not a leaf, so the
+  # leaves list reported shellcheck as missing for as long as actionlint was
+  # installed. And Brewfile.fresh-machine casks are hand-installed by design,
+  # so only the main Brewfile's casks can be meaningfully missing.
+  brew list --formula | sort -u > "$tmp/all-formulae"
+  sed -n 's/^cask "\([^"]*\)".*/\1/p' "$brewfile" | sort -u > "$tmp/bundle-casks"
 
   local undeclared_f undeclared_c missing_f missing_c
   undeclared_f="$(comm -23 "$tmp/installed-formulae" "$tmp/declared-formulae")"
   undeclared_c="$(comm -23 "$tmp/installed-casks" "$tmp/declared-casks")"
-  missing_f="$(comm -13 "$tmp/installed-formulae" "$tmp/declared-formulae")"
-  missing_c="$(comm -13 "$tmp/installed-casks" "$tmp/declared-casks")"
+  missing_f="$(comm -13 "$tmp/all-formulae" "$tmp/declared-formulae")"
+  missing_c="$(comm -13 "$tmp/installed-casks" "$tmp/bundle-casks")"
 
   DRIFT_REPORT=""
 
@@ -318,15 +336,15 @@ brewfile_drift() {
   local unmanaged_apps=""
   if [[ -d /Applications ]]; then
     unmanaged_apps="$(
-      python3 - "$brewfile" "$REPO_DIR/brew/drift-ignore" <<'PYEOF'
+      python3 - "$REPO_DIR/brew/drift-ignore" "${brewfiles[@]}" <<'PYEOF'
 import json, pathlib, re, subprocess, sys
 
-brewfile = pathlib.Path(sys.argv[1]).read_text()
+brewfile = "\n".join(pathlib.Path(p).read_text() for p in sys.argv[2:])
 declared = re.findall(r'^cask "([^"]+)"', brewfile, re.M)
 
 # Explicit opt-outs: apps with no cask that are expected to be here.
 ignore = set()
-ignore_file = pathlib.Path(sys.argv[2])
+ignore_file = pathlib.Path(sys.argv[1])
 if ignore_file.exists():
     for line in ignore_file.read_text().splitlines():
         name = line.split("#", 1)[0].strip()
@@ -384,7 +402,7 @@ for app in sorted(p.name[:-4] for p in apps_dir.glob("*.app")):
     # A pkg cask installs several differently-named apps; credit it with any
     # app sharing its leading vendor word (microsoft-office -> Microsoft Word).
     vendors = {t.split("-")[0] for t in pkg_tokens if t}
-    if slug.split("-")[0] in vendors:
+    if re.split(r"[-.]", slug)[0] in vendors:
         continue
     print(app)
 PYEOF
@@ -525,17 +543,17 @@ write_summary() {
     if [[ "$BUNDLE_FAILED" -eq 1 ]]; then
       printf 'brew bundle had failures; later steps still ran.\n'
     fi
-    if [[ -n "$SKIPPED_CASKS" ]]; then
-      printf 'Skipped (need sudo; install/upgrade by hand):\n'
-      printf '%s\n' "$SKIPPED_CASKS" | tr ' ' '\n' | sed '/^$/d;s/^/  · /'
+    if [[ -n "$STILL_OUTDATED" ]]; then
+      printf 'Still outdated (need sudo or failed; upgrade by hand):\n'
+      printf '%s\n' "$STILL_OUTDATED" | sed 's/^/  · /'
     fi
     # OUTDATED_BEFORE is everything that *was* outdated, sampled before the
-    # skip set is known. Reporting it verbatim listed the root-requiring casks
-    # as upgraded and skipped in the same summary. Report what actually moved.
+    # upgrade. Reporting it verbatim listed skipped and failed casks as
+    # upgraded. Report what actually moved: whatever is no longer outdated.
     local upgraded upgraded_count
     upgraded="$(
       printf '%s\n' "$OUTDATED_BEFORE" \
-        | grep -vxF -f <(printf '%s\n' "$SKIPPED_CASKS" | tr ' ' '\n') || true
+        | grep -vxF -f <(printf '%s\n' "$STILL_OUTDATED") || true
     )"
     upgraded_count="$(printf '%s\n' "$upgraded" | grep -c . || true)"
     if [[ "$upgraded_count" -gt 0 ]]; then
