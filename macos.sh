@@ -48,8 +48,9 @@ d write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 d write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 
 echo "--- Finder ---"
-# Show what a developer needs to see: extensions, path bar, status bar.
-d write NSGlobalDomain AppleShowAllExtensions -bool true
+# Show what a developer needs to see: path bar, status bar. Extensions stay off
+# -- forcing them on also renders the .app suffix in Finder and Spotlight.
+d write NSGlobalDomain AppleShowAllExtensions -bool false
 d write com.apple.finder ShowPathbar -bool true
 d write com.apple.finder ShowStatusBar -bool true
 # Keep dotfiles hidden in Finder. They are edited in the terminal, where they

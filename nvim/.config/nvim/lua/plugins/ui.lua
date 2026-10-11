@@ -76,7 +76,9 @@ return {
         { "<leader>f", group = "find (telescope)" },
         { "<leader>b", group = "buffer" },
         { "<leader>g", group = "git" },
-        { "<leader>l", group = "lsp" },
+        { "<leader>l", group = "lsp / format" },
+        { "<leader>s", group = "session" },
+        { "<leader>t", group = "terminal" },
       })
     end,
   },

@@ -669,6 +669,19 @@ link_vscode() {
     vscode
 
   echo "VS Code config stowed to: $vscode_target"
+
+  # Local extensions are not stowable: they live under ~/.vscode/extensions,
+  # a different target from Code/User, one directory per extension.
+  local ext_src="$REPO_DIR/vscode-extensions"
+  if [[ -d "$ext_src" ]]; then
+    mkdir -p "$HOME/.vscode/extensions"
+    local ext
+    for ext in "$ext_src"/*/; do
+      [[ -d "$ext" ]] || continue
+      ln -sfn "${ext%/}" "$HOME/.vscode/extensions/$(basename "$ext")"
+      echo "Linked local extension: $(basename "$ext")"
+    done
+  fi
 }
 
 ensure_node() {

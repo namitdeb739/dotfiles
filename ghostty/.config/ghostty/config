@@ -36,9 +36,13 @@ adjust-cell-height = 8%
 font-shaping-break = cursor
 
 # --- Window / appearance ---
-# Native macOS tabs rendered into the titlebar — closest match to the iTerm2
-# tab bar. Incompatible with macos-non-native-fullscreen, hence that stays off.
-macos-titlebar-style = tabs
+# Not `tabs` or `transparent`: both paint the chrome the terminal's own
+# background colour (`tabs` is a titlebar Ghostty draws itself; `transparent`
+# lets the window background through). Under macOS 26+ Liquid Glass that
+# leaves the tab bar with no contrast — tabs render the same #eff1f5 as the
+# body and effectively disappear. `native` keeps the system material.
+# Incompatible with macos-non-native-fullscreen, hence that stays off.
+macos-titlebar-style = native
 macos-non-native-fullscreen = false
 # Dock/app-switcher icon variant (Finder still shows the bundle icon).
 macos-icon = glass

@@ -13,6 +13,16 @@ local servers = {
   },
   bashls = {},
   basedpyright = {},
+  -- ruff's LSP: the diagnostics half of charliermarsh.ruff. Formatting and
+  -- import sorting run through conform.nvim instead, so hand hover to
+  -- basedpyright and let ruff stay in its lane.
+  ruff = {
+    on_attach = function(client)
+      client.server_capabilities.hoverProvider = false
+    end,
+  },
+  taplo = {},
+  yamlls = {},
 }
 
 return {
@@ -47,6 +57,12 @@ return {
     config = function()
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
+      -- basedpyright and ruff both register didChangeWatchedFiles over the
+      -- whole workspace; libuv runs out of kqueue descriptors on macOS and
+      -- throws EMFILE. Neovim reports changes on write regardless.
+      capabilities.workspace = capabilities.workspace or {}
+      capabilities.workspace.didChangeWatchedFiles = { dynamicRegistration = false }
+
       -- Neovim 0.11 deprecated the `require('lspconfig')[server].setup()`
       -- framework; it will be removed in nvim-lspconfig v3.0.0. Configuration
       -- now goes through vim.lsp.config, which merges over the defaults that
@@ -78,7 +94,17 @@ return {
           map("<C-k>",      vim.lsp.buf.signature_help,  "Signature help")
           map("<leader>lr", vim.lsp.buf.rename,           "Rename symbol")
           map("<leader>la", vim.lsp.buf.code_action,     "Code action")
-          map("<leader>lf", function() vim.lsp.buf.format({ async = true }) end, "Format")
+          -- <leader>lf is conform.nvim's; see plugins/format.lua.
+
+          -- editor.inlayHints.enabled = "onUnlessPressed" in VS Code.
+          local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          if client and client:supports_method("textDocument/inlayHint") then
+            vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+            map("<leader>lh", function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf }),
+                { bufnr = ev.buf })
+            end, "Toggle inlay hints")
+          end
         end,
       })
 

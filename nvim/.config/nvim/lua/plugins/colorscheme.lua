@@ -22,6 +22,9 @@ return {
       integrations = {
         cmp = true,
         gitsigns = true,
+        dropbar = { enabled = true },
+        rainbow_delimiters = true,
+        treesitter_context = true,
         nvimtree = true,
         treesitter = true,
         telescope = true,

@@ -1,0 +1,17 @@
+{
+  "name": "latex-pairs",
+  "displayName": "LaTeX auto-closing pairs",
+  "description": "Adds $, * and _ to the auto-closing pairs for .tex files. LaTeX Workshop lists $ only under surroundingPairs, so typing one does not insert its partner.",
+  "version": "1.0.0",
+  "publisher": "local",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "latex",
+        "configuration": "./language-configuration.json"
+      }
+    ]
+  }
+}
