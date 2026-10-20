@@ -91,7 +91,7 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `act/` | `.actrc` — Apple Silicon runner defaults | `~/` |
 | `tmux/` | `tmux.conf` — session persistence, Catppuccin, vi copy-mode | `~/.config/tmux/` |
 | `karabiner/` | `karabiner.json` — key remapping | `~/.config/karabiner/` |
-| `tinycast/` | `settings.json`, `quicklinks.json`, `commands.json` — launcher; run `tinycast-setup` to load quicklinks and commands | `~/.config/tinycast/` |
+| `tinycast/` | `settings.json`, `quicklinks.json`, `commands.json`, `snippets/` — launcher; run `tinycast-setup` to load quicklinks and commands | `~/.config/tinycast/` |
 | `gh/` | `config.yml` — aliases and protocol (not `hosts.yml`) | `~/.config/gh/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |

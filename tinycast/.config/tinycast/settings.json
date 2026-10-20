@@ -42,7 +42,35 @@
       "/System/Library/CoreServices/Finder.app",
       "~/Applications"
     ],
-    "apps": {}
+    "apps": {
+      "com.mitchellh.ghostty": {
+        "shortcut": "ctrl+option+t"
+      },
+      "md.obsidian": {
+        "shortcut": "ctrl+option+o"
+      },
+      "com.apple.Safari": {
+        "shortcut": "ctrl+option+b"
+      },
+      "com.microsoft.VSCode": {
+        "shortcut": "ctrl+option+c"
+      },
+      "notion.id": {
+        "shortcut": "ctrl+option+n"
+      },
+      "net.whatsapp.WhatsApp": {
+        "shortcut": "ctrl+option+w"
+      },
+      "com.tdesktop.Telegram": {
+        "shortcut": "ctrl+option+g"
+      },
+      "net.ankiweb.anki": {
+        "shortcut": "ctrl+option+a"
+      },
+      "com.apple.finder": {
+        "shortcut": "ctrl+option+f"
+      }
+    }
   },
   "systemSettings": {
     "enabled": true,
@@ -120,8 +148,12 @@
   },
   "snippets": {
     "showInLauncher": true,
-    "folder": null,
-    "commands": {}
+    "folder": "~/.config/tinycast/snippets",
+    "commands": {
+      "search-snippets": {
+        "shortcut": "ctrl+option+s"
+      }
+    }
   },
   "navigation": {
     "enabled": true,
@@ -187,7 +219,11 @@
       "com.apple.keychainaccess",
       "com.apple.Passwords"
     ],
-    "commands": {}
+    "commands": {
+      "clipboard-history": {
+        "shortcut": "cmd+shift+v"
+      }
+    }
   },
   "emoji": {
     "skinTone": "medium",
@@ -207,7 +243,11 @@
     "menuBarLinkedEventsOnly": true,
     "menuBarHidesWhenEmpty": false,
     "hideCurrentEventAfterMinutes": "never",
-    "commands": {}
+    "commands": {
+      "join-next-meeting": {
+        "shortcut": "ctrl+option+j"
+      }
+    }
   },
   "extensions": {
     "showInLauncher": true
