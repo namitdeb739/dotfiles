@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# tinycast-setup — load ~/.config/tinycast/{quicklinks,commands}.json into Tinycast.
+#
+# Tinycast has no CLI, and settings.json deliberately leaves out content:
+# quicklinks live in a SQLite database, custom commands and all aliases in
+# UserDefaults. This writes them directly, so it has to quit Tinycast first and
+# relaunch it after.
+#
+# Idempotent: a quicklink already present by name or link is skipped, matching
+# the app's own Import Quicklinks. A custom command is matched by its fixed id
+# and replaced. Aliases in the files overwrite the app's.
+
+set -euo pipefail
+
+DOMAIN="com.tinycast.app"
+DB="$HOME/Library/Application Support/$DOMAIN/quicklinks.sqlite3"
+LINKS="$HOME/.config/tinycast/quicklinks.json"
+COMMANDS="$HOME/.config/tinycast/commands.json"
+
+die() { echo "tinycast-setup: $*" >&2; exit 1; }
+
+[[ -d /Applications/Tinycast.app ]] || die "Tinycast is not installed (brew install --cask tinycast)"
+[[ -f "$LINKS" && -f "$COMMANDS" ]] || die "config not found in ~/.config/tinycast; stow the tinycast package"
+[[ -f "$DB" ]] || die "no quicklinks database yet; launch Tinycast once, then rerun"
+
+# Quit can time out behind an open dialog, so fall back to SIGTERM.
+if pgrep -x Tinycast &>/dev/null; then
+  osascript -e "quit app \"Tinycast\"" &>/dev/null || pkill -TERM -x Tinycast || true
+  for _ in {1..10}; do
+    pgrep -x Tinycast &>/dev/null || break
+    sleep 1
+  done
+  pgrep -x Tinycast &>/dev/null && die "Tinycast did not quit"
+fi
+
+python3 -I - "$DB" "$LINKS" "$COMMANDS" "$DOMAIN" <<'PY'
+import json, plistlib, sqlite3, subprocess, sys, time, uuid
+
+db_path, links_path, commands_path, domain = sys.argv[1:]
+db = sqlite3.connect(db_path)
+existing = db.execute("select id, name, link from quicklinks").fetchall()
+names = {name: qid for qid, name, _ in existing}
+links = {link for _, _, link in existing}
+
+added = 0
+aliases = []
+for q in json.load(open(links_path))["quicklinks"]:
+    qid = names.get(q["name"])
+    if qid is None and q["link"] not in links:
+        qid = str(uuid.uuid4()).upper()
+        # The app stores ids as uppercase UUIDs and dates as Unix time.
+        db.execute(
+            "INSERT INTO quicklinks(id, name, link, created_at) VALUES (?, ?, ?, ?)",
+            (qid, q["name"], q["link"], time.time() + added * 0.001),
+        )
+        names[q["name"]] = qid
+        links.add(q["link"])
+        added += 1
+    if qid and q.get("alias"):
+        # Launcher entries key aliases by "quicklink:" + the lowercase id.
+        aliases += [f"quicklink:{qid.lower()}", q["alias"]]
+db.commit()
+print(f"Quicklinks: {added} added, {len(aliases) // 2} aliases set")
+
+# The app stores custom commands as one JSON blob, keyed by uppercase UUID.
+prefs = plistlib.loads(subprocess.run(["defaults", "export", domain, "-"], capture_output=True, check=True).stdout)
+stored = json.loads(prefs.get("customCommands", b"[]"))
+wanted = json.load(open(commands_path))["commands"]
+wanted_ids = {c["id"] for c in wanted}
+stored = [c for c in stored if c["id"] not in wanted_ids]
+for c in wanted:
+    alias = c.pop("alias", None)
+    stored.append(c)
+    if alias:
+        aliases += [f"custom-command:{c['id'].lower()}", alias]
+blob = json.dumps(stored, separators=(",", ":")).encode().hex()
+subprocess.run(["defaults", "write", domain, "customCommands", "-data", blob], check=True)
+subprocess.run(["defaults", "write", domain, "customCommandsEnabled", "-bool", "true"], check=True)
+print(f"Custom commands: {len(wanted)} set")
+
+if aliases:
+    subprocess.run(["defaults", "write", domain, "launcherAliases", "-dict-add", *aliases], check=True)
+PY
+
+# The settings file can only be switched on from the app, which asks first.
+if [[ "$(defaults read "$DOMAIN" settingsFileEnabled 2>/dev/null)" != 1 ]]; then
+  echo "Next: Tinycast Settings → Backup → Settings File, turn it on and choose Import"
+fi
+
+open -a Tinycast

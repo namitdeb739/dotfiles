@@ -84,13 +84,14 @@ Each directory is an independent stow package that mirrors `~/` structure:
 | `starship/` | `starship.toml` — Catppuccin Mocha prompt config | `~/.config/starship/` |
 | `nvim/` | Full neovim config — lazy.nvim, Catppuccin, LSP, telescope | `~/.config/nvim/` |
 | `ghostty/` | `config` — Ghostty terminal: Catppuccin Latte/Mocha, JetBrains Mono, keybinds | `~/.config/ghostty/` |
-| `bin/` | `theme-toggle`, `dotfiles-update`, `secret` — personal scripts | `~/bin/` |
+| `bin/` | `theme-toggle`, `dotfiles-update`, `secret`, `tinycast-setup`, `claude-window` — personal scripts | `~/bin/` |
 | `launchd/` | `com.namitdeb739.dotfiles-update.plist` — weekly maintenance job | `~/Library/LaunchAgents/` |
 | `ssh/` | `config` — host defaults, Keychain, connection reuse | `~/.ssh/` |
 | `lazygit/` | `config.yml` — delta pager, Catppuccin, conventional-commit prompt | `~/Library/Application Support/lazygit/` |
 | `act/` | `.actrc` — Apple Silicon runner defaults | `~/` |
 | `tmux/` | `tmux.conf` — session persistence, Catppuccin, vi copy-mode | `~/.config/tmux/` |
 | `karabiner/` | `karabiner.json` — key remapping | `~/.config/karabiner/` |
+| `tinycast/` | `settings.json`, `quicklinks.json`, `commands.json` — launcher; run `tinycast-setup` to load quicklinks and commands | `~/.config/tinycast/` |
 | `gh/` | `config.yml` — aliases and protocol (not `hosts.yml`) | `~/.config/gh/` |
 | `vscode/` | `settings.json`, `keybindings.json`, `extensions.json` | Platform-specific VSCode User dir |
 | `claude/` | `.claude/` — CLAUDE.md, settings.json, statusline.sh, hooks, agents, commands | `~/` |
@@ -513,7 +514,9 @@ dotfiles/
 ├── bin/bin/
 │   ├── theme-toggle                 # macOS light/dark switcher
 │   ├── dotfiles-update              # weekly maintenance run
-│   └── secret                       # Keychain-backed secret manager
+│   ├── secret                       # Keychain-backed secret manager
+│   ├── tinycast-setup               # load Tinycast quicklinks and commands
+│   └── claude-window                # new Ghostty window running claude
 ├── launchd/Library/LaunchAgents/
 │   └── com.namitdeb739.dotfiles-update.plist
 ├── nvim/

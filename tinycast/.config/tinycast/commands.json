@@ -1,0 +1,11 @@
+{
+  "commands": [
+    {
+      "id": "6A1F4C2E-8B3D-4E7A-9C51-2D0B7E9F3A64",
+      "name": "Claude Code",
+      "command": "~/bin/claude-window \"$1\"",
+      "arguments": [{"name": "Prompt", "isOptional": true}],
+      "alias": "cl"
+    }
+  ]
+}
