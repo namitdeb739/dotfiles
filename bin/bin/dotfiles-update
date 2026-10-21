@@ -240,7 +240,10 @@ brew_maintenance() {
     UPGRADE_FAILED=1
     log "cask upgrade reported failures; continuing so the later steps still run"
   fi
-  STILL_OUTDATED="$(brew outdated --quiet || true)"
+  # Root-requiring casks are left out: the unattended path can never upgrade
+  # them, so reporting them every week is noise, not a signal. The log line
+  # after brew bundle still names them.
+  STILL_OUTDATED="$(brew outdated --quiet | grep -vxF -f <(tr ' ' '\n' <<<"$skip") || true)"
 
   step "brew bundle"
   # Re-converge on the Brewfile: installs anything declared but missing.
@@ -314,7 +317,12 @@ brewfile_drift() {
 
   local undeclared_f undeclared_c missing_f missing_c
   undeclared_f="$(comm -23 "$tmp/installed-formulae" "$tmp/declared-formulae")"
-  undeclared_c="$(comm -23 "$tmp/installed-casks" "$tmp/declared-casks")"
+  # drift-ignore also lists casks that are installed on purpose but cannot be
+  # declared, such as ones disabled upstream.
+  undeclared_c="$(
+    comm -23 "$tmp/installed-casks" "$tmp/declared-casks" \
+      | grep -vxF -f <(sed 's/#.*//;s/[[:space:]]*$//;/^$/d' "$REPO_DIR/brew/drift-ignore" 2>/dev/null) || true
+  )"
   missing_f="$(comm -13 "$tmp/all-formulae" "$tmp/declared-formulae")"
   missing_c="$(comm -13 "$tmp/installed-casks" "$tmp/bundle-casks")"
 

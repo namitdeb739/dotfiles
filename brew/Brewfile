@@ -110,10 +110,11 @@ cask "skim"              # PDF viewer — vimtex's SyncTeX target (nvim latex.lu
 cask "cleanmymac"        # Disk cleanup
 
 # --- Embedded (casks) ---
-# Both need sudo to upgrade, so dotfiles-update skips them and reports them
-# as still outdated; upgrade those by hand. segger-jlink lives in
-# Brewfile.fresh-machine. nrfutil is NOT declared: the cask was disabled
-# upstream on 2026-09-01 (fails Gatekeeper), so it can no longer be installed.
+# Both need sudo to upgrade, so dotfiles-update skips them and leaves them
+# out of the summary; upgrade those by hand. segger-jlink lives in
+# Brewfile.fresh-machine. nrfutil is NOT declared (it is in drift-ignore): the
+# cask was disabled upstream on 2026-09-01 (fails Gatekeeper), so it can no
+# longer be installed.
 cask "gcc-arm-embedded"  # Arm GNU toolchain (arm-none-eabi-*)
 cask "uniflash"          # TI flash programmer
 cask "kicad"             # PCB design

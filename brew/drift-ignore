@@ -1,10 +1,13 @@
-# Apps in /Applications that dotfiles-update should not report as drift.
+# Apps in /Applications, and installed casks, that dotfiles-update should not
+# report as drift.
 #
-# One app name per line, without the .app suffix. Blank lines and lines
-# starting with # are ignored. Matching is exact.
+# One app name (without the .app suffix) or cask token per line. Blank lines
+# and lines starting with # are ignored. Matching is exact.
 #
 # Mac App Store apps are skipped automatically (detected via _MASReceipt) and
 # do not need listing here — Homebrew cannot manage them anyway.
 
 CuaDriver        # installed by the cua-driver-rs installer; see zsh/.zshrc PATH entry
 Hermes           # bundled helper, no cask available
+Duo Desktop      # Duo 2FA device-health agent, installed outside Homebrew
+nrfutil          # cask disabled upstream 2026-09-01, so it cannot be declared
