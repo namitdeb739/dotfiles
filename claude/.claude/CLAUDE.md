@@ -42,6 +42,11 @@ hand after an edit.
 - Slash commands run against the session cwd, not the Bash tool's. `cd` in Bash
   cannot fix a command that needs a different repo — relaunch Claude there.
 - Reach for `ast-grep` over `rg` for structural code search or rewrites.
+- Launching or relaunching a GUI app (`open -a`) hands it this session's
+  `CLAUDE_*` variables, and it passes them on to everything it starts. A
+  launcher or terminal that has them makes every later `claude` a child session
+  that saves no transcript. Strip them first:
+  `env $(env | grep -o '^CLAUDE[A-Z_]*' | sed 's/^/-u /') open -a <App>`.
 
 ## Looking things up
 
