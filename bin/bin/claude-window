@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# claude-window — open a new Ghostty window running Claude Code.
+#
+# Usage:
+#   claude-window            # plain session
+#   claude-window "PROMPT"   # session started with PROMPT
+#
+# The command is typed into the window's shell rather than run in place of it,
+# so the shell stays open after Claude exits and the prompt lands in history.
+
+set -euo pipefail
+
+cmd="claude"
+if [[ -n "${1:-}" ]]; then
+  cmd+=" $(printf '%q' "$1")"
+fi
+
+osascript - "$cmd" <<'APPLESCRIPT' >/dev/null
+on run argv
+  tell application "Ghostty"
+    activate
+    new window with configuration {initial input:(item 1 of argv) & linefeed}
+  end tell
+end run
+APPLESCRIPT

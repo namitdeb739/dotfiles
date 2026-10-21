@@ -77,4 +77,24 @@
     "key": "ctrl+p ctrl+s",
     "command": "markdown.reopenAsSource",
   },
+  {
+    "key": "ctrl+shift+k",
+    "command": "quarto.previewScript",
+    "when": "quartoRenderScriptActive",
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "-quarto.previewScript",
+    "when": "quartoRenderScriptActive",
+  },
+  {
+    "key": "ctrl+shift+k",
+    "command": "quarto.preview",
+    "when": "!quartoRenderScriptActive",
+  },
+  {
+    "key": "shift+cmd+k",
+    "command": "-quarto.preview",
+    "when": "!quartoRenderScriptActive",
+  },
 ]

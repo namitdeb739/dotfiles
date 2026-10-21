@@ -1,0 +1,74 @@
+{
+  "commands": [
+    {
+      "id": "6A1F4C2E-8B3D-4E7A-9C51-2D0B7E9F3A64",
+      "name": "Claude Code",
+      "command": "~/bin/claude-window \"$1\"",
+      "arguments": [
+        {
+          "name": "Prompt",
+          "isOptional": true
+        }
+      ],
+      "alias": "cl"
+    },
+    {
+      "id": "CE709075-8144-5D2E-851B-74DCCC3EC4C6",
+      "name": "Dotfiles Update",
+      "command": "~/bin/dotfiles-update",
+      "showsOutput": true,
+      "alias": "dfu"
+    },
+    {
+      "id": "DC194218-5B49-5104-8D7D-86257633E191",
+      "name": "Toggle Dark Mode",
+      "command": "~/bin/theme-toggle",
+      "alias": "theme"
+    },
+    {
+      "id": "F826EF2D-0E35-534E-AE4A-F5FD1C0A9938",
+      "name": "Show IP Address",
+      "command": "echo \"Local:  $(ipconfig getifaddr en0)\"\necho \"Public: $(curl -s --max-time 5 https://ifconfig.me)\"",
+      "showsOutput": true,
+      "alias": "ip"
+    },
+    {
+      "id": "2CC1EE46-2334-5E99-83AB-0AFA87FB03A4",
+      "name": "What's on Port",
+      "command": "lsof -nP -iTCP:\"$1\" -sTCP:LISTEN",
+      "arguments": [
+        {
+          "name": "Port",
+          "isOptional": false
+        }
+      ],
+      "showsOutput": true,
+      "alias": "port"
+    },
+    {
+      "id": "FA505B83-32AB-530C-869A-35DCEB16E25A",
+      "name": "Kill Process on Port",
+      "command": "lsof -ti TCP:\"$1\" -sTCP:LISTEN | xargs kill",
+      "arguments": [
+        {
+          "name": "Port",
+          "isOptional": false
+        }
+      ],
+      "requiresConfirmation": true,
+      "alias": "killport"
+    },
+    {
+      "id": "6DDA8DC6-8DFB-51AC-A9A0-D93E6F4115A7",
+      "name": "Open Repo in VS Code",
+      "command": "open -a \"Visual Studio Code\" ~/Developer/\"$1\"",
+      "arguments": [
+        {
+          "name": "Repo",
+          "isOptional": false
+        }
+      ],
+      "alias": "co"
+    }
+  ]
+}

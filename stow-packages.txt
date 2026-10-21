@@ -33,3 +33,4 @@ btop
 bin
 launchd
 copier
+tinycast
