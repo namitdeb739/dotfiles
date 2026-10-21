@@ -45,6 +45,7 @@ brew "tectonic"          # Self-contained TeX/LaTeX engine
 brew "latexdiff"         # Marked-up thesis revisions for supervisor review
 brew "tex-fmt"           # LaTeX formatter — VS Code's latex-workshop points at it
 brew "poppler"           # PDF rendering and CLI tools (pdftotext, pdfimages)
+brew "vale"              # Prose linter for thesis chapters
 
 # --- Media ---
 brew "yt-dlp"            # Audio/video downloader
@@ -82,6 +83,11 @@ cask "nightfall"         # Menu bar dark/light mode toggle
 cask "firefox"           # Web browser
 cask "karabiner-elements"  # Keyboard customiser
 cask "sanesidebuttons"   # System-wide navigation with mouse side buttons
+cask "quarto"            # Thesis and analysis pages; a .pkg, so upgraded by hand
+# Declared by its short name: drift compares casks by bare token, so the
+# tap-qualified form would read as both undeclared and missing.
+tap "abue-ammar/tinycast"
+cask "tinycast"          # Launcher; config in tinycast/, content via tinycast-setup
 
 # NOT declared here, deliberately: Hush and AdGuard Mini are Mac App Store
 # apps. Homebrew cannot manage a MAS install — adopting one would replace the
@@ -110,6 +116,7 @@ cask "cleanmymac"        # Disk cleanup
 # upstream on 2026-09-01 (fails Gatekeeper), so it can no longer be installed.
 cask "gcc-arm-embedded"  # Arm GNU toolchain (arm-none-eabi-*)
 cask "uniflash"          # TI flash programmer
+cask "kicad"             # PCB design
 
 # The Microsoft apps live in brew/Brewfile.fresh-machine, not here. Homebrew
 # cannot install over an existing Microsoft AutoUpdate install, so declaring
