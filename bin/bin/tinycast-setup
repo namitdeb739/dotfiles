@@ -87,4 +87,8 @@ if [[ "$(defaults read "$DOMAIN" settingsFileEnabled 2>/dev/null)" != 1 ]]; then
   echo "Next: Tinycast Settings → Backup → Settings File, turn it on and choose Import"
 fi
 
-open -a Tinycast
+# Run from a Claude Code session, Tinycast would inherit its CLAUDE_* variables
+# and hand them to every app it launches, so a claude started in one of those
+# thinks it is a child session and saves no transcript.
+# shellcheck disable=SC2046
+env $(compgen -e | grep '^CLAUDE' | sed 's/^/-u /') open -a Tinycast
