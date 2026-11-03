@@ -7,6 +7,12 @@
 # Requires a Nerd Font (same as Starship config).
 set -euo pipefail
 
+# This runs in the background on every refresh, so its git calls must never
+# take the index lock: a `git status` refreshing the index's stat cache would
+# otherwise make a `git add` or `git commit` running at that moment fail on
+# .git/index.lock. Skipping that cache write is all the variable does.
+export GIT_OPTIONAL_LOCKS=0
+
 input="$(cat)"
 
 dir="$(      echo "$input" | jq -r '.workspace.current_dir          // ""')"
