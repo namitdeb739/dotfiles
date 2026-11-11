@@ -173,7 +173,7 @@
         }
       ]
     },
-    "excludedCommands": []
+    "excludedCommands": ["whisper-cli"]
   },
   "effortLevel": "medium",
   "autoCompactWindow": 500000,
