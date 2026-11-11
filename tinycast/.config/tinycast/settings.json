@@ -13,7 +13,6 @@
     "theme": "system",
     "interfaceSize": "standard",
     "compactMode": true,
-    "showFavoritesInCompactMode": true,
     "followCursorAcrossDisplays": true,
     "dragToReposition": true
   },
@@ -43,32 +42,32 @@
       "~/Applications"
     ],
     "apps": {
-      "com.mitchellh.ghostty": {
-        "shortcut": "ctrl+option+t"
-      },
-      "md.obsidian": {
-        "shortcut": "ctrl+option+o"
-      },
       "com.apple.Safari": {
         "shortcut": "ctrl+option+b"
+      },
+      "com.apple.finder": {
+        "shortcut": "ctrl+option+f"
       },
       "com.microsoft.VSCode": {
         "shortcut": "ctrl+option+c"
       },
-      "notion.id": {
-        "shortcut": "ctrl+option+n"
-      },
-      "net.whatsapp.WhatsApp": {
-        "shortcut": "ctrl+option+w"
+      "com.mitchellh.ghostty": {
+        "shortcut": "ctrl+option+t"
       },
       "com.tdesktop.Telegram": {
         "shortcut": "ctrl+option+g"
       },
+      "md.obsidian": {
+        "shortcut": "ctrl+option+o"
+      },
       "net.ankiweb.anki": {
         "shortcut": "ctrl+option+a"
       },
-      "com.apple.finder": {
-        "shortcut": "ctrl+option+f"
+      "net.whatsapp.WhatsApp": {
+        "shortcut": "ctrl+option+w"
+      },
+      "notion.id": {
+        "shortcut": "ctrl+option+n"
       }
     }
   },
@@ -169,41 +168,41 @@
     "layoutsShowInLauncher": true,
     "roomsShowInLauncher": true,
     "shortcuts": {
-      "left-half": null,
-      "right-half": null,
-      "top-half": null,
+      "almost-maximize": null,
       "bottom-half": null,
-      "top-left-quarter": null,
-      "top-right-quarter": null,
       "bottom-left-quarter": null,
       "bottom-right-quarter": null,
-      "first-three-fourths": null,
-      "last-three-fourths": null,
-      "first-third": null,
-      "center-third": null,
-      "last-third": null,
-      "first-two-thirds": null,
-      "last-two-thirds": null,
-      "maximize": null,
-      "almost-maximize": null,
-      "reasonable-size": null,
-      "maximize-height": null,
-      "maximize-width": null,
       "center": null,
       "center-half": null,
+      "center-third": null,
       "center-two-thirds": null,
+      "first-third": null,
+      "first-three-fourths": null,
+      "first-two-thirds": null,
+      "last-third": null,
+      "last-three-fourths": null,
+      "last-two-thirds": null,
+      "left-half": null,
       "make-larger": null,
       "make-smaller": null,
-      "restore": null,
+      "maximize": null,
+      "maximize-height": null,
+      "maximize-width": null,
+      "move-down": null,
       "move-left": null,
       "move-right": null,
       "move-up": null,
-      "move-down": null,
       "next-display": null,
+      "next-space": null,
       "previous-display": null,
-      "toggle-fullscreen": null,
       "previous-space": null,
-      "next-space": null
+      "reasonable-size": null,
+      "restore": null,
+      "right-half": null,
+      "toggle-fullscreen": null,
+      "top-half": null,
+      "top-left-quarter": null,
+      "top-right-quarter": null
     },
     "aliases": {},
     "customSizes": [],
