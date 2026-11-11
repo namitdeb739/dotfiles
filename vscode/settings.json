@@ -338,6 +338,8 @@
     "*": true,
     "plaintext": false,
     "markdown": true,
+    "latex": false,
+    "quarto": false,
     "scminput": false,
   },
   "claudeCode.hideOnboarding": true,
@@ -374,4 +376,5 @@
   "latex-workshop.formatting.tex-fmt.path": "/opt/homebrew/bin/tex-fmt",
   "nrf-connect.enableTelemetry": true,
   "jupyter.interactiveWindow.creationMode": "perFile",
+  "notebook.lineNumbers": "on",
 }
