@@ -42,7 +42,7 @@
       "Bash(rm *)",
       "Bash(rmdir *)"
     ],
-    "defaultMode": "auto",
+    "defaultMode": "default",
     "additionalDirectories": [
       "/Users/namit/Developer/dotfiles"
     ]
@@ -125,11 +125,19 @@
     "network": {
       "allowedDomains": [
         "github.com",
-        "*.github.com"
+        "*.github.com",
+        "raw.githubusercontent.com",
+        "objects.githubusercontent.com",
+        "pypi.org",
+        "*.pythonhosted.org",
+        "*.npmjs.org",
+        "ghcr.io",
+        "formulae.brew.sh"
       ],
       "allowMachLookup": [
         "com.apple.trustd.agent"
-      ]
+      ],
+      "allowLocalBinding": true
     },
     "filesystem": {
       "allowWrite": [
@@ -201,5 +209,10 @@
       "**Org-specific CLIs**: None configured — non-standard CLIs seen (uv, bat, brew, eza, uvx, fd) are personal tooling, not org-specific",
       "routine under /Users/namit/Developer/ prefix: local file operations, uv/uvx package management, and standard read-only shell tooling (bat, eza, fd)"
     ]
+  },
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 400000
+    }
   }
 }
