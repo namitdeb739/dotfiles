@@ -42,7 +42,7 @@
       "Bash(rm *)",
       "Bash(rmdir *)"
     ],
-    "defaultMode": "default",
+    "defaultMode": "auto",
     "additionalDirectories": [
       "/Users/namit/Developer/dotfiles"
     ]
@@ -110,7 +110,8 @@
     "commit-commands@claude-plugins-official": true,
     "code-simplifier@claude-plugins-official": true,
     "research-assistant@research-assistant": true,
-    "session-report@claude-plugins-official": true
+    "session-report@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "research-assistant": {
@@ -134,10 +135,10 @@
         "ghcr.io",
         "formulae.brew.sh"
       ],
+      "allowLocalBinding": true,
       "allowMachLookup": [
         "com.apple.trustd.agent"
-      ],
-      "allowLocalBinding": true
+      ]
     },
     "filesystem": {
       "allowWrite": [
@@ -173,9 +174,16 @@
         }
       ]
     },
-    "excludedCommands": ["whisper-cli *"]
+    "excludedCommands": [
+      "whisper-cli *"
+    ]
   },
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 400000
+    }
+  },
   "autoCompactWindow": 500000,
   "autoUpdatesChannel": "stable",
   "tui": "fullscreen",
@@ -209,10 +217,5 @@
       "**Org-specific CLIs**: None configured — non-standard CLIs seen (uv, bat, brew, eza, uvx, fd) are personal tooling, not org-specific",
       "routine under /Users/namit/Developer/ prefix: local file operations, uv/uvx package management, and standard read-only shell tooling (bat, eza, fd)"
     ]
-  },
-  "modelSettings": {
-    "claude-opus-5-5": {
-      "autoCompactWindow": 400000
-    }
   }
 }
