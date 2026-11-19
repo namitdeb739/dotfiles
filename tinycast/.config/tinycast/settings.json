@@ -27,7 +27,7 @@
   },
   "search": {
     "showsSuggestions": true,
-    "sensitivity": "medium"
+    "sensitivity": "low"
   },
   "applications": {
     "enabled": true,
@@ -131,8 +131,7 @@
     "ignorePatterns": [
       "*.log",
       "*.tmp",
-      ".DS_Store",
-      "~/Downloads"
+      ".DS_Store"
     ],
     "removedDefaultPatterns": [],
     "showInLauncher": true,
