@@ -7,9 +7,9 @@
   },
   "permissions": {
     "allow": [
-      "Read(*)",
-      "Edit(*)",
-      "Write(*)",
+      "Read",
+      "Edit",
+      "Write",
       "WebSearch",
       "WebFetch(*)",
       "Bash(git *)",
