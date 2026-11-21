@@ -20,10 +20,10 @@ description: >-
   - Options flags: `m` math mode, `t` text mode, `A` auto-fire, `r` regex
     trigger, `w` word boundary, `v` visual selection, `M` block math only,
     `n` inline math only.
-- **Reference doc** — `/Users/namit/Obsidian/_latex-snippets.md`
+- **Reference doc** — `/Users/namit/Obsidian/Meta/LaTeX Snippets.md`
   - Cheat-sheet: `##` category headers, 3-column tables
     (`Trigger | Name | Renders as`).
-- **Trigger conflict index** — `/Users/namit/Obsidian/latex-trigger-index.txt`
+- **Trigger conflict index** — `/Users/namit/Obsidian/Meta/latex-trigger-index.txt`
   - Sorted list of every auto-firing trigger (options containing `A`).
   - Tab-only snippets are absent by design — they cannot fire unintentionally.
 
@@ -42,7 +42,7 @@ description: >-
 
 3. **Apply**:
    - *Add* — insert into the right category block in the JS string; add a row to
-     the matching table in `_latex-snippets.md`; insert into
+     the matching table in `LaTeX Snippets.md`; insert into
      `latex-trigger-index.txt` in sorted position if auto-firing.
    - *Modify* — update `data.json` and the corresponding doc row; update the
      index if the trigger changed.
